@@ -1,0 +1,53 @@
+<div class="col-2"></div>
+<div class="col-2 navbar bg-dark fixed-top h-100 align-items-end">
+  {# <div data-bs-theme="dark sticky-top">
+    {% if g.user is not none %}
+    <form method="get" action="/auth/logout">
+      <button class="btn btn-light rounded-0" type="submit">
+        Logout
+      </button>
+    </form>
+    {% else %}
+    <button class="btn btn-light rounded-0" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasScrolling" aria-controls="offcanvasScrolling">
+      Login
+    </button>
+
+    <div class="offcanvas offcanvas-start h-50" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="offcanvasScrolling" aria-labelledby="offcanvasScrollingLabel">
+      <div class="offcanvas-header">
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+      </div>
+      <div class="offcanvas-body">
+        <form method="post" action="auth/login">
+          <div class="mb-3">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" class="form-control rounded-0" id="email" name="email">
+          </div>
+          <div class="mb-3">
+            <label for="inputpassword" class="form-label">Password</label>
+            <input type="password" class="form-control rounded-0" id="password" name="password">
+          </div>
+          <button type="submit" class="btn btn-dark rounded-0" formaction="/auth/login">Login</button>
+          <button type="submit" class="btn btn-light rounded-0" formaction="/auth/register">Signup</button>
+        </form>      
+      </div>
+    </div>
+    {% endif %}
+  </div> #}
+
+  <div class="nav flex-column px-5 text-left" role="tablist" aria-orientation="vertical">
+    <div class="list-group list-group-flush">
+      {% for link in g.links -%}
+      {% if link.active -%}
+      <a class="nav-link list-group-item list-group-item-action list-group-item-light active" href="{{ link.url }}">
+        {{link.name}}
+      </a>
+      {% else -%}
+      <a class="nav-link list-group-item list-group-item-action list-group-item-light" href="{{ link.url }}">
+        {{link.name}}
+      </a>
+      {% endif -%}
+      {% endfor -%}
+      <div class="list-group-item list-group-item-light mb-5"></div>
+    </div>
+  </div>
+</div>

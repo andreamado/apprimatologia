@@ -1,0 +1,57 @@
+.monkey-bg {
+  background: url("../img/pexels-pieter-van-noorden-12937447_1920.jpg") no-repeat center;
+}
+
+.main {
+  background-size: 100%;
+  background-color: rgb(54, 52, 52);
+
+  position: relative;
+  overflow: hidden;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.main:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+}
+
+.main .main-content {
+  position: relative;
+  max-width: 40rem;
+  padding: 4rem;
+  padding-bottom: 3rem;
+
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.social-icons {
+  position: relative;
+  z-index: 2;
+}
+
+.social-icons .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  height: 4rem;
+  width: 4rem;
+  border-radius: 100rem;
+}
+
+.list-group-item-light {
+  background-color: rgba(0, 0, 0, 0);
+  border: 0cm;
+  color: white;
+  font-size: larger;
+}

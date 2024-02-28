@@ -1,0 +1,7 @@
+[
+    {"name": "APP",      "active": false, "url": "/"},
+    {"name": "Notícias", "active": false, "url": "noticias"},
+    {"name": "Eventos",  "active": false, "url": "eventos"},
+    {"name": "Contacto", "active": false, "url": "contacto"},
+    {"name": "Membros",  "active": false, "url": "membros"}
+]
