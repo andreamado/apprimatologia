@@ -1,28 +1,40 @@
-.monkey-bg {
-  background: url("../img/pexels-pieter-van-noorden-12937447_1920.jpg") no-repeat center;
+@media screen and (min-width: 992px) {
+  .navbar .container-fluid, .navbar-expand-lg .navbar-collapse, .navbar-expand-lg .navbar-nav {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .navbar {
+    width: 300px;
+    height: 100vh;
+  }
+
+  body {
+    display: flex;
+    flex-wrap: nowrap;
+  }
+
+  .navbar-app {
+    margin: 20%
+  }
+}
+
+@media screen and (max-width: 992px) {
+  .navbar-toggler {
+    margin-bottom: 0.5rem;
+  }
 }
 
 .main {
-  background-size: 100%;
+  padding: 20px 20px;
   background-color: rgb(54, 52, 52);
-
   position: relative;
   overflow: hidden;
   z-index: 2;
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-.main:before {
-  content: "";
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  right: 0;
-  left: 0;
-  height: 100%;
-  width: 100%;
+  height: 100vh;
 }
 
 .main .main-content {
@@ -34,19 +46,26 @@
   background-color: rgba(0, 0, 0, 0.4);
 }
 
-.social-icons {
-  position: relative;
-  z-index: 2;
+.nav-link {
+  padding: 0.5rem;
 }
 
-.social-icons .btn {
+.logo {
+  border-radius: 100rem;
+}
+
+.social-icons {
   display: inline-flex;
+  height: 4rem;
+  width: 4rem;
   align-items: center;
   justify-content: center;
   padding: 0;
-  height: 4rem;
-  width: 4rem;
   border-radius: 100rem;
+}
+
+.monkey-bg {
+  background: url("../img/background.jpg") no-repeat center;
 }
 
 .list-group-item-light {
