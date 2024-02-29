@@ -27,9 +27,12 @@
 
 .main {
   padding: 20px 20px;
-  background-color: rgb(54, 52, 52);
-  position: relative;
-  overflow: hidden;
+  background: url("../img/background_noise.svg") repeat center;
+  background-size: cover;
+  background-attachment: local;
+  background-blend-mode: color-burn;
+  background-color: rgba(54, 52, 52, 0.4);
+  overflow: auto;
   z-index: 2;
   display: flex;
   align-items: center;
@@ -38,12 +41,16 @@
 }
 
 .main .main-content {
-  position: relative;
   max-width: 40rem;
   padding: 4rem;
-  padding-bottom: 3rem;
 
   background-color: rgba(0, 0, 0, 0.4);
+}
+
+.navbar {
+  background-image: url("../img/background_noise.svg");
+  background-size: cover;
+  background-blend-mode: soft-light;
 }
 
 .nav-link {

@@ -8,7 +8,7 @@
         {% for link in g.links -%}
         <a class="nav-link list-group-item list-group-item-action list-group-item-light {{ 'active' if link.active }}" href="{{ link.url }}">
           {% if link.name == 'APP' %}
-            <img src="{{ url_for('static', filename='img/logo.jpg') }}" class="logo" alt="APP logo" style="height: 40px;">
+            <img src="{{ url_for('static', filename='img/logo_100x100.jpg') }}" class="logo" alt="APP logo" style="height: 40px;">
           {% endif -%}
           {{link.name}}
         </a>
