@@ -27,6 +27,11 @@
   .navbar-toggler {
     margin-bottom: 0.5rem;
   }
+
+  .main {
+    padding-top: 2rem;
+  }
+
 }
 
 .main {
