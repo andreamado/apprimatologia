@@ -31,7 +31,7 @@ INSERT INTO news (id, title, body) VALUES (
   1,
   "IX Iberian Primatological Conference",
   "APP is happy to announce the IX Iberian Primatological Conference. 
-  The conference will take place in Vila do Conde from *21 to 23 November* 2024.
+  The conference will take place in Vila do Conde from **21 to 23 November** 2024.
   Registration will be available from mid-April.
   Stay tuned!"
 );
