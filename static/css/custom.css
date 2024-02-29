@@ -17,6 +17,10 @@
   .navbar-app {
     margin: 20%
   }
+
+  .main {
+    padding: 10%;
+  }
 }
 
 @media screen and (max-width: 992px) {
