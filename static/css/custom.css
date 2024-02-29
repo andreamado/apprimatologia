@@ -26,21 +26,19 @@
 }
 
 .main {
-  padding: 20px 20px;
   background: url("../img/background_noise.svg") repeat center;
   background-size: cover;
   background-attachment: local;
   background-blend-mode: color-burn;
   background-color: rgba(54, 52, 52, 0.4);
   overflow: auto;
-  z-index: 2;
   display: flex;
-  align-items: center;
   justify-content: center;
   height: 100vh;
 }
 
 .main .main-content {
+  height: fit-content;
   max-width: 40rem;
   padding: 4rem;
 
@@ -73,6 +71,7 @@
 
 .monkey-bg {
   background: url("../img/background.jpg") no-repeat center;
+  align-items: center;
 }
 
 .list-group-item-light {

@@ -35,7 +35,7 @@ def create_app(test_config=None):
     @app.route('/eventos')
     def eventos():
         g.links[2]['active'] = True
-        return render_template('eventos.html', background_monkey=True)
+        return render_template('eventos.html', background_monkey=False)
 
     @app.route('/contacto')
     def contacto():
