@@ -1,0 +1,18 @@
+body {
+  background: url("../img/background_noise.svg") repeat center;
+  background-size: cover;
+  background-blend-mode: color-burn;
+  background-color: rgba(54, 52, 52, 0.4);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  overflow: hidden;
+}
+
+img {
+  position:absolute;
+  bottom:0%;
+  left:40%;
+}

@@ -68,6 +68,9 @@ def create_app(test_config=None):
         g.links[4]['active'] = True
         return render_template('membros.html', background_monkey=False)
 
+    @app.errorhandler(404) 
+    def not_found(e): 
+        return render_template("404.html") 
 
     from . import db
     db.init_app(app)
