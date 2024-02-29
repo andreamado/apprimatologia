@@ -1,6 +1,12 @@
 import os
 from flask import Flask, render_template, g
 
+# check these options
+import markdown
+# md = markdown.Markdown()
+
+from .db import get_db
+
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
@@ -30,6 +36,21 @@ def create_app(test_config=None):
     @app.route('/noticias')
     def noticias():
         g.links[1]['active'] = True
+
+        db = get_db()
+        news_list = db.execute(
+            'SELECT * FROM news ORDER BY id DESC LIMIT 10'
+        )
+
+        g.news = []
+        for news in news_list:
+            g.news.append({
+                'title': news['title'],
+                # 'body': md.convert(news['body']),
+                'body': markdown.markdown(news['body'], tab_length=2),
+                'date': f'Published on {news["created"].strftime("%d/%m/%Y")}'
+            })
+
         return render_template('noticias.html', background_monkey=False)
 
     @app.route('/eventos')
