@@ -32,6 +32,11 @@
   .main {
     padding-top: 2rem;
   }
+
+  .monkey-bg {
+    padding-top: 0;
+    margin-top: 0;
+  }
 }
 
 .main {
@@ -48,10 +53,13 @@
 
 .main .main-content {
   height: fit-content;
-  max-width: 40rem;
   padding: 4rem;
 
   background-color: rgba(0, 0, 0, 0.4);
+}
+
+.index {
+  max-width: 40rem;
 }
 
 .navbar {
@@ -82,7 +90,7 @@
 .monkey-bg {
   background: url("../img/background.jpg") no-repeat center;
   align-items: center;
-  background-size: 100%;
+  background-size: cover;
 }
 
 .list-group-item-light {
