@@ -82,6 +82,7 @@
 .monkey-bg {
   background: url("../img/background.jpg") no-repeat center;
   align-items: center;
+  background-size: 100%;
 }
 
 .list-group-item-light {
