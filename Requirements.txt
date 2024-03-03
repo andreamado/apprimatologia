@@ -1,1 +1,2 @@
 email-validator==2.1.1
+fluent.runtime==0.4.0

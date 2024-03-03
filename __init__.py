@@ -1,11 +1,15 @@
 import os
+from copy import deepcopy
+import json
+
 from flask import Flask, render_template, g
 
 # check these options
 import markdown
-# md = markdown.Markdown()
 
 from .db import get_db
+
+from .i18n import I18N
 
 def create_app(test_config=None):
     # create and configure the app
@@ -14,6 +18,9 @@ def create_app(test_config=None):
         SECRET_KEY='dev',
         DATABASE=os.path.join(app.instance_path, 'apprimatologia.sqlite'),
     )
+
+    # register the internationalization module
+    I18N().register(app)
 
     if test_config is None:
         # load the instance config, if it exists, when not testing
@@ -28,13 +35,27 @@ def create_app(test_config=None):
     except OSError:
         pass
 
-    @app.route('/')
-    def index():
-        g.links[0]['active'] = True
-        return render_template('index.html', background_monkey=True)
+    with open('links.json', encoding='utf8') as f:
+        links = json.load(f)
 
-    @app.route('/noticias')
-    def noticias():
+    @app.before_request
+    def add_links():
+        g.links = deepcopy(links)
+
+    @app.route('/<language:language>/')
+    @app.route('/')
+    def index(language='pt'):
+        g.links[0]['active'] = True
+
+        return render_template(
+            'index.html', 
+            background_monkey=True,
+            lang=language,
+        )
+
+    @app.route('/<language:language>/noticias/')
+    @app.route('/noticias/')
+    def noticias(language='pt'):
         g.links[1]['active'] = True
 
         db = get_db()
@@ -51,25 +72,44 @@ def create_app(test_config=None):
                 'date': f'Published on {news["created"].strftime("%d/%m/%Y")}'
             })
 
-        return render_template('noticias.html', background_monkey=False)
+        return render_template(
+            'noticias.html', 
+            background_monkey=False, 
+            lang=language
+        )
 
-    @app.route('/eventos')
-    def eventos():
+    @app.route('/<language:language>/eventos/')
+    @app.route('/eventos/')
+    def eventos(language='pt'):
         g.links[2]['active'] = True
-        return render_template('eventos.html', background_monkey=False)
+        return render_template(
+            'eventos.html', 
+            background_monkey=False, 
+            lang=language
+        )
 
-    @app.route('/contacto')
-    def contacto():
+    @app.route('/<language:language>/contacto/')
+    @app.route('/contacto/')
+    def contacto(language='pt'):
         g.links[3]['active'] = True
-        return render_template('contacto.html', background_monkey=True)
+        return render_template(
+            'contacto.html', 
+            background_monkey=True, 
+            lang=language
+        )
 
-    @app.route('/membros')
-    def membros():
+    @app.route('/<language:language>/membros/')
+    @app.route('/membros/')
+    def membros(language='pt'):
         g.links[4]['active'] = True
-        return render_template('membros.html', background_monkey=False)
+        return render_template(
+            'membros.html', 
+            background_monkey=False, 
+            lang=language
+        )
 
-    @app.errorhandler(404) 
-    def not_found(e): 
+    @app.errorhandler(404)
+    def not_found(e):
         return render_template("404.html") 
 
     from . import db

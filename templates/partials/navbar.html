@@ -6,14 +6,21 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="nav px-1">
             {% for link in g.links -%}
-            <a class="nav-link list-group-item list-group-item-action list-group-item-light {{ 'active' if link.active }}" href="{{ link.url }}">
-              {% if link.name == 'APP' -%}
+            <a class="nav-link list-group-item list-group-item-action list-group-item-light {{ 'active' if link.active }}" href="{{ url_for(link.url, language=lang) }}">
+              {% if link.name == 'link-app' -%}
                 <img src="{{ url_for('static', filename='img/logo_100x100.jpg') }}" class="logo" alt="APP logo" style="height: 40px;">
               {% endif -%}
-              {{link.name}}
+              {{link.name | l10n(lang)}}
             </a>
             {% endfor -%}
           </ul>
         </div>
+        {% for link in g.links -%}
+        {% if link.active -%}
+        <div class="language-switch">
+          <a href="{{ url_for(link.url, language='pt') }}">PT</a>/<a href="{{ url_for(link.url, language='en') }}">EN</a>
+        </div>
+        {% endif -%}
+        {% endfor -%}
       </div>
     </nav>

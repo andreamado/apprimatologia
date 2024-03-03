@@ -22,6 +22,11 @@
     padding: 10%;
     padding-top: 5%;
   }
+
+  .language-switch {
+    padding-left: 2rem;
+    padding-top: 2rem;
+  }
 }
 
 @media screen and (max-width: 992px) {
@@ -37,6 +42,21 @@
     padding-top: 0;
     margin-top: 0;
   }
+
+  .language-switch {
+    padding-right: 2rem;
+  }
+}
+
+.language-switch {
+  /* justify-content: center;
+  text-align: center; */
+  color: white;
+}
+
+.language-switch a {
+  text-decoration: none;
+  color: white;
 }
 
 .main {
