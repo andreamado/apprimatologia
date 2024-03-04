@@ -16,7 +16,10 @@
       <div class="col-3">
         <a class="social-icons btn btn-dark m-3" href="https://m.facebook.com/p/Associa%C3%A7%C3%A3o-Portuguesa-de-Primatologia-100082994737894/"><img src="{{ url_for('static', filename='img/facebook.svg') }}" alt="facebook logo" style="width: 20px;"></a>
       </div>
-    </div>  
+    </div>
+    <div class="row mt-5 index-join">
+      <div class="col"><a href="{{url_for('juntate', language=lang)}}">{{'index-join'|l10n(lang)}}</a></div>
+    </div>
   </div>
 </div>
 {% endblock main %}

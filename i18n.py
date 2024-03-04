@@ -30,3 +30,6 @@ class I18N():
         app.jinja_env.filters['l10n'] = self.i18n_filter_generator()
 
         app.i18n = self
+
+    def lazy_translator(self, string):
+        return lambda language: self.l10n[language].format_value(string)

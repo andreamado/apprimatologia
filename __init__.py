@@ -2,7 +2,7 @@ import os
 from copy import deepcopy
 import json
 
-from flask import Flask, render_template, g
+from flask import Flask, render_template, g, request
 
 # check these options
 import markdown
@@ -16,6 +16,7 @@ def create_app(test_config=None):
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_mapping(
         SECRET_KEY='dev',
+        CSRF_SECRET_KEY='dev',
         DATABASE=os.path.join(app.instance_path, 'apprimatologia.sqlite'),
     )
 
@@ -44,6 +45,8 @@ def create_app(test_config=None):
 
     @app.route('/<language:language>/')
     @app.route('/')
+    @app.route('/<language:language>/APP')
+    @app.route('/APP')
     def index(language='pt'):
         g.links[0]['active'] = True
 
@@ -80,6 +83,12 @@ def create_app(test_config=None):
 
     @app.route('/<language:language>/eventos/')
     @app.route('/eventos/')
+    @app.route('/<language:language>/IX_Iberian_Primatological_Conference')
+    @app.route('/IX_Iberian_Primatological_Conference')
+    @app.route('/<language:language>/IX_IPC')
+    @app.route('/IX_IPC')
+    @app.route('/<language:language>/IPC')
+    @app.route('/IPC')
     def eventos(language='pt'):
         g.links[2]['active'] = True
         return render_template(
@@ -118,4 +127,7 @@ def create_app(test_config=None):
     from . import auth
     app.register_blueprint(auth.bp)
     
+    from .admission import register_admission
+    register_admission(app)
+
     return app

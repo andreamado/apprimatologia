@@ -1,0 +1,150 @@
+{% extends "base.html" -%}
+
+{% block main -%}
+<div class="main-content-dark text-white">
+  <h1 class="lh-1">{{ 'admission-title'|l10n(lang) }}</h1>
+  <p class="lead">{{ 'admission-description'|l10n(lang) }}</p>
+  <form action="/APP/junta-te" method="post">
+    {{ form.csrf_token }}
+    <div class="rounded-4 card mb-4">
+      <div class="card-body">
+        <h5 class="card-title mb-4">{{ 'registration-form-title-id'|l10n(lang) }}</h5>
+        <div class="container">
+          <div class="row mb-3">
+            <div class="col">
+              {{ form.given_name|label(lang)|safe }} {{ form.given_name(size=50, class='form-control') }}
+            </div>
+            <div class="col">
+              {{ form.family_name|label(lang)|safe }} {{ form.family_name(size=50, class='form-control') }}
+            </div>  
+          </div>
+          <div class="row mb-3">
+            <div class="col">
+              {{ form.cc_passaporte|label(lang)|safe }} {{ form.cc_passaporte(size=50, class='form-control') }}
+            </div>
+            <div class="col">
+              {{ form.nationality|label(lang)|safe }} {{ form.nationality(size=50, class='form-control') }}
+            </div>  
+          </div>
+          <div class="row mb-3">
+            <div class="col">
+              {{ form.private_address|label(lang)|safe }} {{ form.private_address(size=50, class='form-control') }}
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col">
+              {{ form.city|label(lang)|safe }} {{ form.city(size=50, class='form-control') }}
+            </div>
+            <div class="col">
+              {{ form.postal_code|label(lang)|safe }} {{ form.postal_code(size=50, class='form-control') }}
+            </div>
+            <div class="col">
+              {{ form.country|label(lang)|safe }} {{ form.country(size=50, class='form-control') }}
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col">
+              {{ form.phone_number|label(lang)|safe }} {{ form.phone_number(size=50, class='form-control') }}
+            </div>
+            <div class="col">
+              {{ form.fax|label(lang)|safe }} {{ form.fax(size=50, class='form-control') }}
+            </div>
+            <div class="col">
+              {{ form.email|label(lang)|safe }} {{ form.email(size=50, class='form-control') }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="rounded-4 card mb-4">
+        <div class="card-body">
+          <h5 class="card-title mb-4">{{ 'registration-form-title-workplace'|l10n(lang) }}</h5>
+          <div class="container">
+            <div class="row mb-3">
+              <div class="col">
+                {{ form.work_place|label(lang)|safe }} {{ form.work_place(size=50, class='form-control') }}
+              </div>
+            </div>
+            <div class="row mb-3">
+              <div class="col">
+                {{ form.work_address|label(lang)|safe }} {{ form.work_address(size=50, class='form-control') }}
+              </div>
+            </div>
+            <div class="row mb-3">
+              <div class="col">
+                {{ form.work_city|label(lang)|safe }} {{ form.work_city(size=50, class='form-control') }}
+              </div>
+              <div class="col">
+                {{ form.work_postal_code|label(lang)|safe }} {{ form.work_postal_code(size=50, class='form-control') }}
+              </div>
+              <div class="col">
+                {{ form.work_country|label(lang)|safe }} {{ form.work_country(size=50, class='form-control') }}
+              </div>
+            </div>
+            <div class="row mb-3">
+              <div class="col">
+                {{ form.work_phone_number|label(lang)|safe }} {{ form.work_phone_number(size=50, class='form-control') }}
+              </div>
+              <div class="col">
+                {{ form.work_fax|label(lang)|safe }} {{ form.work_fax(size=50, class='form-control') }}
+              </div>
+              <div class="col">
+                {{ form.work_email|label(lang)|safe }} {{ form.work_email(size=50, class='form-control') }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="rounded-4 card mb-4">
+        <div class="card-body">
+          <div class="container">
+            <div class="row">
+              <div class="col-4">
+                {{ form.address_correspondence|label(lang)|safe }}
+              </div>
+              {% for subfield in form.address_correspondence -%}
+              <div class="col-2">
+                {{subfield}} {{ subfield|label(lang)|safe }}
+              </div>
+              {% endfor -%}
+            </div>
+            <div class="row">
+              <div class="col-8">
+                {{ form.data_authorization|label(lang)|safe }}
+              </div>
+              {% for subfield in form.data_authorization -%}
+              <div class="col-2">
+                {{subfield}} {{ subfield|label(lang)|safe }}
+              </div>
+              {% endfor -%}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="rounded-4 card mb-4">
+        <div class="card-body">
+          <h5 class="card-title mb-4">{{ 'registration-form-supporting-members'|l10n(lang) }}</h5>
+          <div class="container">
+            <div class="row mb-4">
+              <div class="col-8">
+                {{ form.supporting_member_name_1|label(lang)|safe }} {{ form.supporting_member_name_1(class='form-control') }}
+              </div>
+              <div class="col-4">
+                {{ form.supporting_member_number_1|label(lang)|safe }} 1 {{ form.supporting_member_number_1(size=10, class='form-control') }}
+              </div>
+            </div>
+            <div class="row">
+                <div class="col-8">
+                  {{ form.supporting_member_name_2|label(lang)|safe }} {{ form.supporting_member_name_2(class='form-control') }}
+                </div>
+                <div class="col-4">
+                  {{ form.supporting_member_number_2|label(lang)|safe }} 2 {{ form.supporting_member_number_2(size=10, class='form-control') }}
+                </div>
+              </div>
+            </div>
+        </div>
+      </div>
+  </form>  
+</div>
+{% endblock -%}
