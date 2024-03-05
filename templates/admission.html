@@ -6,9 +6,9 @@
   <p class="lead">{{ 'admission-description'|l10n(lang) }}</p>
   <form action="/APP/junta-te" method="post">
     {{ form.csrf_token }}
-    <div class="rounded-4 card mb-4">
+    <div class="rounded-4 card mb-3">
       <div class="card-body">
-        <h5 class="card-title mb-4">{{ 'registration-form-title-id'|l10n(lang) }}</h5>
+        <h5 class="card-title mb-3">{{ 'registration-form-title-id'|l10n(lang) }}</h5>
         <div class="container">
           <div class="row mb-3">
             <div class="col">
@@ -57,94 +57,199 @@
       </div>
     </div>
 
-    <div class="rounded-4 card mb-4">
-        <div class="card-body">
-          <h5 class="card-title mb-4">{{ 'registration-form-title-workplace'|l10n(lang) }}</h5>
-          <div class="container">
-            <div class="row mb-3">
-              <div class="col">
-                {{ form.work_place|label(lang)|safe }} {{ form.work_place(size=50, class='form-control') }}
-              </div>
+    <div class="rounded-4 card mb-3">
+      <div class="card-body">
+        <h5 class="card-title mb-3">{{ 'registration-form-title-workplace'|l10n(lang) }}</h5>
+        <div class="container">
+          <div class="row mb-3">
+            <div class="col">
+              {{ form.work_place|label(lang)|safe }} {{ form.work_place(size=50, class='form-control') }}
             </div>
-            <div class="row mb-3">
-              <div class="col">
-                {{ form.work_address|label(lang)|safe }} {{ form.work_address(size=50, class='form-control') }}
-              </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col">
+              {{ form.work_address|label(lang)|safe }} {{ form.work_address(size=50, class='form-control') }}
             </div>
-            <div class="row mb-3">
-              <div class="col">
-                {{ form.work_city|label(lang)|safe }} {{ form.work_city(size=50, class='form-control') }}
-              </div>
-              <div class="col">
-                {{ form.work_postal_code|label(lang)|safe }} {{ form.work_postal_code(size=50, class='form-control') }}
-              </div>
-              <div class="col">
-                {{ form.work_country|label(lang)|safe }} {{ form.work_country(size=50, class='form-control') }}
-              </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col">
+              {{ form.work_city|label(lang)|safe }} {{ form.work_city(size=50, class='form-control') }}
             </div>
-            <div class="row mb-3">
-              <div class="col">
-                {{ form.work_phone_number|label(lang)|safe }} {{ form.work_phone_number(size=50, class='form-control') }}
-              </div>
-              <div class="col">
-                {{ form.work_fax|label(lang)|safe }} {{ form.work_fax(size=50, class='form-control') }}
-              </div>
-              <div class="col">
-                {{ form.work_email|label(lang)|safe }} {{ form.work_email(size=50, class='form-control') }}
-              </div>
+            <div class="col">
+              {{ form.work_postal_code|label(lang)|safe }} {{ form.work_postal_code(size=50, class='form-control') }}
+            </div>
+            <div class="col">
+              {{ form.work_country|label(lang)|safe }} {{ form.work_country(size=50, class='form-control') }}
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col">
+              {{ form.work_phone_number|label(lang)|safe }} {{ form.work_phone_number(size=50, class='form-control') }}
+            </div>
+            <div class="col">
+              {{ form.work_fax|label(lang)|safe }} {{ form.work_fax(size=50, class='form-control') }}
+            </div>
+            <div class="col">
+              {{ form.work_email|label(lang)|safe }} {{ form.work_email(size=50, class='form-control') }}
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col">
+              {{ form.research_line|label(lang)|safe }} {{ form.research_line(size=50, class='form-control') }}
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col">
+              {{ form.species|label(lang)|safe }} {{ form.species(size=50, class='form-control') }}
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col">
+              {{ form.academic_title|label(lang)|safe }} {{ form.academic_title(size=50, class='form-control') }}
+            </div>
+            <div class="col">
+              {{ form.current_studies|label(lang)|safe }} {{ form.current_studies(size=50, class='form-control') }}
+            </div>
+            </div>
+        </div>
+      </div>
+    </div>
+    <div class="rounded-4 card mb-3">
+      <div class="card-body">
+        <div class="container">
+          <div class="row">
+            <div class="col">
+              {{ form.address_correspondence|label(lang)|safe }}
+            </div>
+          </div>
+          <div class="row mb-3">
+            {% for subfield in form.address_correspondence -%}
+            <div class="col-2">
+              {{subfield}} {{ subfield|label(lang)|safe }}
+            </div>
+            {% endfor -%}
+          </div>
+          <div class="row">
+            <div class="col-8">
+              {{ form.data_authorization|label(lang)|safe }}
+            </div>
+          </div>
+          <div class="row">
+            {% for subfield in form.data_authorization -%}
+            <div class="col-2">
+              {{subfield}} {{ subfield|label(lang)|safe }}
+            </div>
+            {% endfor -%}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="rounded-4 card mb-3">
+      <div class="card-body">
+        <h5 class="card-title mb-3">{{ 'registration-form-supporting-members'|l10n(lang) }}</h5>
+        <div class="container">
+          <div class="row mb-3">
+            <div class="col-8">
+              {{ form.supporting_member_name_1|label(lang)|safe }} {{ form.supporting_member_name_1(class='form-control') }}
+            </div>
+            <div class="col-4">
+              {{ form.supporting_member_number_1|label(lang)|safe }} 1 {{ form.supporting_member_number_1(size=10, class='form-control') }}
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-8">
+              {{ form.supporting_member_name_2|label(lang)|safe }} {{ form.supporting_member_name_2(class='form-control') }}
+            </div>
+            <div class="col-4">
+              {{ form.supporting_member_number_2|label(lang)|safe }} 2 {{ form.supporting_member_number_2(size=10, class='form-control') }}
             </div>
           </div>
         </div>
       </div>
-      <div class="rounded-4 card mb-4">
-        <div class="card-body">
-          <div class="container">
-            <div class="row">
-              <div class="col-4">
-                {{ form.address_correspondence|label(lang)|safe }}
-              </div>
-              {% for subfield in form.address_correspondence -%}
-              <div class="col-2">
-                {{subfield}} {{ subfield|label(lang)|safe }}
-              </div>
-              {% endfor -%}
+    </div>
+    <div class="rounded-4 card mb-3">
+      <div class="card-body">
+        <h5 class="card-title mb-3">{{ 'registration-form-quota-title'|l10n(lang) }}</h5>
+        <div class="container">
+          <div class="row mb-3">
+            {% for subfield in form.quota_type -%}
+            <div class="col">
+              {{subfield}} {{ subfield|label(lang)|safe }}
             </div>
-            <div class="row">
-              <div class="col-8">
-                {{ form.data_authorization|label(lang)|safe }}
-              </div>
-              {% for subfield in form.data_authorization -%}
-              <div class="col-2">
-                {{subfield}} {{ subfield|label(lang)|safe }}
-              </div>
-              {% endfor -%}
+            {% endfor -%}
+            <div class="form-text">
+              <sup>*</sup>{{ 'registration-form-reduced-quota-explanation'|l10n(lang) }}
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-6">
+              {{form.voluntary_donation|label(lang)|safe}} {{form.voluntary_donation}}
+            </div>
+            <div class="col-6">
+              {{ 'registration-form-total'|l10n(lang) }}: <span id="registration-form-total-show"></span>
             </div>
           </div>
         </div>
       </div>
-      <div class="rounded-4 card mb-4">
-        <div class="card-body">
-          <h5 class="card-title mb-4">{{ 'registration-form-supporting-members'|l10n(lang) }}</h5>
-          <div class="container">
-            <div class="row mb-4">
-              <div class="col-8">
-                {{ form.supporting_member_name_1|label(lang)|safe }} {{ form.supporting_member_name_1(class='form-control') }}
+    </div>
+    <div class="rounded-4 card mb-3">
+      <div class="card-body">
+        <h5 class="card-title mb-3">{{ 'registration-form-payment-method'|l10n(lang) }}</h5>
+        <div class="container">
+          <div class="row mb-3">
+            {% for subfield in form.payment_method -%}
+            <div class="col">
+              {{subfield}} {{ subfield|label(lang)|safe }}
+              {% if subfield.id == 'payment_method-0' -%}
+              <div class="form-text">
+                {{ 'registration-form-transfer-explanation'|l10n(lang)|safe }}
               </div>
-              <div class="col-4">
-                {{ form.supporting_member_number_1|label(lang)|safe }} 1 {{ form.supporting_member_number_1(size=10, class='form-control') }}
+              {% else -%}
+              ({{ 'number'|l10n(lang) }} {{form.check_number}})
+              <div class="form-text">
+                {{ 'registration-form-check-explanation'|l10n(lang) }}
               </div>
+              {% endif -%}
             </div>
-            <div class="row">
-                <div class="col-8">
-                  {{ form.supporting_member_name_2|label(lang)|safe }} {{ form.supporting_member_name_2(class='form-control') }}
-                </div>
-                <div class="col-4">
-                  {{ form.supporting_member_number_2|label(lang)|safe }} 2 {{ form.supporting_member_number_2(size=10, class='form-control') }}
-                </div>
-              </div>
-            </div>
+            {% endfor -%}
+          </div>
         </div>
       </div>
-  </form>  
+    </div>
+    <div class="rounded-4 card mb-3">
+      <div class="card-body">
+        {% for error in form.recaptcha.errors %}
+          {{ error }}
+        {% endfor %}
+        {{ form.recaptcha }}
+      </div>
+    </div>
+  </form>
+  <script>
+    const update_total = function() {
+      let total = parseFloat(document.getElementById('voluntary_donation').value);
+      if (isNaN(total)) {
+        total = 0.0;
+      }
+
+      let radios = document.getElementsByName('quota_type');
+      for (let i = 0; i < 2; i++) {
+        if (radios[i].checked) {
+          // do whatever you want with the checked radio
+          if (i == 0) {
+            total += 40;
+          } else {
+            total += 25;
+          }
+          break;
+        }
+      }
+      document.getElementById('registration-form-total-show').innerHTML = total.toFixed(2).toString() + ' €';
+    };
+    document.getElementById('voluntary_donation').onchange = update_total;
+    document.getElementById('quota_type-0').onchange = update_total;
+    document.getElementById('quota_type-1').onchange = update_total;
+    update_total();
+  </script>
 </div>
 {% endblock -%}

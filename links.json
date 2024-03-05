@@ -1,7 +1,9 @@
 [
-    {"name": "link-app",     "active": false, "url": "index"},
-    {"name": "link-news",    "active": false, "url": "noticias"},
-    {"name": "link-events",  "active": false, "url": "eventos"},
-    {"name": "link-contact", "active": false, "url": "contacto"},
-    {"name": "link-members", "active": false, "url": "membros"}
+    {"name": "link-app",     "active": false, "url": "index", "submenus": [
+            {"name": "link-juntate", "active": false, "url": "juntate"}
+    ]},
+    {"name": "link-news",    "active": false, "url": "noticias",  "submenus": []},
+    {"name": "link-events",  "active": false, "url": "eventos",   "submenus": []},
+    {"name": "link-contact", "active": false, "url": "contacto",  "submenus": []},
+    {"name": "link-members", "active": false, "url": "membros",   "submenus": []}
 ]

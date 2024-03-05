@@ -1,8 +1,9 @@
 from flask import session, g, request, render_template
 
-from wtforms import BooleanField, EmailField, IntegerField, RadioField, StringField, TelField, validators
+from wtforms import DecimalField, EmailField, FileField, IntegerField, RadioField, StringField, TelField, TextAreaField, validators
 from flask_wtf.csrf import CSRFProtect
 from flask_wtf import FlaskForm
+from flask_wtf.recaptcha import RecaptchaField
 
 def register_admission(app):
     csrf = CSRFProtect()
@@ -29,6 +30,10 @@ def register_admission(app):
         work_phone_number = TelField('registration-form-work-phone-number', [validators.Length(min=1, max=20)])
         work_fax = TelField('registration-form-work-fax', [validators.Length(min=1, max=20)])
         work_email = EmailField('registration-form-work-email', [validators.DataRequired(), validators.Email()])
+        research_line = TextAreaField('registration-form-research-line')
+        species = StringField('registration-form-species')
+        academic_title = StringField('registration-form-academic-title')
+        current_studies = StringField('registration-form-current-studies')
 
         address_correspondence = RadioField('registration-form-address-correspondence', choices=['private', 'work'])
         data_authorization = RadioField('registration-form-data-authorization', choices=['yes', 'no'])
@@ -38,12 +43,13 @@ def register_admission(app):
         supporting_member_name_2 = StringField('registration-form-name', [validators.Length(min=1, max=100)])
         supporting_member_number_2 = IntegerField('number')
 
-        # password = PasswordField('New Password', [
-        #     validators.DataRequired(),
-        #     validators.EqualTo('confirm', message='Passwords must match')
-        # ])
-        # confirm = PasswordField('Repeat Password')
-        # accept_tos = BooleanField('I accept the TOS', [validators.DataRequired()])
+        quota_type = RadioField('registration-form-quota-type', choices=[(1, 'regular-quota'), (2, 'reduced-quota')], default=1)
+        voluntary_donation = DecimalField('registration-form-voluntary-donation', places=2)
+        payment_method = RadioField('registration-form-payment-method', choices=[(1, 'transfer'), (2, 'check')])
+        check_number = StringField('registration-form-check', [validators.Length(min=1, max=50)])
+        payment_confirmation = FileField()
+
+        recaptcha = RecaptchaField()
 
     def label_generator():
         return lambda field, language: f'<label for="{field.id}" class="form-label">{app.i18n.l10n[language].format_value(field.label.text)}</label>'

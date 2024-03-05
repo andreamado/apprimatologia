@@ -7,8 +7,6 @@ from flask import Flask, render_template, g, request
 # check these options
 import markdown
 
-from .db import get_db
-
 from .i18n import I18N
 
 def create_app(test_config=None):
@@ -18,10 +16,17 @@ def create_app(test_config=None):
         SECRET_KEY='dev',
         CSRF_SECRET_KEY='dev',
         DATABASE=os.path.join(app.instance_path, 'apprimatologia.sqlite'),
+        RECAPTCHA_PUBLIC_KEY = "6LeYIbsSAAAAACRPIllxA7wvXjIE411PfdB2gt2J",
+        RECAPTCHA_PRIVATE_KEY = "6LeYIbsSAAAAAJezaIq3Ft_hSTo0YtyeFG-JgRtu"
     )
 
     # register the internationalization module
     I18N().register(app)
+
+    from .db import db_session
+    @app.teardown_appcontext
+    def shutdown_session(exception=None):
+        db_session.remove()
 
     if test_config is None:
         # load the instance config, if it exists, when not testing
@@ -61,18 +66,16 @@ def create_app(test_config=None):
     def noticias(language='pt'):
         g.links[1]['active'] = True
 
-        db = get_db()
-        news_list = db.execute(
-            'SELECT * FROM news ORDER BY id DESC LIMIT 10'
-        )
+        from .models import News
+        from sqlalchemy import select
+        news_list = db_session.execute(select(News).order_by(News.id.desc()).limit(5)).fetchall()
 
         g.news = []
         for news in news_list:
             g.news.append({
-                'title': news['title'],
-                # 'body': md.convert(news['body']),
-                'body': markdown.markdown(news['body'], tab_length=2),
-                'date': f'Published on {news["created"].strftime("%d/%m/%Y")}'
+                'title': getattr(news[0], f'title_{language}'),
+                'body': markdown.markdown(getattr(news[0], f'body_{language}'), tab_length=2),
+                'date': news[0].created.strftime("%d/%m/%Y")
             })
 
         return render_template(
@@ -121,9 +124,9 @@ def create_app(test_config=None):
     def not_found(e):
         return render_template("404.html") 
 
-    from . import db
-    db.init_app(app)
-    
+    from .db import init_db_command
+    app.cli.add_command(init_db_command)
+
     from . import auth
     app.register_blueprint(auth.bp)
     

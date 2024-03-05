@@ -10,10 +10,12 @@ link-news = News
 link-events = IX IPC
 link-contact = Contact
 link-members = Members
+link-juntate = Join!
 
 contact-headquarters = Headquarters
 
 news-title = News
+news-published-on = Published on
 
 events-title = IX Iberian Primatological Conference
 
@@ -53,6 +55,10 @@ registration-form-work-country = Country
 registration-form-work-phone-number = Phone number
 registration-form-work-fax = Fax
 registration-form-work-email = Email
+registration-form-research-line = Research line/Interests
+registration-form-species = Species
+registration-form-academic-title = Título Académico
+registration-form-current-studies = Current studies
 
 registration-form-address-correspondence = Correspondence address
 private = Private
@@ -64,3 +70,20 @@ no = No
 registration-form-supporting-members = Members who support my application
 registration-form-name = Name
 number = Number
+
+# TODO: check the translation of quota
+registration-form-quota-title = Quota (????)
+registration-form-regular-quota = Regular quota (????) (40€/year)
+registration-form-reduced-quota = Reduced Quota (????) (25€/year)
+registration-form-voluntary-donation = Voluntary donation
+registration-form-reduced-quota-explanation = Requires upload of a copy of proof of student status (Ph.D. students are not considered students, unless they prove they receive no salary and/or scholarship)
+registration-form-total = Total
+registration-form-payment-method = Payment method
+transfer = Bank transfer
+check = Bank check
+registration-form-transfer-explanation = 
+    Associação Portuguesa de Primatologia <br>
+    Conta nº.: 2169030322930 <br>
+    NIB: 003521690003032293030 <br>
+    Caixa Geral de Depósitos
+registration-form-check-explanation = To: Associação Portuguesa de Primatologia
