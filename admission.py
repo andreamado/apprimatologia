@@ -1,15 +1,11 @@
 from flask import session, g, request, render_template
 
 from wtforms import DecimalField, EmailField, FileField, IntegerField, RadioField, StringField, TelField, TextAreaField, validators
-from flask_wtf.csrf import CSRFProtect
 from flask_wtf import FlaskForm
 from flask_wtf.recaptcha import RecaptchaField
 
 def register_admission(app):
-    csrf = CSRFProtect()
-    csrf.init_app(app)
-
-    class RegistrationForm(FlaskForm):        
+    class RegistrationForm(FlaskForm):
         given_name  = StringField('registration-form-given-name', [validators.Length(min=1, max=50)])
         family_name = StringField('registration-form-family-name', [validators.Length(min=1, max=50)])
         cc_passaporte = StringField('registration-form-cc-passport', [validators.Length(min=5, max=20)])

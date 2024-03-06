@@ -1,4 +1,4 @@
-from sqlalchemy import Column, ForeignKey, Integer, String, Text
+from sqlalchemy import Column, Boolean, ForeignKey, Integer, String, Text
 from sqlalchemy_utc import UtcDateTime, utcnow
 from sqlalchemy.sql import func
 from .db import Base
@@ -43,3 +43,40 @@ class News(Base):
             return f'<News {self.title_pt!r} (id = {self.id})>'
         else:
             return f'<News untitled (id = {self.id})>'
+
+
+class Member(Base):
+    __tablename__ = 'members'
+
+    id = Column(Integer, primary_key=True)
+    # Isto é o número de inscrição do sócio
+    number = Column(Integer, unique=True)
+    created = Column(UtcDateTime(), default=utcnow())
+    modified = Column(UtcDateTime(), onupdate=utcnow())
+
+    authorized = Column(Boolean, default=False)
+
+    given_name = Column(String(50))
+    family_name = Column(String(50))
+    
+    work_place = Column(String(50))
+    research_line = Column(Text)
+    species = Column(String(100))
+
+    data_authorization = Column(Boolean)
+
+    photo = Column(String(50))
+
+    created = Column(UtcDateTime(), default=utcnow())
+    modified = Column(UtcDateTime(), onupdate=utcnow())
+
+    def __init__(self, number=None, given_name=None, family_name=None, work_place=None, research_line=None, species=None):
+        self.number = number
+        self.given_name = given_name
+        self.family_name = family_name
+        self.work_place = work_place
+        self.research_line = research_line
+        self.species = species
+
+    def __repr__(self):
+        return f'<Member {self.given_name!r} {self.family_name!r})>'

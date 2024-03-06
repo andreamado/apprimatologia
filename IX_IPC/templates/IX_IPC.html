@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block main %}
+<div class="main-content-dark">
+  <h1 class="lh-1 mb-4 text-white">{{ 'IXIPC-title'|l10n(lang) }}</h1>
+  <div class="text-white mb-5">
+    {{ 'IXIPC-description'|l10n(lang)|safe }}
+  </div>
+
+  <div class="container">
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-warning rounded-4" role="alert">
+            {{ message }}
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+  </div>
+
+  {% if not g.IXIPC_user %}
+  <div class="container">
+    <!-- register form -->
+    <div class="row mb-3">
+      <div class="col-12 col-md-6 g-3">
+        <div class="card rounded-4 mb-3 h-100">
+          <div class="card-body">
+            <h2 class="lh-1 mb-4">{{ 'IXIPC-register'|l10n(lang) }}</h2>
+            <div class="row mb-3">
+              <form action="{{ url_for('IX_IPC.register_user', language=lang) }}" method="post">
+                {{ form.csrf_token }}
+                <div class="col-12 mb-3">
+                  <label for="first-name" class="form-label">{{ 'IXIPC-register-first-name'|l10n(lang) }}</label>
+                  <input type="text" class="form-control" id="first-name" name="first-name">
+                </div>
+                {# <div class="col-12 mb-3">
+                  <label for="last-name" class="form-label">{{ 'IXIPC-register-last-name'|l10n(lang) }}</label>
+                  <input type="text" class="form-control" id="last-name" name="last-name">
+                </div> #}
+                <div class="col-12 mb-3">
+                  <label for="email" class="form-label">Email</label>
+                  <input type="email" class="form-control" id="email" name="email">
+                </div>
+                <div class="col-2">
+                  <button type="submit" class="btn btn-primary">{{ 'IXIPC-register-submit'|l10n(lang) }}</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- login form -->
+      <div class="col-12 col-md-6 g-3">
+        <div class="card rounded-4 mb-3 h-100">
+          <div class="card-body">
+            <h2 class="lh-1 mb-4">{{ 'IXIPC-login'|l10n(lang) }}</h2>
+            <div class="row mb-3">
+              <form action="{{ url_for('IX_IPC.login', language=lang) }}" method="post">
+                {{ form.csrf_token }}
+                <div class="col-12 mb-3">
+                  <label for="email" class="form-label">Email</label>
+                  <input type="email" class="form-control" id="email" name="email">
+                </div>
+                <div class="col-12 mb-3">
+                  <label for="password" class="form-label">Password</label>
+                  <input type="password" class="form-control" id="password" name="password">
+                </div>
+                <div class="col-2">
+                  <button type="submit" class="btn btn-primary">{{ 'IXIPC-register-submit'|l10n(lang) }}</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% else %}
+  <div class="container text-white">
+    <h2 class="mb-5">{{ 'IXIPC-hi'|l10n(lang) }}, {{ g.IXIPC_user.name }}!</h2>
+
+    <form action="{{ url_for('IX_IPC.logout', language=lang) }}" method="post">
+      {{ form.csrf_token }}
+      <input type="hidden" id="user_id" name="user_id" value="{{ g.user.id }}"> 
+      <button type="submit" class="btn btn-primary">{{ 'IXIPC-logout'|l10n(lang) }}</button>
+    </form>  
+  </div>
+  {% endif %}
+</div>
+{% endblock main %}

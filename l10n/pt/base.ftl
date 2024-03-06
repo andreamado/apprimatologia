@@ -18,8 +18,8 @@ contact-headquarters = Sede
 news-title = Notícias
 news-published-on = Publicado a
 
-events-title = IX Congresso Ibérico de Primatologia
-events-description = 
+IXIPC-title = IX Congresso Ibérico de Primatologia
+IXIPC-description = 
     <p>
       APP is happy to announce the IX Iberian Primatological Conference. 
       The conference will take place in Vila do Conde from 21 to 23 November 2024.
@@ -27,7 +27,14 @@ events-description =
     </p>
     <br>
     <p>Stay tuned!</p>
+IXIPC-register = Inscreve-te!
+IXIPC-login = Entrar
+IXIPC-logout = Sair
 
+IXIPC-register-first-name = Nome
+IXIPC-register-last-name = Apelido
+IXIPC-register-submit = Submeter
+IXIPC-hi = Olá
 
 admission-title = Junta-te à APP!
 admission-description = Preenche o formulário abaixo para te juntares à APP 
@@ -86,3 +93,6 @@ registration-form-transfer-explanation =
     NIB: 003521690003032293030 <br>
     Caixa Geral de Depósitos
 registration-form-check-explanation = À ordem de: Associação Portuguesa de Primatologia
+
+
+members-list-title = Lista de associados

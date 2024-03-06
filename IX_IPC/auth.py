@@ -6,7 +6,7 @@ from flask import (
 from werkzeug.security import check_password_hash, generate_password_hash
 from email_validator import validate_email, EmailNotValidError
 
-from .db import db_session
+from .db_IXIPC import db_session
 from .models import User
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
@@ -33,7 +33,7 @@ def register(language='pt'):
 
         if error is None:
             try:
-                user = User(email, generate_password_hash(password))
+                user = User(email, password)
                 db_session.add(user)
                 db_session.commit()
             except:
@@ -89,7 +89,7 @@ def load_logged_in_user():
 @bp.route('/<language:language>/logout')
 def logout(language='pt'):
     session.clear()
-    return redirect(url_for('index', lang=language))
+    return redirect(url_for('index', language=language))
 
 
 def login_required(view):

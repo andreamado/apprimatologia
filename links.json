@@ -3,7 +3,7 @@
             {"name": "link-juntate", "active": false, "url": "juntate"}
     ]},
     {"name": "link-news",    "active": false, "url": "noticias",  "submenus": []},
-    {"name": "link-events",  "active": false, "url": "eventos",   "submenus": []},
+    {"name": "link-events",  "active": false, "url": "IX_IPC.IXIPC",   "submenus": []},
     {"name": "link-contact", "active": false, "url": "contacto",  "submenus": []},
     {"name": "link-members", "active": false, "url": "membros",   "submenus": []}
 ]
