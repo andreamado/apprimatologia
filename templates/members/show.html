@@ -1,0 +1,15 @@
+{% extends "base.html" -%}
+{% block main -%}
+      <div class="main-content-dark text-white">
+        <h1 class="lh-1 mb-4">{{ member.given_name }} {{ member.family_name }}</h1>
+        {% if member.number -%}
+        <p>Número de associado: {{ member.number }}</p>
+        {% endif -%}
+        {% if member.reresearch_line -%}
+        <p>Linha de pesquisa: {{ member.research_line }}</p>
+        {% endif -%}
+        {% if member.species -%}
+        <p>Espécies: {{ member.species }}</p>
+        {% endif -%}
+      </div>
+{% endblock main -%}

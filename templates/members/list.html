@@ -1,0 +1,11 @@
+{% extends "base.html" -%}
+{% block main -%}
+      <div class="main-content-dark">
+        <h1 class="lh-1 mb-4 text-white">{{ 'members-list-title'|l10n(lang) }}</h1>
+        {% for member in members -%}
+        <a href=" {{url_for('associado.show_member', id=member.id)}} ">
+            <h4>{{member.number}}. {{ member.given_name }} {{ member.family_name }}</h4>
+        </a>
+        {% endfor -%}
+      </div>
+{% endblock main -%}
