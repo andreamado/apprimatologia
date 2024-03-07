@@ -29,10 +29,13 @@ IXIPC-description =
 IXIPC-register = Register!
 IXIPC-login = Login
 IXIPC-logout = Logout
+IXIPC-email-already-registered = {$email} is already registered. Please use a different email or login with the credentials we sent to your registration email. In case you lost the credentials, click <a href="{$recover_credentials}">here</a> to receive them again.
+
 IXIPC-register-first-name = First name
 IXIPC-register-last-name = Last name
 IXIPC-register-submit = Submit
 IXIPC-hi = Hello
+
 
 admission-title = Join APP!
 admission-description = Fill the form below to join APP
