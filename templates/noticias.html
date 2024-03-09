@@ -1,13 +1,18 @@
 {% extends "base.html" -%}
 {% block main -%}
-      <div class="main-content-dark">
+      <div class="main-content-dark smaller-column">
         <h1 class="lh-1 mb-4 text-white">{{ 'news-title'|l10n(lang) }}</h1>
         {% for news in g.news -%}
-        <div class="text-white">
+        <div class="text-white mb-5">
+          <p class="mb-1 lead">{{ 'news-published-on'|l10n(lang) }} {{ news.date }} <small style="font-size:9pt">(modificado a 1/2/2023)</small></p>
           <h2>{{ news.title }}</h2>
-          {{ news.body|safe }}
-          <br>
-          <p>{{ 'news-published-on'|l10n(lang) }} {{ news.date }}</p>
+          {% include 'partials/news-image.html' %}
+          {# <div class="mb-3" style="width:60%"> #}
+            {# TODO: tamanho máximo vertical da imagem; legenda no máximo ~10 palavras de largura #}
+            {# <img src="{{ url_for('static', filename='img/monkey404.png')}}" alt="" class="mb-2" style="width:60%"> #}
+            {# <p class="image-subtitle">APP is happy to announce the IX Iberian Primatological Conference. The conference will take place in Vila do Conde from 21 to 23 November 2024. Registration will be available from mid-April. Stay tuned!</p> #}
+          {# </div> #}
+          {{ news.body|safe }}          
         </div>  
         {% endfor -%}
       </div>

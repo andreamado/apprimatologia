@@ -12,7 +12,7 @@
   <body style="background-color: rgba(54, 52, 52, 0.4)">
 {% include "partials/navbar.html" %}
     
-    <div class="container-fluid main{{ ' monkey-bg' if background_monkey }}">
+    <div class="container-fluid main{{ ' monkey-bg' if background_monkey }} smaller-column">
       {% block main %}{% endblock main %}
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
