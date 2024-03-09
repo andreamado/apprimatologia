@@ -12,8 +12,6 @@ from sqlalchemy import select
 bp = Blueprint('IX_IPC', __name__, template_folder='templates')
 
 
-@bp.route('/<language:language>/eventos/')
-@bp.route('/eventos/')
 @bp.route('/<language:language>/IX_IPC')
 @bp.route('/IX_IPC')
 @bp.route('/<language:language>/IPC')
@@ -85,20 +83,19 @@ def register_user(language):
 
 @bp.route('/<language:language>/IX_IPC/recover_credentials/<string:email>')
 def recover_credentials(language, email):
-    try:
-        emailinfo = validate_email(email, check_deliverability=False)
-        email = emailinfo.normalized
-    except EmailNotValidError as e:
-        error = str(e)
-    
-    user = db_session.execute(select(User).filter_by(email=email)).scalar_one()
-    app.send_email(
-        'Bem-vindo/a ao Congresso Ibérico de Primatologia!', 
-        f'Olá {user.name},\n\nBem-vindo/a ao Congresso Ibérico de Primatologia!\nO teu username é este email ({email}) tua password é {user.password}. Usa estes dados no site para alterar a tua inscrição e submeter candidaturas a posters e apresentações orais.\n\nEsperamos ver-te em breve!',
-        [email]
-    )
-    flash('We have sent you the login credentials again! If you don\'t seen them in you inbox within a few minutes, please check you spam box.', 'success')
+    email = sanitize_email(email)
+    if email:
+        user = db_session.execute(select(User).filter_by(email=email)).scalar_one()
+        app.send_email(
+            'Bem-vindo/a ao Congresso Ibérico de Primatologia!', 
+            f'Olá {user.name},\n\nBem-vindo/a ao Congresso Ibérico de Primatologia!\nO teu username é este email ({email}) tua password é {user.password}. Usa estes dados no site para alterar a tua inscrição e submeter candidaturas a posters e apresentações orais.\n\nEsperamos ver-te em breve!',
+            [email]
+        )
+        flash('We have sent you the login credentials again! If you don\'t seen them in you inbox within a few minutes, please check you spam box.', 'success')
+    else:
+        flash('Invalid email.', 'warning')
     return redirect(url_for("IX_IPC.IXIPC", language=language))
+
 
 @bp.route('/<language:language>/IX_IPC/login', methods=['POST'])
 def login(language):

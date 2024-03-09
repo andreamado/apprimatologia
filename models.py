@@ -1,7 +1,11 @@
-from sqlalchemy import Column, Boolean, ForeignKey, Integer, String, Text
+from sqlalchemy import Column, Boolean, ForeignKey, Integer, String, Text, Uuid
 from sqlalchemy_utc import UtcDateTime, utcnow
 from sqlalchemy.sql import func
 from .db import Base
+
+from werkzeug.utils import secure_filename
+
+import uuid
 
 class User(Base):
     __tablename__ = 'users'
@@ -16,6 +20,28 @@ class User(Base):
 
     def __repr__(self):
         return f'<User {self.email!r}>'
+
+
+class UploadedFile(Base):
+    __tablename__ = 'uploaded_files'
+    id = Column(Uuid(), primary_key=True)
+    user = Column(ForeignKey('users.id'))
+    original_name = Column(String(256))
+    extension = Column(String(6))
+    description = Column(Text)
+    deleted = Column(Boolean)
+
+    def __init__(self, original_name, description=None, user=None):
+        self.id = uuid.uuid4()
+        self.user = user
+        self.original_name = secure_filename(original_name)
+        self.extension = self.original_name.split('.')[-1]
+        self.description = description
+        self.deleted = None
+
+    def __repr__(self):
+        return f'<File {self.original_name} ({self.id})>'
+
 
 
 class News(Base):

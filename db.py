@@ -34,6 +34,35 @@ def init_db_command():
     )
     db_session.add(news)
 
+    news = models.News(
+    title_pt = 'IX Congresso Ibérico de Primatologia', 
+    title_en = 'IX Iberian Primatological Conference', 
+    body_pt  = "APP is happy to announce the IX Iberian Primatological Conference. \
+                The conference will take place in Vila do Conde from **21 to 23 November** 2024. \
+                Registration will be available from mid-April. \
+                Stay tuned!", 
+    body_en  =  "APP is happy to announce the IX Iberian Primatological Conference. \
+                    The conference will take place in Vila do Conde from **21 to 23 November** 2024. \
+                    Registration will be available from mid-April. \
+                    Stay tuned!"
+    )
+    db_session.add(news)
+
+    news = models.News(
+    title_pt = 'IX Congresso Ibérico de Primatologia', 
+    title_en = 'IX Iberian Primatological Conference', 
+    body_pt  = "APP is happy to announce the IX Iberian Primatological Conference. \
+                The conference will take place in Vila do Conde from **21 to 23 November** 2024. \
+                Registration will be available from mid-April. \
+                Stay tuned!", 
+    body_en  =  "APP is happy to announce the IX Iberian Primatological Conference. \
+                    The conference will take place in Vila do Conde from **21 to 23 November** 2024. \
+                    Registration will be available from mid-April. \
+                    Stay tuned!"
+    )
+
+    db_session.add(news)
+
     member = models.Member(given_name='Zé', family_name='Chimp', number=1, species='Homo Sapiens')
     db_session.add(member)
 

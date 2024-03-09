@@ -30,6 +30,7 @@ IXIPC-register = Register!
 IXIPC-login = Login
 IXIPC-logout = Logout
 IXIPC-email-already-registered = {$email} is already registered. Please use a different email or login with the credentials we sent to your registration email. In case you lost the credentials, click <a href="{$recover_credentials}">here</a> to receive them again.
+IXIPC-upload-payment-proof = Please upload the payment proof
 
 IXIPC-register-first-name = First name
 IXIPC-register-last-name = Last name

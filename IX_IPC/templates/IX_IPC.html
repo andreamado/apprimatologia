@@ -1,10 +1,16 @@
 {% extends "base.html" %}
 
 {% block main %}
-<div class="main-content-dark">
+<div class="main-content-dark smaller-column">
   <h1 class="lh-1 mb-4 text-white">{{ 'IXIPC-title'|l10n(lang) }}</h1>
   <div class="text-white mb-5">
     {{ 'IXIPC-description'|l10n(lang)|safe }}
+  </div>
+
+  <div class="text-white mb-5">
+    <h2 class="mb-1">Essential information</h2>
+    <p class="lead mb-0">Dates: <strong>Nov 21 - 23</strong> (2024)</p>
+    <p class="lead">Place: <strong>Vila do Conde</strong> (Portugal)</p>
   </div>
 
   <div class="container">
@@ -80,12 +86,43 @@
   <div class="container text-white">
     <h2 class="mb-5">{{ 'IXIPC-hi'|l10n(lang) }}, {{ g.IXIPC_user.name }}!</h2>
 
+    <div class="mb-5">
+      <h4 class="mb">{{'IXIPC-upload-payment-proof'|l10n(lang)}}</h4>
+      <input type="file" name="file" />  
+    </div>
+
     <form action="{{ url_for('IX_IPC.logout', language=lang) }}" method="post">
       {{ form.csrf_token }}
       <input type="hidden" id="user_id" name="user_id" value="{{ g.user.id }}"> 
       <button type="submit" class="btn btn-primary">{{ 'IXIPC-logout'|l10n(lang) }}</button>
-    </form>  
+    </form>
   </div>
   {% endif %}
 </div>
+
+<script>
+  const fileField = document.querySelector('input[type="file"]');
+  const csrf_token = "{{ csrf_token() }}";
+
+  const upload_file = (file) => {
+    const uploadForm = new FormData();
+    uploadForm.append('file', file.files[0]);
+    uploadForm.append('csrf_token', csrf_token);
+  
+    fetch("{{ url_for('upload_file') }}", {
+      method: 'POST',
+      body: uploadForm
+    })
+    .then((response) => response.json())
+    .then((data) => {
+      console.log('Success:', data);
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+    })
+  };
+
+  const onSelectFile = () => upload_file(fileField);
+  fileField.addEventListener('change', onSelectFile, false);
+</script>
 {% endblock main %}

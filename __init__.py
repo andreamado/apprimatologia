@@ -2,8 +2,12 @@ import os
 from copy import deepcopy
 import json
 
-from flask import Flask, render_template, g, request
+from uuid import UUID
+
+from flask import Flask, render_template, g, request, url_for
 from flask_mail import Mail, Message
+
+from sqlalchemy import select
 
 from dotenv import dotenv_values
 config = dotenv_values(".env")
@@ -14,6 +18,9 @@ from flask_wtf.csrf import CSRFProtect
 import markdown
 
 from .i18n import I18N
+from .models import UploadedFile
+
+ALLOWED_EXTENSIONS = {'pdf', 'png', 'jpg', 'jpeg', 'gif'}
 
 def create_app(test_config=None):
     # create and configure the app
@@ -31,10 +38,11 @@ def create_app(test_config=None):
         # MAIL_DEBUG = default app.debug,
         MAIL_USERNAME = config['MAIL_USERNAME'],
         MAIL_PASSWORD = config['MAIL_PASSWORD'],
-        MAIL_DEFAULT_SENDER = config['MAIL_USERNAME']
+        MAIL_DEFAULT_SENDER = config['MAIL_USERNAME'],
         # MAIL_MAX_EMAILS = default None,
         # MAIL_SUPPRESS_SEND = default app.testing,
         # MAIL_ASCII_ATTACHMENTS = default False
+        UPLOAD_FOLDER = 'uploaded_files'
     )
 
     # register the internationalization module
@@ -111,7 +119,12 @@ def create_app(test_config=None):
 
         return render_template(
             'noticias.html', 
-            lang=language
+            lang=language,
+            image={
+                'url': url_for('static', filename='img/monkey404.png'),
+                'subtitle': 'APP is happy to announce the IX Iberian Primatological Conference. The conference will take place in Vila do Conde from 21 to 23 November 2024. Registration will be available from mid-April. Stay tuned!',
+                'alt': 'sad monkey'
+            }
         )
 
     @app.route('/<language:language>/contacto/')
@@ -132,6 +145,59 @@ def create_app(test_config=None):
             'membros.html', 
             lang=language
         )
+
+
+    def allowed_file(filename):
+        return '.' in filename and \
+            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+    
+    @app.route('/upload_file/', methods=['POST'])
+    def upload_file():
+        if 'file' in request.files:
+            f = request.files['file']
+        elif 'file' in request.form:
+            f = request.form['file']
+        else:
+            return json.dumps({'error': 'no file uploaded'}), 400 
+
+        if f.filename == '':
+            return json.dumps({'error': 'no selected file'}), 400
+
+        if not allowed_file(f.filename):
+            return json.dumps({'error': 'file type not allowed'}), 415
+
+        #TODO: sanitize the description
+        description = request.form['description'] if 'description' in request.form else None
+
+        file = UploadedFile(f.filename, description, g.user)
+        try:
+            f.save(os.path.join(app.config['UPLOAD_FOLDER'], str(file.id)))
+        except:
+            return json.dumps({'error': 'upload failed'}), 500
+        else:
+            db_session.add(file)
+            db_session.commit()
+
+        return json.dumps({
+            'id': f'{file.id}',
+            'name': f'{file.original_name}'
+        }), 200
+
+    @app.route("/remove_file/<uuid:id>", methods=['POST'])
+    def remove_file(id: UUID):
+        id = UUID(id)
+
+        file = db_session.execute(select(UploadedFile).filter_by(id=id)).scalar_one()
+        if not file.deleted:
+            file.deleted = True
+            # os.rename(os)
+            #TODO: move the file to deleted files
+
+
+        #TODO: implement remove_file
+        # if the file is changed, remove previous file
+
+
 
     @app.errorhandler(404)
     def not_found(e):
