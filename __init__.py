@@ -114,17 +114,19 @@ def create_app(test_config=None):
             g.news.append({
                 'title': getattr(news, f'title_{language}'),
                 'body': markdown.markdown(getattr(news, f'body_{language}'), tab_length=2),
-                'date': news.created.strftime("%d/%m/%Y")
+                'date': news.created.strftime("%d/%m/%Y"),
+                'modified': news.modified.strftime("%d/%m/%Y") if news.modified else None,
+                'image': news.image.to_object() if news.image else None
             })
 
         return render_template(
             'noticias.html', 
             lang=language,
-            image={
-                'url': url_for('static', filename='img/monkey404.png'),
-                'subtitle': 'APP is happy to announce the IX Iberian Primatological Conference. The conference will take place in Vila do Conde from 21 to 23 November 2024. Registration will be available from mid-April. Stay tuned!',
-                'alt': 'sad monkey'
-            }
+            # image={
+            #     'url': url_for('static', filename='img/monkey404.png'),
+            #     'subtitle': 'APP is happy to announce the IX Iberian Primatological Conference. The conference will take place in Vila do Conde from 21 to 23 November 2024. Registration will be available from mid-April. Stay tuned!',
+            #     'alt': 'sad monkey'
+            # }
         )
 
     @app.route('/<language:language>/contacto/')

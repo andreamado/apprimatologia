@@ -17,6 +17,7 @@ contact-headquarters = Sede
 
 news-title = Notícias
 news-published-on = Publicado a
+news-modified-on = modificado a
 
 IXIPC-title = IX Congresso Ibérico de Primatologia
 IXIPC-description = 
@@ -31,7 +32,7 @@ IXIPC-register = Inscreve-te!
 IXIPC-login = Entrar
 IXIPC-logout = Sair
 IXIPC-email-already-registered = O email {$email} já está registado. Usa outro email ou entra com as credenciais que te enviámos no email de registo. Se perdeste as credenciais carrega <a href="{$recover_credentials}">aqui</a> para as receber de novo.
-IXIPC-upload-payment-proof = 
+IXIPC-upload-payment-proof = Upload da confirmação de pagamento
 
 IXIPC-register-first-name = Nome
 IXIPC-register-last-name = Apelido

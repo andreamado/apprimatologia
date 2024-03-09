@@ -16,6 +16,7 @@ contact-headquarters = Headquarters
 
 news-title = News
 news-published-on = Published on
+news-modified-on = modified on
 
 IXIPC-title = IX Iberian Primatological Conference
 IXIPC-description = 

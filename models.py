@@ -43,6 +43,30 @@ class UploadedFile(Base):
         return f'<File {self.original_name} ({self.id})>'
 
 
+class Image(Base):
+    __tablename__ = 'images'
+    id = Column(Integer, primary_key=True)
+    file = Column(ForeignKey('uploaded_files.id'), nullable=False)
+    subtitle_pt = Column(Text)
+    subtitle_en = Column(Text)
+    alt_pt = Column(Text)
+    alt_en = Column(Text)
+
+    def __init__(self, file, subtitle_pt=None, subtitle_en=None, alt_pt=None, alt_en=None):
+        self.file = file
+        self.subtitle_pt = subtitle_pt
+        self.subtitle_en = subtitle_en
+        self.alt_pt = alt_pt
+        self.alt_en = alt_en
+
+    def to_object(self, lang):
+        return {
+            # implement access to uploaded files
+            'url': 'placeholder!',#url_to(),
+            'subtitle': self.subtitle_pt if lang == 'pt' else self.subtitle_en,
+            'alt': self.alt_pt if lang == 'pt' else self.alt_en
+        }
+
 
 class News(Base):
     __tablename__ = 'news'
@@ -54,13 +78,15 @@ class News(Base):
     title_en = Column(String(200))
     body_pt = Column(Text)
     body_en = Column(Text)
+    image = Column(ForeignKey('images.id'))
 
-    def __init__(self, author_id=None, title_pt=None, title_en=None, body_pt=None, body_en=None):
+    def __init__(self, author_id=None, title_pt=None, title_en=None, body_pt=None, body_en=None, image=None):
         self.author_id = author_id
         self.title_pt = title_pt
         self.title_en = title_en
         self.body_pt = body_pt
         self.body_en = body_en
+        self.image = image
 
     def __repr__(self):
         if self.title_pt:

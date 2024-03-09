@@ -179,3 +179,7 @@ input[type="color"]:focus,
   max-width: fit-content;
   max-height: 200px;
 }
+
+.news-modified {
+  font-size:9pt
+}
