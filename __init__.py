@@ -18,6 +18,7 @@ import markdown
 
 from .i18n import I18N
 from .models import UploadedFile
+from .db import get_session
 
 ALLOWED_EXTENSIONS = {'pdf', 'png', 'jpg', 'jpeg', 'gif'}
 
@@ -63,10 +64,9 @@ def create_app(test_config=None):
     
     app.send_email = send_email
 
-    from .db import db_session
-    @app.teardown_appcontext
-    def shutdown_session(exception=None):
-        db_session.remove()
+    # @app.teardown_appcontext
+    # def shutdown_session(exception=None):
+    #     db_session.remove()
 
     if test_config is None:
         # load the instance config, if it exists, when not testing
@@ -108,26 +108,24 @@ def create_app(test_config=None):
 
         from .models import News
         from sqlalchemy import select
-        try:
-            news_list = db_session.scalars(select(News).order_by(News.id.desc()).limit(5)).fetchall()
-        finally:
-            db_session.close()
+        with get_session() as session:
+            news_list = session.scalars(select(News).order_by(News.id.desc()).limit(5)).fetchall()
 
-        g.news = []
-        for news in news_list:
-            g.news.append({
-                'title': getattr(news, f'title_{language}'),
-                'body': markdown.markdown(getattr(news, f'body_{language}'), tab_length=2),
-                'date': news.created.strftime("%d/%m/%Y"),
-                'modified': news.modified.strftime("%d/%m/%Y") if news.modified else None,
-                'image': news.image.to_object() if news.image else None
-            })
+            g.news = []
+            for news in news_list:
+                g.news.append({
+                    'title': getattr(news, f'title_{language}'),
+                    'body': markdown.markdown(getattr(news, f'body_{language}'), tab_length=2),
+                    'date': news.created.strftime("%d/%m/%Y"),
+                    'modified': news.modified.strftime("%d/%m/%Y") if news.modified else None,
+                    'image': news.image.to_object() if news.image else None
+                })
 
-        return render_template(
-            'noticias.html', 
-            lang=language,
-            text_column=True
-        )
+            return render_template(
+                'noticias.html', 
+                lang=language,
+                text_column=True
+            )
 
     @app.route('/<language:language>/contacto/')
     @app.route('/contacto/')
@@ -170,23 +168,21 @@ def create_app(test_config=None):
 
         #TODO: sanitize the description
         description = request.form['description'] if 'description' in request.form else None
+        
+        with get_session() as db_session:
+            file = UploadedFile(f.filename, description, g.user)
+            try:
+                f.save(os.path.join(app.config['UPLOAD_FOLDER'], str(file.id)))
+            except:
+                return json.dumps({'error': 'upload failed'}), 500
+            else:
+                db_session.add(file)
+                db_session.commit()
 
-        file = UploadedFile(f.filename, description, g.user)
-        try:
-            f.save(os.path.join(app.config['UPLOAD_FOLDER'], str(file.id)))
-        except:
-            return json.dumps({'error': 'upload failed'}), 500
-        else:
-            db_session.add(file)
-            db_session.commit()
-        finally:
-            db_session.close()
-
-
-        return json.dumps({
-            'id': f'{file.id}',
-            'name': f'{file.original_name}'
-        }), 200
+            return json.dumps({
+                'id': f'{file.id}',
+                'name': f'{file.original_name}'
+            }), 200
 
 
     @app.route("/remove_file", methods=['POST'])
@@ -198,7 +194,7 @@ def create_app(test_config=None):
             return json.dumps({'error': 'no file uploaded'}), 400 
         id = UUID(id)
 
-        try:
+        with get_session() as db_session:
             file = db_session.execute(select(UploadedFile).filter_by(id=id)).scalar_one()
             if not file.deleted:
                 file.deleted = True
@@ -208,13 +204,11 @@ def create_app(test_config=None):
                         os.path.join('deleted_files', str(id))
                     )
                 except:
+                    db_session.rollback()
                     return 'unable to remove file', 500
                 else:
                     db_session.commit()
-        finally:
-            db_session.close()
 
-        
         return '', 204
 
 

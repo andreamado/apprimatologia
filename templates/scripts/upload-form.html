@@ -77,7 +77,9 @@
           feedbackArea.classList.add('bg-success')
           previousFile = data;
         }
-      })
+      }).catch((error) => {
+        console.log(error)
+      }) 
     }
 
     dropArea.addEventListener('click', () => {
@@ -88,9 +90,4 @@
       uploadFile(inputElem.files[0]);
     });
   }
-
-  const file_uploader = make_uploader(
-    dropArea = document.getElementById('{{ upload_area.id }}'),
-    csrfToken = '{{ csrf_token() }}'
-  );
 </script>

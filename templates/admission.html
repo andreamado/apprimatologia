@@ -246,38 +246,37 @@
     </div>
   </form>
   <script>
-    const updateQuotaType = function() {
-      let total = parseFloat(document.querySelector('#voluntary_donation').value);
+    const update_total = function() {
+      let total = parseFloat(document.getElementById('voluntary_donation').value);
       if (isNaN(total)) {
         total = 0.0;
       }
 
-      let radios = document.querySelector('#quota_type');
-      for (let i = 0; i < 2; i++) {
-        if (radios[i].checked) {
-          // do whatever you want with the checked radio
-          if (i == 0) {
-            total += 40;
-            document.querySelector('#upload-reduced-quota-proof').style.display = 'none';
-          } else {
-            total += 25;
-            document.querySelector('#upload-reduced-quota-proof').style.display = '';
-          }
-          break;
-        }
+      let radio = document.querySelector('#quota_type-0');
+      if(radio.checked) {
+        total += 40;
+        document.querySelector('#upload-reduced-quota-proof').style.display = 'none';
+      } else {
+        total += 25;
+        document.querySelector('#upload-reduced-quota-proof').style.display = '';
       }
-      document.querySelector('#registration-form-total-show').innerHTML = total.toFixed(2).toString() + ' €';
+      document.getElementById('registration-form-total-show').innerHTML = total.toFixed(2).toString() + ' €';
     };
-    document.querySelector('#voluntary_donation').onchange = updateQuotaType;
-    document.querySelector('#quota_type-0').onchange = updateQuotaType;
-    document.querySelector('#quota_type-1').onchange = updateQuotaType;
-    updateQuotaType();
+    document.getElementById('voluntary_donation').onchange = update_total;
+    document.getElementById('quota_type-0').onchange = update_total;
+    document.getElementById('quota_type-1').onchange = update_total;
+    update_total();
   </script>
-  {% with upload_area={'id': 'admission-upload-payment-proof'} -%}
-    {% include "scripts/upload-form.html" %}
-  {% endwith -%}
-  {% with upload_area={'id': 'admission-upload-reduced-quota-proof'} -%}
-    {% include "scripts/upload-form.html" %}
-  {% endwith -%}
+  {% include "scripts/upload-form.html" %}
+  <script>
+    make_uploader(
+      dropArea = document.getElementById('admission-upload-payment-proof'),
+      csrfToken = '{{ csrf_token() }}'
+    );
+    make_uploader(
+      dropArea = document.getElementById('admission-upload-reduced-quota-proof'),
+      csrfToken = '{{ csrf_token() }}'
+    );
+  </script>
 </div>
 {% endblock -%}

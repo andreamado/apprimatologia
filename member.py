@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template
 
-from .db import db_session
+from .db import get_session
 from .auth import login_required
 from .models import Member
 
@@ -11,11 +11,8 @@ bp = Blueprint('associado', __name__, url_prefix='/associado')
 @bp.route('/lista/')
 # @login_required
 def list_members():
-    try:
+    with get_session() as db_session:
         members = db_session.execute(select(Member.id, Member.number, Member.given_name, Member.family_name)).fetchall()
-    finally:
-        db_session.close()
-
 
     return render_template(
         'members/list.html',
@@ -26,10 +23,8 @@ def list_members():
 @bp.route('/<int:id>')
 # @login_required
 def show_member(id: int):
-    try:
+    with get_session() as db_session:
         member = db_session.execute(select(Member).where(Member.id == id)).fetchone()
-    finally:
-        db_session.close()
 
     return render_template(
         'members/show.html',

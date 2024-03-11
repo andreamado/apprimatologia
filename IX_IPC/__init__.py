@@ -2,7 +2,7 @@ from flask import flash, render_template, redirect, url_for, Blueprint, g, reque
 from flask import current_app as app
 from email_validator import validate_email, EmailNotValidError
 
-from .db_IXIPC import db_session
+from .db_IXIPC import get_session
 from .models import User
 
 from flask_wtf import FlaskForm
@@ -50,34 +50,33 @@ def register_user(language):
     else:
         email = sanitize_email(email)
         if email:
-            try:
-                user = User(name, email)
-                db_session.add(user)
-                db_session.commit()
-                session['IXIPC_user_id'] = user.id
-            except:
-                flash(
-                    app.i18n.l10n[language].format_value(
-                        'IXIPC-email-already-registered', {
-                            'email': email, 
-                            'recover_credentials': url_for('IX_IPC.recover_credentials', language=language, email=email)
-                        }
-                    ), 'warning'
-                )
-            else:
+            with get_session() as db_session:
                 try:
-                    app.send_email(
-                        'Bem-vindo/a ao Congresso Ibérico de Primatologia!', 
-                        f'Olá {name},\n\nBem-vindo/a ao Congresso Ibérico de Primatologia!\nO teu username é este email ({email}) tua password é {user.password}. Usa estes dados no site para alterar a tua inscrição e submeter candidaturas a posters e apresentações orais.\n\nEsperamos ver-te em breve!',
-                        [email]
-                    )
+                    user = User(name, email)
+                    db_session.add(user)
+                    db_session.commit()
+                    session['IXIPC_user_id'] = user.id
                 except:
-                    flash(f"Could not send email {email}. Please contact the organization.", 'warning')
+                    flash(
+                        app.i18n.l10n[language].format_value(
+                            'IXIPC-email-already-registered', {
+                                'email': email, 
+                                'recover_credentials': url_for('IX_IPC.recover_credentials', language=language, email=email)
+                            }
+                        ), 'warning'
+                    )
                 else:
-                    flash('Your account was successfully created! You can proceed with an abstract submission now or login again later with the credentials sent to your email.', 'success')
-                    return redirect(url_for("IX_IPC.IXIPC", language=language))
-            finally:
-                db_session.close()
+                    try:
+                        app.send_email(
+                            'Bem-vindo/a ao Congresso Ibérico de Primatologia!', 
+                            f'Olá {name},\n\nBem-vindo/a ao Congresso Ibérico de Primatologia!\nO teu username é este email ({email}) tua password é {user.password}. Usa estes dados no site para alterar a tua inscrição e submeter candidaturas a posters e apresentações orais.\n\nEsperamos ver-te em breve!',
+                            [email]
+                        )
+                    except:
+                        flash(f"Could not send email {email}. Please contact the organization.", 'warning')
+                    else:
+                        flash('Your account was successfully created! You can proceed with an abstract submission now or login again later with the credentials sent to your email.', 'success')
+                        return redirect(url_for("IX_IPC.IXIPC", language=language))
         else:
             flash('Email not valid', 'warning')
 
@@ -88,7 +87,7 @@ def register_user(language):
 def recover_credentials(language, email):
     email = sanitize_email(email)
     if email:
-        try:
+        with get_session() as db_session:
             user = db_session.execute(select(User).filter_by(email=email)).scalar_one()
             app.send_email(
                 'Bem-vindo/a ao Congresso Ibérico de Primatologia!', 
@@ -96,8 +95,6 @@ def recover_credentials(language, email):
                 [email]
             )
             flash('We have sent you the login credentials again! If you don\'t seen them in you inbox within a few minutes, please check you spam box.', 'success')
-        finally:
-            db_session.close()
     else:
         flash('Invalid email.', 'warning')
     return redirect(url_for("IX_IPC.IXIPC", language=language))
@@ -109,10 +106,8 @@ def login(language):
     password = request.form['password']
     error = None
 
-    try:
+    with get_session() as db_session:
         user = db_session.execute(select(User).filter_by(email=email)).scalar_one()
-    finally:
-        db_session.close()
 
     if user is None:
         error = 'Incorrect email.'
@@ -141,12 +136,10 @@ def load_logged_in_IXIPC_user():
         g.IXIPC_user = None
     else:
         try:
-            g.IXIPC_user = db_session.get(User, user_IXIPC_id)
+            with get_session() as db_session:
+                g.IXIPC_user = db_session.get(User, user_IXIPC_id)
         except:
             g.IXIPC_user = None
-        finally:
-            db_session.close()
-
 
 
 def register(app):

@@ -115,7 +115,11 @@
   {% endif %}
 </div>
 
-{% with upload_area={'id': 'IXIPC-upload-payment-proof'} -%}
-  {% include "scripts/upload-form.html" %}
-{% endwith -%}
+{% include "scripts/upload-form.html" %}
+<script>
+  make_uploader(
+      dropArea = document.getElementById('IXIPC-upload-payment-proof'),
+      csrfToken = '{{ csrf_token() }}'
+    );
+</script>
 {% endblock main %}

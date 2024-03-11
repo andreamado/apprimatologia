@@ -62,7 +62,6 @@ def register_admission(app):
 
         return render_template(
             'admission.html',
-            monkey_background=False,
             lang=language,
             form=RegistrationForm()
         )

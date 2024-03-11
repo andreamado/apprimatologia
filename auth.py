@@ -6,7 +6,7 @@ from flask import (
 from werkzeug.security import check_password_hash, generate_password_hash
 from email_validator import validate_email, EmailNotValidError
 
-from .db import db_session
+from .db import get_session
 from .models import User
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
@@ -32,17 +32,15 @@ def register(language='pt'):
             error = str(e)
 
         if error is None:
-            try:
-                user = User(email, generate_password_hash(password))
-                db_session.add(user)
-                db_session.commit()
-                db_session.close()
-            except:
-                error = f"User {email} is already registered."
-            else:
-                return redirect(url_for("auth.login", language=language))
-            finally:
-                db_session.close()
+            with get_session() as db_session:
+                try:
+                    user = User(email, generate_password_hash(password))
+                    db_session.add(user)
+                    db_session.commit()
+                except:
+                    error = f"User {email} is already registered."
+                else:
+                    return redirect(url_for("auth.login", language=language))
 
 
         flash(error)
@@ -59,11 +57,8 @@ def login(language='pt'):
         password = request.form['password']
         error = None
 
-        try:
+        with get_session() as db_session:
             user = db_session.execute(db_session.select(User).filter_by(email=email)).scalar_one()
-        finally:
-            db_session.close()
-
 
         if user is None:
             error = 'Incorrect email.'
@@ -91,13 +86,11 @@ def load_logged_in_user():
     if user_id is None:
         g.user = None
     else:
-        try:
-            g.user = db_session.get(User, user_id)
-        except:
-            g.user = None
-        finally:
-            db_session.close()
-
+        with get_session() as db_session:
+            try:
+                g.user = db_session.get(User, user_id)
+            except:
+                g.user = None
 
 @bp.route('/logout')
 @bp.route('/<language:language>/logout')
