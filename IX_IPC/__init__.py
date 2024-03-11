@@ -76,6 +76,8 @@ def register_user(language):
                 else:
                     flash('Your account was successfully created! You can proceed with an abstract submission now or login again later with the credentials sent to your email.', 'success')
                     return redirect(url_for("IX_IPC.IXIPC", language=language))
+            finally:
+                db_session.close()
         else:
             flash('Email not valid', 'warning')
 
@@ -86,13 +88,16 @@ def register_user(language):
 def recover_credentials(language, email):
     email = sanitize_email(email)
     if email:
-        user = db_session.execute(select(User).filter_by(email=email)).scalar_one()
-        app.send_email(
-            'Bem-vindo/a ao Congresso Ibérico de Primatologia!', 
-            f'Olá {user.name},\n\nBem-vindo/a ao Congresso Ibérico de Primatologia!\nO teu username é este email ({email}) tua password é {user.password}. Usa estes dados no site para alterar a tua inscrição e submeter candidaturas a posters e apresentações orais.\n\nEsperamos ver-te em breve!',
-            [email]
-        )
-        flash('We have sent you the login credentials again! If you don\'t seen them in you inbox within a few minutes, please check you spam box.', 'success')
+        try:
+            user = db_session.execute(select(User).filter_by(email=email)).scalar_one()
+            app.send_email(
+                'Bem-vindo/a ao Congresso Ibérico de Primatologia!', 
+                f'Olá {user.name},\n\nBem-vindo/a ao Congresso Ibérico de Primatologia!\nO teu username é este email ({email}) tua password é {user.password}. Usa estes dados no site para alterar a tua inscrição e submeter candidaturas a posters e apresentações orais.\n\nEsperamos ver-te em breve!',
+                [email]
+            )
+            flash('We have sent you the login credentials again! If you don\'t seen them in you inbox within a few minutes, please check you spam box.', 'success')
+        finally:
+            db_session.close()
     else:
         flash('Invalid email.', 'warning')
     return redirect(url_for("IX_IPC.IXIPC", language=language))
@@ -104,7 +109,10 @@ def login(language):
     password = request.form['password']
     error = None
 
-    user = db_session.execute(select(User).filter_by(email=email)).scalar_one()
+    try:
+        user = db_session.execute(select(User).filter_by(email=email)).scalar_one()
+    finally:
+        db_session.close()
 
     if user is None:
         error = 'Incorrect email.'
@@ -132,7 +140,13 @@ def load_logged_in_IXIPC_user():
     if user_IXIPC_id is None:
         g.IXIPC_user = None
     else:
-        g.IXIPC_user = db_session.get(User, user_IXIPC_id)
+        try:
+            g.IXIPC_user = db_session.get(User, user_IXIPC_id)
+        except:
+            g.IXIPC_user = None
+        finally:
+            db_session.close()
+
 
 
 def register(app):

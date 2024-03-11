@@ -36,10 +36,14 @@ def register(language='pt'):
                 user = User(email, generate_password_hash(password))
                 db_session.add(user)
                 db_session.commit()
+                db_session.close()
             except:
                 error = f"User {email} is already registered."
             else:
                 return redirect(url_for("auth.login", language=language))
+            finally:
+                db_session.close()
+
 
         flash(error)
 
@@ -55,7 +59,11 @@ def login(language='pt'):
         password = request.form['password']
         error = None
 
-        user = db_session.execute(db_session.select(User).filter_by(email=email)).scalar_one()
+        try:
+            user = db_session.execute(db_session.select(User).filter_by(email=email)).scalar_one()
+        finally:
+            db_session.close()
+
 
         if user is None:
             error = 'Incorrect email.'
@@ -83,7 +91,13 @@ def load_logged_in_user():
     if user_id is None:
         g.user = None
     else:
-        g.user = db_session.get(User, user_id)
+        try:
+            g.user = db_session.get(User, user_id)
+        except:
+            g.user = None
+        finally:
+            db_session.close()
+
 
 @bp.route('/logout')
 @bp.route('/<language:language>/logout')

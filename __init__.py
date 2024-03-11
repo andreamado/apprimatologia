@@ -10,7 +10,6 @@ from flask_mail import Mail, Message
 from sqlalchemy import select
 
 from dotenv import dotenv_values
-config = dotenv_values(".env")
 
 from flask_wtf.csrf import CSRFProtect
 
@@ -25,10 +24,14 @@ ALLOWED_EXTENSIONS = {'pdf', 'png', 'jpg', 'jpeg', 'gif'}
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
+
+    config = dotenv_values(os.path.join(app.root_path, '.env'))
+
     app.config.from_mapping(
         SECRET_KEY='dev',
         CSRF_SECRET_KEY='dev',
         DATABASE=os.path.join(app.instance_path, 'apprimatologia.sqlite'),
+        DATABASE_IXIPC=os.path.join(app.instance_path, 'IX_IPC.sqlite'),
         RECAPTCHA_PUBLIC_KEY = "6LeYIbsSAAAAACRPIllxA7wvXjIE411PfdB2gt2J",
         RECAPTCHA_PRIVATE_KEY = "6LeYIbsSAAAAAJezaIq3Ft_hSTo0YtyeFG-JgRtu",
         MAIL_SERVER = 'smtp.gmail.com',
@@ -46,7 +49,7 @@ def create_app(test_config=None):
     )
 
     # register the internationalization module
-    I18N().register(app)
+    I18N(app)
 
     csrf = CSRFProtect()
     csrf.init_app(app)
@@ -60,8 +63,6 @@ def create_app(test_config=None):
     
     app.send_email = send_email
 
-    # app.send_email('Test', 'tested!', ['9546585a-a072-4f83-bd69-8b230b4ec10e@8shield.net'])
-
     from .db import db_session
     @app.teardown_appcontext
     def shutdown_session(exception=None):
@@ -69,7 +70,7 @@ def create_app(test_config=None):
 
     if test_config is None:
         # load the instance config, if it exists, when not testing
-        app.config.from_pyfile('config.py', silent=True)
+        app.config.from_pyfile(os.path.join(app.root_path, 'config.py'), silent=True)
     else:
         # load the test config if passed in
         app.config.from_mapping(test_config)
@@ -80,7 +81,7 @@ def create_app(test_config=None):
     except OSError:
         pass
 
-    with open('links.json', encoding='utf8') as f:
+    with open(os.path.join(app.root_path, 'links.json'), encoding='utf8') as f:
         links = json.load(f)
 
     @app.before_request
@@ -107,7 +108,10 @@ def create_app(test_config=None):
 
         from .models import News
         from sqlalchemy import select
-        news_list = db_session.scalars(select(News).order_by(News.id.desc()).limit(5)).fetchall()
+        try:
+            news_list = db_session.scalars(select(News).order_by(News.id.desc()).limit(5)).fetchall()
+        finally:
+            db_session.close()
 
         g.news = []
         for news in news_list:
@@ -175,6 +179,9 @@ def create_app(test_config=None):
         else:
             db_session.add(file)
             db_session.commit()
+        finally:
+            db_session.close()
+
 
         return json.dumps({
             'id': f'{file.id}',
@@ -191,18 +198,22 @@ def create_app(test_config=None):
             return json.dumps({'error': 'no file uploaded'}), 400 
         id = UUID(id)
 
-        file = db_session.execute(select(UploadedFile).filter_by(id=id)).scalar_one()
-        if not file.deleted:
-            file.deleted = True
-            try:
-                os.rename(
-                    os.path.join('uploaded_files', str(id)), 
-                    os.path.join('deleted_files', str(id))
-                )
-            except:
-                return 'unable to remove file', 500
-            else:
-                db_session.commit()
+        try:
+            file = db_session.execute(select(UploadedFile).filter_by(id=id)).scalar_one()
+            if not file.deleted:
+                file.deleted = True
+                try:
+                    os.rename(
+                        os.path.join('uploaded_files', str(id)), 
+                        os.path.join('deleted_files', str(id))
+                    )
+                except:
+                    return 'unable to remove file', 500
+                else:
+                    db_session.commit()
+        finally:
+            db_session.close()
+
         
         return '', 204
 
@@ -227,3 +238,7 @@ def create_app(test_config=None):
     register_admission(app)
 
     return app
+
+if __name__ == '__main__':
+    import waitress
+    waitress.serve(create_app, port=5000, url_scheme='https')

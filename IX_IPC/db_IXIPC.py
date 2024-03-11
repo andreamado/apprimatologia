@@ -21,5 +21,6 @@ def init_IX_IPC_db_command():
     Base.metadata.create_all(bind=engine)
 
     db_session.commit()
+    db_session.close_all()
 
     click.echo('Initialized the IX IPC database.')

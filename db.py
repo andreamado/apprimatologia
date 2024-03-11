@@ -3,11 +3,20 @@ from sqlalchemy.orm import scoped_session, sessionmaker, declarative_base
 import click
 
 import sqlite3
+import os
 
-conn = sqlite3.connect('test.db')
+database_path = ''
+if os.path.isdir('apprimatologia'):
+    database_path = os.path.join('apprimatologia', 'test.db')
+else:
+    database_path = 'test.db'
+
+print('sqlite:///' + database_path)
+
+conn = sqlite3.connect(database_path)
 conn.close()
 
-engine = create_engine('sqlite:///test.db')
+engine = create_engine('sqlite:///' + database_path)
 db_session = scoped_session(sessionmaker(autocommit=False,
                                          autoflush=False,
                                          bind=engine))
@@ -73,5 +82,6 @@ def init_db_command():
     db_session.add(member)
 
     db_session.commit()
+    db_session.close_all()
 
     click.echo('Initialized the database.')
