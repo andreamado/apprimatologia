@@ -76,6 +76,8 @@ work = Work
 registration-form-data-authorization = I authorize my data to be present in APP directory
 yes = Yes
 no = No
+registration-form-upload-payment-proof = Upload the payment proof
+registration-form-upload-reduced-quota-proof = Upload the student status proof
 
 registration-form-supporting-members = Members who support my application
 registration-form-name = Name

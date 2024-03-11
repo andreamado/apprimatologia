@@ -189,6 +189,16 @@
               {{ 'registration-form-total'|l10n(lang) }}: <span id="registration-form-total-show"></span>
             </div>
           </div>
+          <div class="row justify-content-center" id="upload-reduced-quota-proof">
+            <div class="col">
+              <div class="form-label">
+                {{ 'registration-form-upload-reduced-quota-proof'|l10n(lang) }}
+              </div>
+              {% with upload_area={'id': 'admission-upload-reduced-quota-proof'} -%}
+                {% include "partials/upload-form.html" %}
+              {% endwith -%}
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -212,6 +222,16 @@
               {% endif -%}
             </div>
             {% endfor -%}
+          </div>
+          <div class="row justify-content-center">
+            <div class="col">
+              <div class="form-label">
+                {{ 'registration-form-upload-payment-proof'|l10n(lang) }}
+              </div>
+              {% with upload_area={'id': 'admission-upload-payment-proof'} -%}
+                {% include "partials/upload-form.html" %}
+              {% endwith -%}
+            </div>
           </div>
         </div>
       </div>
@@ -238,8 +258,10 @@
           // do whatever you want with the checked radio
           if (i == 0) {
             total += 40;
+            document.querySelector('#upload-reduced-quota-proof').style.display = 'none';
           } else {
             total += 25;
+            document.querySelector('#upload-reduced-quota-proof').style.display = '';
           }
           break;
         }
@@ -251,5 +273,11 @@
     document.getElementById('quota_type-1').onchange = update_total;
     update_total();
   </script>
+  {% with upload_area={'id': 'admission-upload-payment-proof'} -%}
+    {% include "scripts/upload-form.html" %}
+  {% endwith -%}
+  {% with upload_area={'id': 'admission-upload-reduced-quota-proof'} -%}
+    {% include "scripts/upload-form.html" %}
+  {% endwith -%}
 </div>
 {% endblock -%}

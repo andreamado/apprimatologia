@@ -77,6 +77,8 @@ work = Trabalho
 registration-form-data-authorization = Dou a minha autorização para que os meus dados apareçam no directório da APP
 yes = Sim
 no = Não
+registration-form-upload-payment-proof = Comprovativo de pagamento
+registration-form-upload-reduced-quota-proof = Comprovativo de estatuto de estudante
 
 registration-form-supporting-members = Sócios que apoiam a proposta de admissão
 registration-form-name = Nome
