@@ -29,7 +29,7 @@ class UploadedFile(Base):
     original_name = Column(String(256))
     extension = Column(String(6))
     description = Column(Text)
-    deleted = Column(Boolean)
+    deleted = Column(Boolean, nullable=False)
 
     def __init__(self, original_name, description=None, user=None):
         self.id = uuid.uuid4()
@@ -37,7 +37,7 @@ class UploadedFile(Base):
         self.original_name = secure_filename(original_name)
         self.extension = self.original_name.split('.')[-1]
         self.description = description
-        self.deleted = None
+        self.deleted = False
 
     def __repr__(self):
         return f'<File {self.original_name} ({self.id})>'

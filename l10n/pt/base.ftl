@@ -38,6 +38,7 @@ IXIPC-register-first-name = Nome
 IXIPC-register-last-name = Apelido
 IXIPC-register-submit = Submeter
 IXIPC-hi = Olá
+IXIPC-abstract-submission = Submete um resumo
 
 admission-title = Junta-te à APP!
 admission-description = Preenche o formulário abaixo para te juntares à APP 

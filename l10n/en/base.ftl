@@ -37,6 +37,7 @@ IXIPC-register-first-name = First name
 IXIPC-register-last-name = Last name
 IXIPC-register-submit = Submit
 IXIPC-hi = Hello
+IXIPC-abstract-submission = Submit an abstract
 
 
 admission-title = Join APP!

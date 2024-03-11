@@ -24,7 +24,8 @@ def IXIPC(language='pt'):
     return render_template(
         'IX_IPC.html',
         lang=language,
-        form=FlaskForm()
+        form=FlaskForm(),
+        text_column=True
     )
 
 def sanitize_email(email: str) -> str|None:

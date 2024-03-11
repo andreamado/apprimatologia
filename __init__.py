@@ -122,11 +122,7 @@ def create_app(test_config=None):
         return render_template(
             'noticias.html', 
             lang=language,
-            # image={
-            #     'url': url_for('static', filename='img/monkey404.png'),
-            #     'subtitle': 'APP is happy to announce the IX Iberian Primatological Conference. The conference will take place in Vila do Conde from 21 to 23 November 2024. Registration will be available from mid-April. Stay tuned!',
-            #     'alt': 'sad monkey'
-            # }
+            text_column=True
         )
 
     @app.route('/<language:language>/contacto/')
@@ -185,20 +181,30 @@ def create_app(test_config=None):
             'name': f'{file.original_name}'
         }), 200
 
-    @app.route("/remove_file/<uuid:id>", methods=['POST'])
-    def remove_file(id: UUID):
+
+    @app.route("/remove_file", methods=['POST'])
+    def remove_file():
+        if 'id' in request.form:
+            id = request.form['id']
+        else:
+            # Correct this error
+            return json.dumps({'error': 'no file uploaded'}), 400 
         id = UUID(id)
 
         file = db_session.execute(select(UploadedFile).filter_by(id=id)).scalar_one()
         if not file.deleted:
             file.deleted = True
-            # os.rename(os)
-            #TODO: move the file to deleted files
-
-
-        #TODO: implement remove_file
-        # if the file is changed, remove previous file
-
+            try:
+                os.rename(
+                    os.path.join('uploaded_files', str(id)), 
+                    os.path.join('deleted_files', str(id))
+                )
+            except:
+                return 'unable to remove file', 500
+            else:
+                db_session.commit()
+        
+        return '', 204
 
 
     @app.errorhandler(404)
