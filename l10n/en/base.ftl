@@ -2,6 +2,7 @@ title = Portuguese Primatological Association
 
 index-description = Portuguese Primatological Association's (APP) goal is to promote, develop and disseminate the research in Primatology.
 index-join = Join APP!
+index-IXIPC-enroll = Enroll here!
 
 members-title = Direction
 

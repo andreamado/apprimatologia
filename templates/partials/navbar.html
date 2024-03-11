@@ -18,9 +18,9 @@
         {% for link in g.links -%}
         {% if link.active -%}
         <div class="language-switch">
-          <a href="{{ url_for(link.url, language='pt', data=link.data) }}" class="{{'selected-language' if lang == 'pt'}}">PT</a>
+          <a href="{{ url_for(link.url, language='pt') }}" class="{{'selected-language' if lang == 'pt'}}">PT</a>
           /
-          <a href="{{ url_for(link.url, language='en', data=link.data) }}" class="{{'selected-language' if lang == 'en'}}">EN</a>
+          <a href="{{ url_for(link.url, language='en') }}" class="{{'selected-language' if lang == 'en'}}">EN</a>
         </div>
         {% endif -%}
         {% endfor -%}
