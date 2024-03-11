@@ -246,13 +246,13 @@
     </div>
   </form>
   <script>
-    const update_total = function() {
-      let total = parseFloat(document.getElementById('voluntary_donation').value);
+    const updateQuotaType = function() {
+      let total = parseFloat(document.querySelector('#voluntary_donation').value);
       if (isNaN(total)) {
         total = 0.0;
       }
 
-      let radios = document.getElementsByName('quota_type');
+      let radios = document.querySelector('#quota_type');
       for (let i = 0; i < 2; i++) {
         if (radios[i].checked) {
           // do whatever you want with the checked radio
@@ -266,12 +266,12 @@
           break;
         }
       }
-      document.getElementById('registration-form-total-show').innerHTML = total.toFixed(2).toString() + ' €';
+      document.querySelector('#registration-form-total-show').innerHTML = total.toFixed(2).toString() + ' €';
     };
-    document.getElementById('voluntary_donation').onchange = update_total;
-    document.getElementById('quota_type-0').onchange = update_total;
-    document.getElementById('quota_type-1').onchange = update_total;
-    update_total();
+    document.querySelector('#voluntary_donation').onchange = updateQuotaType;
+    document.querySelector('#quota_type-0').onchange = updateQuotaType;
+    document.querySelector('#quota_type-1').onchange = updateQuotaType;
+    updateQuotaType();
   </script>
   {% with upload_area={'id': 'admission-upload-payment-proof'} -%}
     {% include "scripts/upload-form.html" %}
