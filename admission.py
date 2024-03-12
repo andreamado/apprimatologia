@@ -4,6 +4,9 @@ from wtforms import DecimalField, EmailField, FileField, IntegerField, RadioFiel
 from flask_wtf import FlaskForm
 from flask_wtf.recaptcha import RecaptchaField
 
+from .db import get_session
+from .models import Member
+
 def register_admission(app):
     class RegistrationForm(FlaskForm):
         given_name  = StringField('registration-form-given-name', [validators.Length(min=1, max=50)])
@@ -52,7 +55,7 @@ def register_admission(app):
 
     app.jinja_env.filters['label'] = label_generator()
 
-    @app.route('/<language:language>/APP/junta-te')
+    @app.route('/APP/junta-te/<language:language>')
     @app.route('/APP/junta-te')
     def juntate(language='pt', methods=['GET', 'POST']):
         g.links[0]['active'] = True
@@ -65,3 +68,16 @@ def register_admission(app):
             lang=language,
             form=RegistrationForm()
         )
+    
+    # @app.route('/api/save_juntate', methods=['POST'])
+    # def save_juntate():
+    #     with get_session as db_session:
+    #         member = None
+    #         if request.form['id']:
+    #             id = request.form['id']
+    #             member = db_session.get(Member, id)
+    #         else:
+    #             member = Member()
+
+    #         if request.form['registration-form-given-name']:
+    #             member.given_name = request.form['registration-form-given-name']

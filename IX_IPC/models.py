@@ -65,30 +65,33 @@ class Affiliation(Base):
         self.institution_id = institution_id
 
 
-class WorkType(enum.Enum):
-    poster = 1
-    presentation = 2
-    both = 3
+class AbstractType:
+    POSTER = 1
+    PRESENTATION = 2
+    BOTH = 3
 
-
-class Work(Base):
-    __tablename__ = 'works'
+class Abstract(Base):
+    __tablename__ = 'abstracts'
     id = Column(Integer, primary_key=True)
     title = Column(String(500))
     abstract = Column(Text)
-    work_type = Column(Enum(WorkType))
+    abstract_type = Column(Integer)
+    owner = Column(ForeignKey('users.id'))
+    submitted = Column(Boolean)
 
-    def __init__(self, title, abstract, work_type):
+    def __init__(self, owner, title=None, abstract=None, abstract_type=None, submitted=False):
         self.title = title
         self.abstract = abstract
-        self.work_type = work_type
+        self.abstract_type = abstract_type
+        self.owner = owner
+        self.submitted = submitted
 
 
-class WorkAuthor(Base):
-    __tablename__ = 'work_author'
+class AbstractAuthor(Base):
+    __tablename__ = 'abstract_author'
     id = Column(Integer, primary_key=True)
     author_id = Column(Integer, ForeignKey('participants.id'))
-    work_id = Column(Integer, ForeignKey('works.id'))
+    abstract_id = Column(Integer, ForeignKey('abstracts.id'))
     presenter = Column(Boolean)
     first_author = Column(Boolean)
     corresponding_author = Column(Boolean)

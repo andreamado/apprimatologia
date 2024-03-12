@@ -33,13 +33,21 @@ IXIPC-login = Login
 IXIPC-logout = Logout
 IXIPC-email-already-registered = {$email} is already registered. Please use a different email or login with the credentials we sent to your registration email. In case you lost the credentials, click <a href="{$recover_credentials}">here</a> to receive them again.
 IXIPC-upload-payment-proof = Please upload the payment proof
+IXIPC-register-dates = November 21 to 23
 
 IXIPC-register-first-name = First name
 IXIPC-register-last-name = Last name
 IXIPC-register-submit = Submit
 IXIPC-hi = Hello
-IXIPC-abstract-submission = Submit an abstract
 
+IXIPC-abstract-submission = Submit an abstract
+IXIPC-abstract-title = Title
+IXIPC-abstract-body = Abstract
+IXIPC-abstract-characters = characters
+IXIPC-abstract-poster = Poster
+IXIPC-abstract-presentation = Oral presentation
+IXIPC-abstract-save = Save
+IXIPC-abstract-submit = Submit
 
 admission-title = Join APP!
 admission-description = Fill the form below to join APP
@@ -103,3 +111,5 @@ registration-form-check-explanation = To: Associação Portuguesa de Primatologi
 
 
 members-list-title = Lista de associados
+
+upload-form-drag-and-drop = Drag and drop or click to select a file

@@ -3,24 +3,30 @@ from flask import current_app as app
 from email_validator import validate_email, EmailNotValidError
 
 from .db_IXIPC import get_session
-from .models import User
+from .models import User, Abstract, AbstractType
 
 from flask_wtf import FlaskForm
 
 from sqlalchemy import select
 
+import json
+
 bp = Blueprint('IX_IPC', __name__, template_folder='templates')
 
 
-@bp.route('/<language:language>/IX_IPC')
+@bp.route('/IX_IPC/<language:language>')
 @bp.route('/IX_IPC')
-@bp.route('/<language:language>/IPC')
+@bp.route('/IPC/<language:language>')
 @bp.route('/IPC')
-@bp.route('/<language:language>/IX_Iberian_Primatological_Conference')
+@bp.route('/IX_Iberian_Primatological_Conference/<language:language>')
 @bp.route('/IX_Iberian_Primatological_Conference')
 def IXIPC(language='pt'):
     g.links[2]['active'] = True
 
+    if g.IXIPC_user:
+        with get_session() as db_session:
+            g.abstract = db_session.execute(select(Abstract).filter_by(owner=g.IXIPC_user.id)).scalar_one_or_none()
+    
     return render_template(
         'IX_IPC.html',
         lang=language,
@@ -36,7 +42,7 @@ def sanitize_email(email: str) -> str|None:
         return None
     return email
 
-@bp.route('/<language:language>/IX_IPC/register', methods=['POST'])
+@bp.route('/IX_IPC/register/<language:language>', methods=['POST'])
 def register_user(language):
     g.links[2]['active'] = True
 
@@ -83,7 +89,7 @@ def register_user(language):
     return redirect(url_for("IX_IPC.IXIPC", language=language))
 
 
-@bp.route('/<language:language>/IX_IPC/recover_credentials/<string:email>')
+@bp.route('/IX_IPC/recover_credentials/<language:language>/<string:email>')
 def recover_credentials(language, email):
     email = sanitize_email(email)
     if email:
@@ -100,7 +106,7 @@ def recover_credentials(language, email):
     return redirect(url_for("IX_IPC.IXIPC", language=language))
 
 
-@bp.route('/<language:language>/IX_IPC/login', methods=['POST'])
+@bp.route('/IX_IPC/login/<language:language>', methods=['POST'])
 def login(language):
     email = request.form['email']
     password = request.form['password']
@@ -123,7 +129,7 @@ def login(language):
     return redirect(url_for('IX_IPC.IXIPC', language=language))
 
 
-@bp.route('/<language:language>/IX_IPC/logout', methods=['POST'])
+@bp.route('/IX_IPC/logout/<language:language>', methods=['POST'])
 def logout(language):
     session.clear()
     return redirect(url_for('IX_IPC.IXIPC', language=language))
@@ -141,6 +147,36 @@ def load_logged_in_IXIPC_user():
         except:
             g.IXIPC_user = None
 
+@bp.route('/IX_IPC/save_abstract', methods=['POST'])
+def save_abstract():
+    print(request)
+    with get_session() as db_session:
+        abstract = None
+        if 'abstract-id' in request.form and len(request.form['abstract-id']) > 0:
+            id = int(request.form['abstract-id'])
+            abstract = db_session.get(Abstract, id)
+        else:
+            abstract = Abstract(owner=g.IXIPC_user.id)
+            db_session.add(abstract)
+
+
+        # TODO: Sanitize input!
+        if 'title' in request.form:
+            abstract.title = request.form['title']
+
+        if 'abstract-body' in request.form:
+            abstract.abstract = request.form['abstract-body']
+
+        if 'abstract_type' in request.form:
+            abstract_type = request.form['abstract_type']
+            if abstract_type == 'poster':
+                abstract.abstract_type = AbstractType.POSTER
+            elif abstract_type == 'presentation':
+                abstract.abstract_type = AbstractType.PRESENTATION
+
+        db_session.commit()
+
+        return json.dumps({'id': abstract.id}), 200
 
 def register(app):
     app.register_blueprint(bp)

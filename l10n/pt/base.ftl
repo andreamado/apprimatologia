@@ -34,12 +34,21 @@ IXIPC-login = Entrar
 IXIPC-logout = Sair
 IXIPC-email-already-registered = O email {$email} já está registado. Usa outro email ou entra com as credenciais que te enviámos no email de registo. Se perdeste as credenciais carrega <a href="{$recover_credentials}">aqui</a> para as receber de novo.
 IXIPC-upload-payment-proof = Upload da confirmação de pagamento
+IXIPC-register-dates = 21 a 23 de Novembro
 
 IXIPC-register-first-name = Nome
 IXIPC-register-last-name = Apelido
 IXIPC-register-submit = Submeter
 IXIPC-hi = Olá
+
 IXIPC-abstract-submission = Submete um resumo
+IXIPC-abstract-title = Título
+IXIPC-abstract-body = Resumo
+IXIPC-abstract-characters = caracteres
+IXIPC-abstract-poster = Poster
+IXIPC-abstract-presentation = Apresentação oral
+IXIPC-abstract-save = Salvar
+IXIPC-abstract-submit = Submeter
 
 admission-title = Junta-te à APP!
 admission-description = Preenche o formulário abaixo para te juntares à APP 
@@ -103,3 +112,5 @@ registration-form-check-explanation = À ordem de: Associação Portuguesa de Pr
 
 
 members-list-title = Lista de associados
+
+upload-form-drag-and-drop = Arrasta um ficheiro ou carrega aqui

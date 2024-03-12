@@ -269,11 +269,11 @@
   </script>
   {% include "scripts/upload-form.html" %}
   <script>
-    make_uploader(
+    makeUploader(
       dropArea = document.getElementById('admission-upload-payment-proof'),
       csrfToken = '{{ csrf_token() }}'
     );
-    make_uploader(
+    makeUploader(
       dropArea = document.getElementById('admission-upload-reduced-quota-proof'),
       csrfToken = '{{ csrf_token() }}'
     );
