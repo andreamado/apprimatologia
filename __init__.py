@@ -1,4 +1,5 @@
 import os
+import threading
 from copy import deepcopy
 import json
 
@@ -58,9 +59,13 @@ def create_app(test_config=None):
     app.mail = Mail(app)
 
     def send_email(subject, body, recipients):
-        with app.app_context():
-            msg = Message(subject, recipients=recipients, body=body)
-            app.mail.send(msg)
+        def _send_email():
+            with app.app_context():
+                msg = Message(subject, recipients=recipients, body=body)
+                app.mail.send(msg)
+                print(f'Email sent to {recipients}.')
+        t1 = threading.Thread(target=_send_email, name="email")
+        t1.start()
     
     app.send_email = send_email
 
@@ -90,8 +95,6 @@ def create_app(test_config=None):
 
     @app.route('/<language:language>/')
     @app.route('/')
-    @app.route('/<language:language>/APP')
-    @app.route('/APP')
     def index(language='pt'):
         g.links[0]['active'] = True
 
@@ -101,7 +104,7 @@ def create_app(test_config=None):
             lang=language,
         )
 
-    @app.route('/<language:language>/noticias/')
+    @app.route('/noticias/<language:language>')
     @app.route('/noticias/')
     def noticias(language='pt'):
         g.links[1]['active'] = True
@@ -127,7 +130,7 @@ def create_app(test_config=None):
                 text_column=True
             )
 
-    @app.route('/<language:language>/contacto/')
+    @app.route('/contacto/<language:language>')
     @app.route('/contacto/')
     def contacto(language='pt'):
         g.links[3]['active'] = True
@@ -137,7 +140,7 @@ def create_app(test_config=None):
             lang=language
         )
 
-    @app.route('/<language:language>/membros/')
+    @app.route('/membros/<language:language>')
     @app.route('/membros/')
     def membros(language='pt'):
         g.links[4]['active'] = True
@@ -214,7 +217,7 @@ def create_app(test_config=None):
 
     @app.errorhandler(404)
     def not_found(e):
-        return render_template("404.html") 
+        return render_template("404.html")
 
     from .db import init_db_command
     app.cli.add_command(init_db_command)
