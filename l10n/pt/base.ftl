@@ -34,7 +34,11 @@ IXIPC-login = Entrar
 IXIPC-logout = Sair
 IXIPC-email-already-registered = O email {$email} já está registado. Usa outro email ou entra com as credenciais que te enviámos no email de registo. Se perdeste as credenciais carrega <a href="{$recover_credentials}">aqui</a> para as receber de novo.
 IXIPC-upload-payment-proof = Upload da confirmação de pagamento
+IXIPC-dates = Datas
+IXIPC-place = Local
 IXIPC-register-dates = 21 a 23 de Novembro
+
+IXIPC-essential-information = Informação essencial
 
 IXIPC-register-first-name = Nome
 IXIPC-register-last-name = Apelido
