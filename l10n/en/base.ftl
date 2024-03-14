@@ -19,6 +19,8 @@ news-title = News
 news-published-on = Published on
 news-modified-on = modified on
 
+designed-by = Design by
+
 IXIPC-title = IX Iberian Primatological Conference
 IXIPC-description = 
     <p>
@@ -44,6 +46,7 @@ IXIPC-register-last-name = Last name
 IXIPC-register-submit = Submit
 IXIPC-hi = Hello
 
+IXIPC-abstract-new-abstract = New abstract
 IXIPC-abstract-submission = Abstract
 IXIPC-abstract-title = Title
 IXIPC-abstract-body = Abstract

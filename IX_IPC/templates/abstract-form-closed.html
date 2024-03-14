@@ -1,5 +1,5 @@
 {% if abstract -%}
-<form id="abstract-closed-{{ abstract.id }}" action="" onclick="openAbstract({{ abstract.id }})">
+<form id="abstract-closed-{{ abstract.id }}" class="abstract-form-closed" action="" onclick="openAbstract({{ abstract.id }})">
   <input type="hidden" name="abstract-id" value="{{ abstract.id }}">
   {% if reload -%}
   <input type="hidden" name="csrf_token" value="{{ csrf_token }}"/>
