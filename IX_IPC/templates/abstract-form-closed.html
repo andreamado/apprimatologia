@@ -1,0 +1,28 @@
+{% if abstract -%}
+<form id="abstract-closed-{{ abstract.id }}" action="" onclick="openAbstract({{ abstract.id }})">
+  <input type="hidden" name="abstract-id" value="{{ abstract.id }}">
+  {% if reload -%}
+  <input type="hidden" name="csrf_token" value="{{ csrf_token }}"/>
+  {% else -%}
+  {{ form.csrf_token }}
+  {% endif -%}
+  <div class="rounded-4 card mb-3">
+    <div class="card-body">
+      <div class="container">
+        <div class="row d-flex align-items-center">
+          <div class="col-3">
+            <button type="button" class="btn btn-primary">{{ abstract.abstract_type|abstract_type(lang) }}</button>
+          </div>
+          <div class="col">
+            {% if abstract.title|length > 0 -%}
+              <h5 class="card-title">{{ abstract.title }}</h5>
+            {% else -%}
+              <h5 class="card-title">Untitled</h5>
+            {% endif -%}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+{% endif -%}

@@ -194,7 +194,7 @@ def create_app(test_config=None):
             id = request.form['id']
         else:
             # Correct this error
-            return json.dumps({'error': 'no file uploaded'}), 400 
+            return json.dumps({'error': 'no file uploaded'}), 400
         id = UUID(id)
 
         with get_session() as db_session:

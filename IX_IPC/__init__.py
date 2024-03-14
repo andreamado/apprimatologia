@@ -23,16 +23,18 @@ bp = Blueprint('IX_IPC', __name__, template_folder='templates')
 def IXIPC(language='pt'):
     g.links[2]['active'] = True
 
-    if g.IXIPC_user:
-        with get_session() as db_session:
-            g.abstract = db_session.execute(select(Abstract).filter_by(owner=g.IXIPC_user.id)).scalar_one_or_none()
-    
-    return render_template(
-        'IX_IPC.html',
-        lang=language,
-        form=FlaskForm(),
-        text_column=True
-    )
+    with get_session() as db_session:
+        abstracts = []
+        if g.IXIPC_user:
+            abstracts = db_session.execute(select(Abstract).filter_by(owner=g.IXIPC_user.id)).scalars()
+
+        return render_template(
+            'IX_IPC.html',
+            lang=language,
+            form=FlaskForm(),
+            text_column=True,
+            abstracts=abstracts
+        )
 
 def sanitize_email(email: str) -> str|None:
     try:
@@ -147,39 +149,131 @@ def load_logged_in_IXIPC_user():
         except:
             g.IXIPC_user = None
 
-@bp.route('/IX_IPC/save_abstract', methods=['POST'])
-def save_abstract():
-    print(request)
+
+@bp.route('/IX_IPC/create_abstract/<language:language>', methods=['POST'])
+def create_new_abstract(language='pt'):
+    id = json.loads(save_abstract_local(None, g))['id']
+    with get_session() as db_session:
+        abstract = db_session.get(Abstract, id)
+        
+        return json.dumps({
+            'id': id,
+            'html': render_template(
+                'abstract-form-closed.html',
+                abstract = abstract,
+                csrf_token = request.form['csrf_token'],
+                reload=True,
+                lang=language
+            )}), 200
+
+
+@bp.route('/IX_IPC/delete_abstract', methods=['POST'])
+def delete_abstract():
+    with get_session() as db_session:
+        id = request.form['abstract-id']
+
+        abstract = db_session.get(Abstract, id)
+        if g.IXIPC_user and g.IXIPC_user.id == abstract.owner:
+            try:
+                db_session.delete(abstract)
+                db_session.commit()
+            except:
+                return '', 500
+            return '', 204
+        return '', 400
+
+
+def save_abstract_local(form, g):
     with get_session() as db_session:
         abstract = None
-        if 'abstract-id' in request.form and len(request.form['abstract-id']) > 0:
-            id = int(request.form['abstract-id'])
+        if form and 'abstract-id' in form and len(form['abstract-id']) > 0:
+            id = int(form['abstract-id'])
             abstract = db_session.get(Abstract, id)
         else:
             abstract = Abstract(owner=g.IXIPC_user.id)
             db_session.add(abstract)
 
-
         # TODO: Sanitize input!
-        if 'title' in request.form:
-            abstract.title = request.form['title']
+        if form:
+            if 'title' in form:
+                abstract.title = form['title']
 
-        if 'abstract-body' in request.form:
-            abstract.abstract = request.form['abstract-body']
+            if 'abstract-body' in form:
+                abstract.abstract = form['abstract-body']
 
-        if 'abstract_type' in request.form:
-            abstract_type = request.form['abstract_type']
-            if abstract_type == 'poster':
-                abstract.abstract_type = AbstractType.POSTER
-            elif abstract_type == 'presentation':
-                abstract.abstract_type = AbstractType.PRESENTATION
+            if 'abstract_type' in form:
+                abstract_type = form['abstract_type']
+                if abstract_type == 'poster':
+                    abstract.abstract_type = AbstractType.POSTER
+                elif abstract_type == 'presentation':
+                    abstract.abstract_type = AbstractType.PRESENTATION
+        else:
+            abstract.title = ''
+            abstract.abstract = ''
+            abstract.abstract_type = AbstractType.POSTER
 
         db_session.commit()
 
-        return json.dumps({'id': abstract.id}), 200
+        return json.dumps({'id': abstract.id})
+
+
+@bp.route('/IX_IPC/load_abstract/<language:language>/', methods=['POST'])
+def load_abstract(language, id=None, csrf_token = None):
+    if not id:
+        id = request.form['abstract-id']
+    
+    if not csrf_token:
+        csrf_token = request.form['csrf_token']
+
+    with get_session() as db_session:
+        abstract = db_session.get(Abstract, id)
+        if g.IXIPC_user.id == abstract.owner:
+            return json.dumps({
+                'id': abstract.id,
+                'html': render_template(
+                    'abstract-form-open.html', 
+                    lang=language, 
+                    form=request.form, 
+                    reload=True,
+                    abstract=abstract,
+                    csrf_token=csrf_token
+                )
+            }), 200
+        else:
+            return json.dumps({'error': 'Access not authorized'}), 401
+
+
+@bp.route('/IX_IPC/save_abstract', methods=['POST'])
+def save_abstract():
+    return save_abstract_local(request.form, g), 200
+
+
+@bp.route('/IX_IPC/submit_abstract/<language:language>', methods=['POST'])
+def submit_abstract(language):
+    id = request.form['id']
+    save_abstract_local(request.form, g)
+
+    with get_session() as db_session:
+        abstract = db_session.get(Abstract, id)
+        abstract.submitted = True
+        db_session.commit()
+
+        return redirect(url_for('IX_IPC.IXIPC', language=language))
 
 def register(app):
     app.register_blueprint(bp)
+
+    def filter(abstract_type, language) -> str:
+        abstract = ''
+        if abstract_type == 1:
+            abstract = app.i18n.l10n[language].format_value('IXIPC-abstract-poster')
+        else:
+            abstract = app.i18n.l10n[language].format_value('IXIPC-abstract-presentation')
+        
+        return abstract
+
+    app.jinja_env.filters['abstract_type'] = filter
+
 
     from .db_IXIPC import init_IX_IPC_db_command
     app.cli.add_command(init_IX_IPC_db_command)

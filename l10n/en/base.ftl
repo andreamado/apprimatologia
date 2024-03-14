@@ -44,7 +44,7 @@ IXIPC-register-last-name = Last name
 IXIPC-register-submit = Submit
 IXIPC-hi = Hello
 
-IXIPC-abstract-submission = Submit an abstract
+IXIPC-abstract-submission = Abstract
 IXIPC-abstract-title = Title
 IXIPC-abstract-body = Abstract
 IXIPC-abstract-characters = characters
@@ -52,6 +52,7 @@ IXIPC-abstract-poster = Poster
 IXIPC-abstract-presentation = Oral presentation
 IXIPC-abstract-save = Save
 IXIPC-abstract-submit = Submit
+IXIPC-abstract-delete = Delete
 
 admission-title = Join APP!
 admission-description = Fill the form below to join APP

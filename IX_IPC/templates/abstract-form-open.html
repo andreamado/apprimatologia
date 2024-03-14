@@ -1,0 +1,63 @@
+<form id="abstract-{{abstract.id}}" action="">
+  <input type="hidden" id="abstract-id" name="abstract-id" value="{{ abstract.id if abstract }}">
+  {% if reload -%}
+  <input type="hidden" name="csrf_token" value="{{ csrf_token }}"/>
+  {% else -%}
+  {{ csrf_token }}
+  {% endif -%}
+  <div class="rounded-4 card mb-3">
+    <div class="card-body">
+      <h5 class="card-title mb-3">{{ 'IXIPC-abstract-submission'|l10n(lang) }}</h5>
+      <div class="container">
+        <div class="row mb-3">
+          <div class="col-3 col-sm-2">
+            {% if abstract -%}
+            <input type="radio" class="btn-check" name="abstract_type" id="abstract-poster" value="poster" autocomplete="off" {{'checked' if abstract.abstract_type == 1 }}>
+            {% else -%}
+            <input type="radio" class="btn-check" name="abstract_type" id="abstract-poster" value="poster" autocomplete="off" checked>
+            {% endif -%}
+            <label class="btn btn-outline-success" for="abstract-poster">{{ 'IXIPC-abstract-poster'|l10n(lang) }}</label>
+          </div>
+          <div class="col">
+            {% if abstract -%}
+            <input type="radio" class="btn-check" name="abstract_type" id="abstract-presentation" value="presentation" autocomplete="off" {{'checked' if abstract.abstract_type == 2 }}>
+            {% else -%}
+            <input type="radio" class="btn-check" name="abstract_type" id="abstract-presentation" value="presentation" autocomplete="off">
+            {% endif -%}
+            <label class="btn btn-outline-success" for="abstract-presentation">{{ 'IXIPC-abstract-presentation'|l10n(lang) }}</label>
+          </div>
+        </div>
+        <div class="row mb-3">
+          <div class="col">
+            {% set max_title_length = 150 -%}
+            <label for="abstract-title" class="form-label">{{ 'IXIPC-abstract-title'|l10n(lang) }}</label>
+            <input type="text" name="title" id="abstract-title" class="form-control abstract-title" maxlength="{{ max_title_length }}" value="{{ abstract.title if abstract }}">
+            <div class="form-text"><span id="abstract-title-character-counter" class="abstract-title-character-counter">{{abstract.title|length if abstract}}</span>/{{ max_title_length }} {{ 'IXIPC-abstract-characters'|l10n(lang) }}</div>
+          </div>
+        </div>
+        <div class="row mb-3">
+          <div class="col">
+            {% set max_abstract_length = 500 -%}
+            <label for="abstract-body" class="form-label">{{ 'IXIPC-abstract-body'|l10n(lang) }}</label>
+            <textarea name="abstract-body" id="abstract-body" rows="6" class="form-control" maxlength="{{ max_abstract_length }}" aria-describedby="abstract-character-counter">{{ abstract.abstract if abstract }}</textarea>
+            <div class="form-text"><span id="abstract-character-counter">{{abstract.abstract|length if abstract}}</span>/{{ max_abstract_length }} {{ 'IXIPC-abstract-characters'|l10n(lang) }}</div>
+          </div>
+        </div>
+        <div class="d-flex flex-row mb-3">
+          <div class="col">
+            <button type="button" id="abstract-save" class="btn btn-primary">{{ 'IXIPC-abstract-save'|l10n(lang) }}</button>
+            <button type="button" id="abstract-submit" class="btn btn-primary">{{ 'IXIPC-abstract-submit'|l10n(lang) }}</button>
+          </div>
+          <div class="col d-flex justify-content-end">
+            <button type="button" id="abstract-delete" class="btn btn-danger">{{ 'IXIPC-abstract-delete'|l10n(lang) }}</button>
+          </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <div id="save-feedback" class="alert rounded-2 m-0 p-1 mt-2 float-end" role="alert"></div>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>

@@ -86,51 +86,26 @@
   <div class="container text-white">
     <h2 class="mb-5">{{ 'IXIPC-hi'|l10n(lang) }}, {{ g.IXIPC_user.name }}!</h2>
 
-    <form id="abstract" action="">
-      <input type="hidden" id="abstract-id" name="abstract-id" value="{{ g.abstract.id if g.abstract }}">
+    <form id="abstract-new" action="">
       {{ form.csrf_token }}
-      <div class="rounded-4 card mb-3">
+      <div class="rounded-4 card mb-3 abstract-new">
         <div class="card-body">
-          <h5 class="card-title mb-3">{{ 'IXIPC-abstract-submission'|l10n(lang) }}</h5>
-          <div class="container">
-            <div class="row mb-3">
-              <div class="col-3 col-sm-2">
-                <input type="radio" class="btn-check" name="abstract_type" id="abstract-poster" value="poster" autocomplete="off" checked>
-                <label class="btn btn-outline-success" for="abstract-poster">{{ 'IXIPC-abstract-poster'|l10n(lang) }}</label>  
-              </div>
-              <div class="col">
-                <input type="radio" class="btn-check" name="abstract_type" id="abstract-presentation" value="presentation" autocomplete="off">
-                <label class="btn btn-outline-success" for="abstract-presentation">{{ 'IXIPC-abstract-presentation'|l10n(lang) }}</label>
-              </div>
-            </div>
-            <div class="row mb-3">
-              <div class="col">
-                {% set max_title_length = 150 -%}
-                <label for="abstract-title" class="form-label">{{ 'IXIPC-abstract-title'|l10n(lang) }}</label>
-                <input type="text" name="title" id="abstract-title" class="form-control" maxlength="{{ max_title_length }}">
-                <div class="form-text"><span id="abstract-title-character-counter">0</span>/{{ max_title_length }} {{ 'IXIPC-abstract-characters'|l10n(lang) }}</div>
-              </div>
-            </div>
-            <div class="row mb-3">
-              <div class="col">
-                {% set max_abstract_length = 500 -%}
-                <label for="abstract-body" class="form-label">{{ 'IXIPC-abstract-body'|l10n(lang) }}</label>
-                <textarea name="abstract-body" id="abstract-body" rows="6" class="form-control" maxlength="{{ max_abstract_length }}" aria-describedby="abstract-character-counter"></textarea>
-                <div class="form-text"><span id="abstract-character-counter">0</span>/{{ max_abstract_length }} {{ 'IXIPC-abstract-characters'|l10n(lang) }}</div>
-              </div>
-            </div>
-            <div class="row mb-3">
-              <div class="col">
-                <button type="button" id="abstract-save" class="btn btn-primary">{{ 'IXIPC-abstract-save'|l10n(lang) }}</button>
-                <button type="button" id="abstract-submit" class="btn btn-primary">{{ 'IXIPC-abstract-submit'|l10n(lang) }}</button>
-                <div id="save-feedback" class="alert rounded-2 m-0 p-1 mt-2" role="alert"></div>
-              </div>
-            </div>
-          </div>
+          <h5 class="card-title mb-0">
+            <img src='data:image/svg+xml,<svg width="20px" height="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 12H15" stroke="%23fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 9L12 15" stroke="%23fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 12C3 4.5885 4.5885 3 12 3C19.4115 3 21 4.5885 21 12C21 19.4115 19.4115 21 12 21C4.5885 21 3 19.4115 3 12Z" stroke="%23fff" stroke-width="2"/></svg>' alt="" style="height: 25px;">
+            Create a new abstract
+          </h5>
         </div>
       </div>
     </form>
 
+    <div id="abstract-forms-container">
+      {% for abstract in abstracts -%}
+      <div id="abstract-{{ abstract.id }}">
+        {% include "abstract-form-closed.html" -%}
+      </div>
+      {% endfor -%}
+    </div>
+    
     <div class="mb-5">
       <h4 class="mb-0">{{'IXIPC-upload-payment-proof'|l10n(lang)}}</h4>
       <img src="" alt="" id="upload-result" class="upload-result">
@@ -151,49 +126,34 @@
 
   {% include "scripts/upload-form.html" -%}
   {% include "scripts/character-counter.html" -%}
+  {% include "scripts/open-abstract.html" -%}
+  
   <script>
     makeUploader(
       dropArea = document.getElementById('IXIPC-upload-payment-proof'),
       csrfToken = '{{ csrf_token() }}'
     );
-
-    registerCounter(
-      document.getElementById('abstract-title'), 
-      document.getElementById('abstract-title-character-counter')
-    );
-    registerCounter(
-      document.getElementById('abstract-body'), 
-      document.getElementById('abstract-character-counter')
-    );
-
-    document.getElementById('abstract-save').onclick = () => {
-      fetch("{{ url_for('IX_IPC.save_abstract') }}", {
+    const addAbstract = () => {
+      let id = null;
+      let container = document.getElementById('abstract-forms-container');
+      fetch("{{ url_for('IX_IPC.create_new_abstract', language=lang) }}", {
         method: 'POST',
-        body: new FormData(document.getElementById('abstract'))
+        body: new FormData(document.getElementById('abstract-new'))
       })
       .then((response) => response.json())
       .then((data) => {
-        let feedback = document.getElementById('save-feedback');
-        if('id' in data) {
-          document.getElementById('abstract-id').value = data['id'];
-          feedback.innerHTML = 'Abstract data sucessfully saved!'
-          feedback.classList.add('alert-success')
-          feedback.classList.remove('alert-danger')
-        } else {
-          feedback.innerHTML = 'Error saving data'
-          feedback.classList.remove('alert-success')
-          feedback.classList.add('alert-success')
-        }
-        setTimeout(() => {
-          feedback.innerHTML = '';
-          feedback.classList.remove('alert-success')
-          feedback.classList.remove('alert-danger')
-        }, 4000);
+        const div = document.createElement('div');
+        div.id = 'abstract-' + String(data['id']);
+        div.innerHTML = data['html'];
+        container.appendChild(div);
       })
-      .catch((e) => {
-        console.log(e)
-      });
-    };
+      .catch((e) => console.log(e));
+    }
+
+    document.getElementById('abstract-new').addEventListener(
+      'click',
+      addAbstract
+    );
   </script>
   {% endif -%}
 </div>

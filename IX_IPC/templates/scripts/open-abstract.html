@@ -1,0 +1,74 @@
+<script>
+  const openAbstract = (id) => {
+    let elem = document.getElementById('abstract-' + String(id));
+    let url = "{{ url_for('IX_IPC.load_abstract', language=lang) }}";
+
+    const callback = (mutationList, observer) => {
+      registerCounter(
+        elem.querySelector('#abstract-title'), 
+        elem.querySelector('#abstract-title-character-counter')
+      );
+      registerCounter(
+        elem.querySelector('#abstract-body'), 
+        elem.querySelector('#abstract-character-counter')
+      );
+
+      elem.querySelector('#abstract-delete').onclick = () => {
+        fetch("{{ url_for('IX_IPC.delete_abstract') }}", {
+          method: 'POST',
+          body: new FormData(elem.querySelector('#abstract-' + String(id)))
+        })
+        .catch((e) => {
+          console.log(e)
+        });
+        elem.remove();
+      };
+
+      elem.querySelector('#abstract-save').onclick = () => {
+        fetch("{{ url_for('IX_IPC.save_abstract') }}", {
+          method: 'POST',
+          body: new FormData(elem.querySelector('#abstract-' + String(id)))
+        })
+        .then((response) => response.json())
+        .then((data) => {
+          let feedback = elem.querySelector('#save-feedback');
+          if('id' in data) {
+            elem.querySelector('#abstract-id').value = data['id'];
+            feedback.innerHTML = 'Abstract data sucessfully saved!'
+            feedback.classList.add('alert-success')
+            feedback.classList.remove('alert-danger')
+          } else {
+            feedback.innerHTML = 'Error saving data'
+            feedback.classList.remove('alert-success')
+            feedback.classList.add('alert-success')
+          }
+          setTimeout(() => {
+            feedback.innerHTML = '';
+            feedback.classList.remove('alert-success')
+            feedback.classList.remove('alert-danger')
+          }, 4000);
+        })
+        .catch((e) => {
+          console.log(e)
+        });
+      };
+      observer.disconnect();
+    };
+  
+    const config = { attributes: false, childList: true, subtree: false };
+    const observer = new MutationObserver(callback);
+    observer.observe(elem, config);
+
+    fetch(url, {
+      method: 'POST',
+      body: new FormData(elem.firstElementChild)
+    })
+    .then((response) => response.json())
+    .then((data) => {
+      elem.innerHTML = data.html;
+    })
+    .catch((e) => {
+      console.log(e);
+    });
+  }
+</script>

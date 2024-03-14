@@ -17,7 +17,6 @@ class I18N():
     def i18n_filter_generator(self) -> str:
         return lambda string_name, language: self.l10n[language].format_value(string_name)
 
-
     def __init__(self, app) -> None:
         self.loader = FluentResourceLoader(app.root_path + '/l10n/{locale}')
 

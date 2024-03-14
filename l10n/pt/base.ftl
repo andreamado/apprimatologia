@@ -45,7 +45,7 @@ IXIPC-register-last-name = Apelido
 IXIPC-register-submit = Submeter
 IXIPC-hi = Olá
 
-IXIPC-abstract-submission = Submete um resumo
+IXIPC-abstract-submission = Resumo
 IXIPC-abstract-title = Título
 IXIPC-abstract-body = Resumo
 IXIPC-abstract-characters = caracteres
@@ -53,6 +53,7 @@ IXIPC-abstract-poster = Poster
 IXIPC-abstract-presentation = Apresentação oral
 IXIPC-abstract-save = Salvar
 IXIPC-abstract-submit = Submeter
+IXIPC-abstract-delete = Apagar
 
 admission-title = Junta-te à APP!
 admission-description = Preenche o formulário abaixo para te juntares à APP 
