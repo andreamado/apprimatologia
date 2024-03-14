@@ -20,12 +20,12 @@ news-title = Notícias
 news-published-on = Publicado a
 news-modified-on = modificado a
 
-designed-by = Design por
+designed-by = Design e implementação por
 
 IXIPC-title = IX Congresso Ibérico de Primatologia
 IXIPC-description = 
     <p>
-      APP is happy to announce the IX Iberian Primatological Conference. 
+      APP is happy to announce the <strong>IX Iberian Primatological Conference</strong>. 
       The conference will take place in Vila do Conde from 21 to 23 November 2024.
       Registration will be available from mid-April.
     </p>
@@ -41,6 +41,13 @@ IXIPC-place = Local
 IXIPC-register-dates = 21 a 23 de Novembro
 
 IXIPC-essential-information = Informação essencial
+IXIPC-personal-area = Área pessoal
+IXIPC-program = Programa
+IXIPC-invited-speakers = Oradores convidados
+IXIPC-timeline = Timeline
+
+IXIPC-register-to-submit = Regista-te para te inscreveres e submeter resumos
+IXIPC-register-to-submit-logged-in = Submit resumos para os teus posters e apresentações!
 
 IXIPC-register-first-name = Nome
 IXIPC-register-last-name = Apelido

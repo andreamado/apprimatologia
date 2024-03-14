@@ -19,12 +19,12 @@ news-title = News
 news-published-on = Published on
 news-modified-on = modified on
 
-designed-by = Design by
+designed-by = Design and implementation by
 
 IXIPC-title = IX Iberian Primatological Conference
 IXIPC-description = 
     <p>
-      APP is happy to announce the IX Iberian Primatological Conference. 
+      APP is happy to announce the <strong>IX Iberian Primatological Conference</strong>. 
       The conference will take place in Vila do Conde from 21 to 23 November 2024.
       Registration will be available from mid-April.
     </p>
@@ -36,10 +36,17 @@ IXIPC-logout = Logout
 IXIPC-email-already-registered = {$email} is already registered. Please use a different email or login with the credentials we sent to your registration email. In case you lost the credentials, click <a href="{$recover_credentials}">here</a> to receive them again.
 IXIPC-upload-payment-proof = Please upload the payment proof
 IXIPC-dates = Dates
-IXIPC-place = Place
-IXIPC-register-dates = November 21 to 23
+IXIPC-place = Venue
+IXIPC-register-dates = November 21-23
 
 IXIPC-essential-information = Essential information
+IXIPC-personal-area = Personal area
+IXIPC-program = Program
+IXIPC-invited-speakers = Invited speakers
+IXIPC-timeline = Timeline
+
+IXIPC-register-to-submit = Register to enroll and submit abstracts
+IXIPC-register-to-submit-logged-in = Submit abstracts for your posters and presentations!
 
 IXIPC-register-first-name = First name
 IXIPC-register-last-name = Last name

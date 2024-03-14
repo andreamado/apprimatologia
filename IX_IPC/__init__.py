@@ -13,6 +13,18 @@ import json
 
 bp = Blueprint('IX_IPC', __name__, template_folder='templates')
 
+import functools
+def login_IXIPC_required(view):
+    @functools.wraps(view)
+    def wrapped_view(**kwargs):
+        if g.IXIPC_user is None:
+            return redirect(url_for('IX_IPC.IXIPC', language=kwargs['language']))
+
+        return view(**kwargs)
+
+    return wrapped_view
+
+
 
 @bp.route('/IX_IPC/<language:language>')
 @bp.route('/IX_IPC')
@@ -150,6 +162,7 @@ def load_logged_in_IXIPC_user():
             g.IXIPC_user = None
 
 
+@login_IXIPC_required
 @bp.route('/IX_IPC/create_abstract/<language:language>', methods=['POST'])
 def create_new_abstract(language='pt'):
     id = json.loads(save_abstract_local(None, g))['id']
@@ -167,13 +180,14 @@ def create_new_abstract(language='pt'):
             )}), 200
 
 
+@login_IXIPC_required
 @bp.route('/IX_IPC/delete_abstract', methods=['POST'])
 def delete_abstract():
     with get_session() as db_session:
         id = request.form['abstract-id']
 
         abstract = db_session.get(Abstract, id)
-        if g.IXIPC_user and g.IXIPC_user.id == abstract.owner:
+        if g.IXIPC_user.id == abstract.owner:
             try:
                 db_session.delete(abstract)
                 db_session.commit()
@@ -217,6 +231,7 @@ def save_abstract_local(form, g):
         return json.dumps({'id': abstract.id})
 
 
+@login_IXIPC_required
 @bp.route('/IX_IPC/load_abstract/<language:language>/', methods=['POST'])
 def load_abstract(language, id=None, csrf_token = None):
     if not id:
@@ -243,11 +258,13 @@ def load_abstract(language, id=None, csrf_token = None):
             return json.dumps({'error': 'Access not authorized'}), 401
 
 
+@login_IXIPC_required
 @bp.route('/IX_IPC/save_abstract', methods=['POST'])
 def save_abstract():
     return save_abstract_local(request.form, g), 200
 
 
+@login_IXIPC_required
 @bp.route('/IX_IPC/submit_abstract/<language:language>', methods=['POST'])
 def submit_abstract(language):
     id = request.form['id']
