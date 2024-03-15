@@ -47,7 +47,7 @@ IXIPC-invited-speakers = Oradores convidados
 IXIPC-timeline = Timeline
 
 IXIPC-register-to-submit = Regista-te para te inscreveres e submeter resumos
-IXIPC-register-to-submit-logged-in = Submit resumos para os teus posters e apresentações!
+IXIPC-register-to-submit-logged-in = Submete resumos para os teus posters e apresentações!
 
 IXIPC-register-first-name = Nome
 IXIPC-register-last-name = Apelido

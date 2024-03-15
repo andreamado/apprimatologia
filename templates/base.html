@@ -8,18 +8,27 @@
     <!-- Bootstrap -->
     {# <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous"> #}
     <link href="{{ url_for('static', filename='css/custom.css') }}" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" async></script>
   </head>
   <body style="background-color: rgba(54, 52, 52, 0.4)">
 {% include "partials/navbar.html" %}
-    
-    <div class="container-fluid main{{ ' monkey-bg' if background_monkey }}{{' smaller-column' if text_column}}">
+{% if site_map -%}
+<div class="site-map">
+  <a href="#IXIPC-title" class="nav-link">{{ 'IXIPC-title'|l10n(lang) }}</a>
+  <a href="#essential-information" class="nav-link">{{ 'IXIPC-essential-information'|l10n(lang) }}</a>
+  <a href="#timeline" class="nav-link">{{ 'IXIPC-timeline'|l10n(lang) }}</a>
+  <a href="#program" class="nav-link">{{ 'IXIPC-program'|l10n(lang) }}</a>
+  <a href="#personal-area" class="nav-link">{{ 'IXIPC-personal-area'|l10n(lang) }}</a>
+</div>
+{% endif -%}
+
+    <div class="container-fluid main{{ ' monkey-bg' if background_monkey }}{{' smaller-column' if text_column}}" data-bs-spy="scroll" data-bs-smooth-scroll="true" data-bs-target="#site-map">
       {% block main %}{% endblock main %}
       {# <hr> #}
       <br>
       <div class="row">
         <div class="col float-center designed-by"><a href="https://andreamado.github.io/me">{{ 'designed-by'|l10n(lang) }} André Amado</a></div>
       </div>
-    </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    </div>    
   </body>
 </html>

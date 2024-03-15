@@ -45,7 +45,8 @@ def IXIPC(language='pt'):
             lang=language,
             form=FlaskForm(),
             text_column=True,
-            abstracts=abstracts
+            abstracts=abstracts,
+            site_map=True
         )
 
 def sanitize_email(email: str) -> str|None:
