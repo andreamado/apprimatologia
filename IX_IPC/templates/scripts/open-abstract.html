@@ -4,6 +4,25 @@
     let url = "{{ url_for('IX_IPC.load_abstract', language=lang) }}";
 
     const callback = (mutationList, observer) => {
+      elem.querySelector('#abstract-close-button').onclick = () => {
+        fetch("{{ url_for('IX_IPC.closed_abstract', language=lang) }}", {
+          method: 'POST',
+          body: new FormData(elem.querySelector('#abstract-' + String(id)))
+        })
+        .then((response) => response.json())
+        .then((data) => {
+          elem.innerHTML = data.html;
+        })
+        .catch((e) => {
+          console.log(e)
+        });
+      };
+
+      if(elem.querySelector('#abstract-submitted') != null) {
+        observer.disconnect();
+        return;
+      } 
+
       registerCounter(
         elem.querySelector('#abstract-title'), 
         elem.querySelector('#abstract-title-character-counter')
@@ -24,6 +43,22 @@
         elem.remove();
       };
 
+      // Submit abstract
+      elem.querySelector('#abstract-submit').onclick = () => {
+        fetch("{{ url_for('IX_IPC.submit_abstract', language=lang) }}", {
+          method: 'POST',
+          body: new FormData(elem.querySelector('#abstract-' + String(id)))
+        })
+        .then((response) => response.json())
+        .then((data) => {
+          elem.outerHTML = data['html'];
+        })
+        .catch((e) => {
+          console.log(e)
+        })
+      };
+ 
+      // Save abstract
       elem.querySelector('#abstract-save').onclick = () => {
         fetch("{{ url_for('IX_IPC.save_abstract') }}", {
           method: 'POST',
@@ -34,18 +69,18 @@
           let feedback = elem.querySelector('#save-feedback');
           if('id' in data) {
             elem.querySelector('#abstract-id').value = data['id'];
-            feedback.innerHTML = 'Abstract data sucessfully saved!'
-            feedback.classList.add('alert-success')
-            feedback.classList.remove('alert-danger')
+            feedback.innerHTML = "{{ 'IXIPC-abstract-save-success'|l10n(lang) }}"
+            feedback.classList.add('bg-success')
+            feedback.classList.remove('bg-danger')
           } else {
-            feedback.innerHTML = 'Error saving data'
-            feedback.classList.remove('alert-success')
-            feedback.classList.add('alert-success')
+            feedback.innerHTML = "{{ 'IXIPC-abstract-save-fail'|l10n(lang) }}"
+            feedback.classList.remove('bg-success')
+            feedback.classList.add('bg-success')
           }
           setTimeout(() => {
-            feedback.innerHTML = '';
-            feedback.classList.remove('alert-success')
-            feedback.classList.remove('alert-danger')
+            feedback.innerHTML = '&nbsp;';
+            feedback.classList.remove('bg-success')
+            feedback.classList.remove('bg-danger')
           }, 4000);
         })
         .catch((e) => {

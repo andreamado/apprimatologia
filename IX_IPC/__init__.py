@@ -167,6 +167,17 @@ def load_logged_in_IXIPC_user():
 @bp.route('/IX_IPC/create_abstract/<language:language>', methods=['POST'])
 def create_new_abstract(language='pt'):
     id = json.loads(save_abstract_local(None, g))['id']
+    return load_closed_abstract(id, language), 200
+
+
+@login_IXIPC_required
+@bp.route('/IX_IPC/closed_abstract/<language:language>', methods=['POST'])
+def closed_abstract(language='pt'):
+    id = request.form['abstract-id']
+    return load_closed_abstract(id, language), 200
+
+
+def load_closed_abstract(id, language):
     with get_session() as db_session:
         abstract = db_session.get(Abstract, id)
         
@@ -178,7 +189,7 @@ def create_new_abstract(language='pt'):
                 csrf_token = request.form['csrf_token'],
                 reload=True,
                 lang=language
-            )}), 200
+            )})
 
 
 @login_IXIPC_required
@@ -268,15 +279,15 @@ def save_abstract():
 @login_IXIPC_required
 @bp.route('/IX_IPC/submit_abstract/<language:language>', methods=['POST'])
 def submit_abstract(language):
-    id = request.form['id']
+    id = request.form['abstract-id']
     save_abstract_local(request.form, g)
 
     with get_session() as db_session:
         abstract = db_session.get(Abstract, id)
-        abstract.submitted = True
+        abstract.submit()
         db_session.commit()
 
-        return redirect(url_for('IX_IPC.IXIPC', language=language))
+        return load_abstract(language=language, id=id)
 
 def register(app):
     app.register_blueprint(bp)

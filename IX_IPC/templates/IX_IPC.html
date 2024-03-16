@@ -4,7 +4,7 @@
 <div class="main-content-dark smaller-column">
   <hr class="separator mb-5">
   <h1 id="IXIPC-title" class="lh-1 mb-4 text-white" data-offset="100">{{ 'IXIPC-title'|l10n(lang) }}</h1>
-  <img src="{{ url_for('static', filename='img/pexels-egor-kamelev-802208_small.jpg') }}" width="100%" alt="" style="opacity:0.9;">
+  <img class="mb-3" src="{{ url_for('static', filename='img/pexels-egor-kamelev-802208_small.jpg') }}" width="100%" alt="" style="opacity:0.9;">
   <div class="text-white lead mb-5">
     {{ 'IXIPC-description'|l10n(lang)|safe }}
   </div>
@@ -15,8 +15,8 @@
     <h2 class="mb-1">{{ 'IXIPC-essential-information'|l10n(lang) }}</h2>
     <p class="lead mb-0">{{ 'IXIPC-dates'|l10n(lang) }}: <strong>{{ 'IXIPC-register-dates'|l10n(lang) }}</strong> (2024)</p>
     <p class="lead">{{ 'IXIPC-place'|l10n(lang) }}: <strong>Auditório Municipal - Vila do Conde</strong> (Portugal)</p>
-    <div class="col-lg-6 text-end">
-      <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d12331.156050207355!2d-8.750362500198147!3d41.35174212548796!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd244406dbde29f3%3A0x4c7d869a165163ed!2sAudit%C3%B3rio%20Municipal!5e0!3m2!1sen!2spt!4v1710515659700!5m2!1sen!2spt" width="600" height="300" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+    <div class="col-lg-6 text-end w-100">
+      <iframe class="w-100" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d12331.156050207355!2d-8.750362500198147!3d41.35174212548796!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd244406dbde29f3%3A0x4c7d869a165163ed!2sAudit%C3%B3rio%20Municipal!5e0!3m2!1sen!2spt!4v1710515659700!5m2!1sen!2spt" height="300" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
     </div>
   </div>
 
@@ -65,7 +65,7 @@
   <div class="text-white mb-5" id="program">
     <h2 class="mb-4">{{ 'IXIPC-program'|l10n(lang) }}</h2>
     <h3 class="mb-3">{{ 'IXIPC-invited-speakers'|l10n(lang) }}</h3>
-    <div class="row g-3">
+    <div class="row g-3 mb-5">
       <div class="col-12 col-sm-6 order-2 order-sm-1"><img class="IXIPC-invited-speaker w-100" src="{{ url_for('static', filename='img/man-person-black-and-white-photography-old-portrait-35917-pxhere.com.jpg') }}" alt=""></div>
       <div class="col-12 col-sm-6 order-1 order-sm-2">
         <h4>Zé Chimp</h4>
@@ -73,30 +73,24 @@
         Zé Chimp will present his research on tool usage by homo sapiens, a subject that did not always received the attention it deserves.
       </div>
     </div>
-    <hr>
-    <div class="row g-3">
+    <div class="row g-3 mb-5">
       <div class="col-12 col-sm-6">
         <h4>Filipa Borges</h4>
         This person studies poo from primates. For some surprising reason, she decided to focus on non-human primates...
       </div>
       <div class="col-12 col-sm-6"><img class="IXIPC-invited-speaker w-100" src="{{ url_for('static', filename='img/1200px-Colobus_angolensis_3X2.jpg') }}" alt=""></div>
     </div>
-
   </div>
 
   <hr class="separator mb-5">
 
+  {% if not g.IXIPC_user -%}
+
   <div class="text-white mb-5" id="personal-area">
     <h2 class="mb-1">{{ 'IXIPC-personal-area'|l10n(lang) }}</h2>
-    {% if not g.IXIPC_user -%}
     <p class="lead">{{ 'IXIPC-register-to-submit'|l10n(lang) }}</p>
-    {% else -%}
-    <p class="lead">{{ 'IXIPC-register-to-submit-logged-in'|l10n(lang) }}</p>
-    {% endif -%}
   </div>
 
-
-  {% if not g.IXIPC_user -%}
   <div class="container mb-5">
     <!-- register form -->
     <div class="row mb-3">
@@ -154,9 +148,12 @@
     </div>
   </div>
   {% else -%}
-  <div class="container text-white mb-5">
-    <h2 class="mb-5">{{ 'IXIPC-hi'|l10n(lang) }}, {{ g.IXIPC_user.name }}!</h2>
+  <div class="text-white mb-5" id="personal-area">
+    <h2 class="mb-1">{{ 'IXIPC-hi'|l10n(lang) }}, {{ g.IXIPC_user.name }}!</h2>
+    <p class="lead">{{ 'IXIPC-register-to-submit-logged-in'|l10n(lang) }}</p>
+  </div>
 
+  <div class="container text-white mb-5">
     <form id="abstract-new" action="">
       {{ form.csrf_token }}
       <div class="rounded-4 card mb-3 abstract-new">
@@ -214,11 +211,21 @@
       .then((response) => response.json())
       .then((data) => {
         const div = document.createElement('div');
-        div.id = 'abstract-' + String(data['id']);
+        id = data['id'];
+        div.id = 'abstract-' + String(id);
         div.innerHTML = data['html'];
         container.appendChild(div);
       })
       .catch((e) => console.log(e));
+
+      const callback = (mutationList, observer) => {
+        document.getElementById('abstract-' + String(id)).scrollIntoView({behavior: "smooth", block: "center"});
+        observer.disconnect();
+      }
+
+      const config = { attributes: false, childList: true, subtree: false };
+      const observer = new MutationObserver(callback);
+      observer.observe(container, config);
     }
 
     document.getElementById('abstract-new').addEventListener(

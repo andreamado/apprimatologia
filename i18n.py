@@ -26,6 +26,7 @@ class I18N():
 
         app.url_map.converters['language'] = I18N.LanguageConverter
         app.jinja_env.filters['l10n'] = self.i18n_filter_generator()
+        app.jinja_env.filters['date'] = lambda date: date.strftime("%d/%m/%y")
 
         app.i18n = self        
 

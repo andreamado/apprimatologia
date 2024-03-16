@@ -78,6 +78,10 @@ class Abstract(Base):
     abstract_type = Column(Integer)
     owner = Column(ForeignKey('users.id'))
     submitted = Column(Boolean)
+    submitted_on = Column(UtcDateTime())
+
+    created = Column(UtcDateTime(), default=utcnow())
+    modified = Column(UtcDateTime(), onupdate=utcnow())
 
     def __init__(self, owner, title=None, abstract=None, abstract_type=None, submitted=False):
         self.title = title
@@ -85,6 +89,10 @@ class Abstract(Base):
         self.abstract_type = abstract_type
         self.owner = owner
         self.submitted = submitted
+
+    def submit(self):
+        self.submitted = True
+        self.submitted_on = utcnow()
 
 
 class AbstractAuthor(Base):

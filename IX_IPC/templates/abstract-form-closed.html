@@ -10,19 +10,25 @@
     <div class="card-body">
       <div class="container">
         <div class="row d-flex align-items-center">
-          <div class="col-3">
-            <button type="button" class="btn btn-primary">{{ abstract.abstract_type|abstract_type(lang) }}</button>
-          </div>
           <div class="col">
             {% if abstract.title|length > 0 -%}
-              <h5 class="card-title">{{ abstract.title }}</h5>
+              <h5 class="card-title">{{ abstract.abstract_type|abstract_type(lang) }}: {{ abstract.title }}</h5>
             {% else -%}
-              <h5 class="card-title">Untitled</h5>
+              <h5 class="card-title">{{ abstract.abstract_type|abstract_type(lang) }}: {{ 'IXIPC-untitled'|l10n(lang) }}</h5>
             {% endif -%}
           </div>
         </div>
       </div>
     </div>
+    {% if abstract.submitted -%}
+    <div class="card-footer rounded-bottom-4 abstract-footer-text bg-success text-white text-center p-0">
+      {{ 'IXIPC-abstract-submitted-long'|l10n(lang) }}
+    </div>
+    {% else -%}
+    <div class="card-footer rounded-bottom-4 abstract-footer-text bg-warning text-center p-0">
+      {{ 'IXIPC-abstract-not-submitted-long'|l10n(lang) }}
+    </div>
+    {% endif -%}
   </div>
 </form>
 {% endif -%}

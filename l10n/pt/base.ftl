@@ -62,8 +62,15 @@ IXIPC-abstract-characters = caracteres
 IXIPC-abstract-poster = Poster
 IXIPC-abstract-presentation = Apresentação oral
 IXIPC-abstract-save = Salvar
+IXIPC-abstract-save-success = Dados do resumo salvos!
+IXIPC-abstract-save-fail = Erro ao salvar os dados
 IXIPC-abstract-submit = Submeter
+IXIPC-abstract-submitted = Resumo submetido
+IXIPC-abstract-submitted-on = Submetido a
+IXIPC-abstract-submitted-long = Resumo já submetido
+IXIPC-abstract-not-submitted-long = Resumo ainda não submetido
 IXIPC-abstract-delete = Apagar
+IXIPC-untitled = sem título
 
 admission-title = Junta-te à APP!
 admission-description = Preenche o formulário abaixo para te juntares à APP 

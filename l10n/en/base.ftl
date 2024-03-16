@@ -45,7 +45,7 @@ IXIPC-program = Program
 IXIPC-invited-speakers = Invited speakers
 IXIPC-timeline = Timeline
 
-IXIPC-register-to-submit = Register to enroll and submit abstracts
+IXIPC-register-to-submit = Register or login to enroll and submit abstracts
 IXIPC-register-to-submit-logged-in = Submit abstracts for your posters and presentations!
 
 IXIPC-register-first-name = First name
@@ -61,8 +61,15 @@ IXIPC-abstract-characters = characters
 IXIPC-abstract-poster = Poster
 IXIPC-abstract-presentation = Oral presentation
 IXIPC-abstract-save = Save
+IXIPC-abstract-save-success = Abstract data sucessfully saved!
+IXIPC-abstract-save-fail = Error saving abstract data
 IXIPC-abstract-submit = Submit
+IXIPC-abstract-submitted = Submitted abstract
+IXIPC-abstract-submitted-on = Submitted on
+IXIPC-abstract-submitted-long = Abstract already submitted
+IXIPC-abstract-not-submitted-long = Abstract not yet submitted
 IXIPC-abstract-delete = Delete
+IXIPC-untitled = untitled
 
 admission-title = Join APP!
 admission-description = Fill the form below to join APP
