@@ -149,49 +149,93 @@
   </div>
   {% else -%}
   <div class="text-white mb-5" id="personal-area">
-    <h2 class="mb-1">{{ 'IXIPC-hi'|l10n(lang) }}, {{ g.IXIPC_user.name }}!</h2>
-    <p class="lead">{{ 'IXIPC-register-to-submit-logged-in'|l10n(lang) }}</p>
-  </div>
+      <h2 class="mb-1">{{ 'IXIPC-hi'|l10n(lang) }}, {{ g.IXIPC_user.name }}!</h2>
+      <p class="lead mb-5">{{ 'IXIPC-register-to-submit-logged-in'|l10n(lang) }}</p>
+    
 
-  <div class="container text-white mb-5">
-    <form id="abstract-new" action="">
-      {{ form.csrf_token }}
-      <div class="rounded-4 card mb-3 abstract-new">
-        <div class="card-body">
-          <h5 class="card-title mb-0">
-            <img src='data:image/svg+xml,<svg width="20px" height="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 12H15" stroke="%23fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 9L12 15" stroke="%23fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 12C3 4.5885 4.5885 3 12 3C19.4115 3 21 4.5885 21 12C21 19.4115 19.4115 21 12 21C4.5885 21 3 19.4115 3 12Z" stroke="%23fff" stroke-width="2"/></svg>' alt="" style="height: 25px;">
-            {{ 'IXIPC-abstract-new-abstract'|l10n(lang) }}
-          </h5>
+    <div class="container text-white mb-5">
+      <form id="personal-data" action="">
+        {{ form.csrf_token }}
+        <div class="rounded-4 card mb-3 abstract-new">
+          <div class="card-body">
+            <h5 class="card-title mb-0">
+              {{ 'IXIPC-personal-data'|l10n(lang) }}
+            </h5>
+          </div>
+        </div>
+      </form>
+      <div class="row mb-3">
+        <div class="col">
+          <label for="email" class="form-label">Email</label>
+          <input class="form-control" name="email" id="email" type="text" value="{{g.IXIPC_user.email}}">
         </div>
       </div>
-    </form>
-
-    <div id="abstract-forms-container">
-      {% for abstract in abstracts -%}
-      <div id="abstract-{{ abstract.id }}">
-        {% include "abstract-form-closed.html" -%}
+      <div class="row mb-3">
+        <div class="col">
+          <label for="first-name" class="form-label">First name</label>
+          <input name="first-name" id="first-name" type="text" class="form-control">
+        </div>
+        <div class="col">
+          <label for="last-name" class="form-label">Last name</label>
+          <input name="last-name" id="last-name" type="text" class="form-control">
+        </div>
       </div>
-      {% endfor -%}
-    </div>
-    
-    <div class="mb-5">
-      <h4 class="mb-0">{{'IXIPC-upload-payment-proof'|l10n(lang)}}</h4>
-      <img src="" alt="" id="upload-result" class="upload-result">
-      {% with upload_area={'id': 'IXIPC-upload-payment-proof'} -%}
-        {% include "partials/upload-form.html" -%}
-      {% endwith -%}
-      <p id="upload-result-text" class="lead upload-result-text">&nbsp;</p>
+      <div class="row mb-3">
+        <div class="col">
+          <label for="institution" class="form-label">Institution</label>
+          <input name="institution" id="institution" type="text" class="form-control">
+        </div>
+      </div>
     </div>
 
-    <div class="mb-5">
-      <form action="{{ url_for('IX_IPC.logout', language=lang) }}" method="post">
+    <div class="container text-white mb-5">
+      <form action="">
         {{ form.csrf_token }}
-        <input type="hidden" id="user_id" name="user_id" value="{{ g.user.id }}"> 
-        <button type="submit" class="btn btn-primary">{{ 'IXIPC-logout'|l10n(lang) }}</button>
-      </form>  
+        <div class="rounded-4 card mb-3 abstract-new">
+          <div class="card-body">
+            <h5 class="card-title mb-0">
+              {{ 'IXIPC-abstract-body'|l10n(lang) }}s
+            </h5>
+          </div>
+        </div>
+      </form>
+
+      <div class="container mb-5">
+        <form id="abstract-new" action="">
+          {{ form.csrf_token }}
+          <button type="button" class="btn btn-primary text-white mb-3" type="submit">
+            <img src='data:image/svg+xml,<svg width="20px" height="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 12H15" stroke="%23fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 9L12 15" stroke="%23fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 12C3 4.5885 4.5885 3 12 3C19.4115 3 21 4.5885 21 12C21 19.4115 19.4115 21 12 21C4.5885 21 3 19.4115 3 12Z" stroke="%23fff" stroke-width="2"/></svg>' alt="" style="height: 25px;">
+            <span class="text-white">{{ 'IXIPC-abstract-new-abstract'|l10n(lang) }}</span>
+          </button>
+        </form>
+    
+        <div id="abstract-forms-container">
+          {% for abstract in abstracts -%}
+          <div id="abstract-{{ abstract.id }}">
+            {% include "abstract-form-closed.html" -%}
+          </div>
+          {% endfor -%}
+        </div>
+      
+        <div class="mb-5">
+          <h4 class="mb-0">{{'IXIPC-upload-payment-proof'|l10n(lang)}}</h4>
+          <img src="" alt="" id="upload-result" class="upload-result">
+          {% with upload_area={'id': 'IXIPC-upload-payment-proof'} -%}
+            {% include "partials/upload-form.html" -%}
+          {% endwith -%}
+          <p id="upload-result-text" class="lead upload-result-text">&nbsp;</p>
+        </div>
+
+        <div class="mb-5">
+          <form action="{{ url_for('IX_IPC.logout', language=lang) }}" method="post">
+            {{ form.csrf_token }}
+            <input type="hidden" id="user_id" name="user_id" value="{{ g.user.id }}"> 
+            <button type="submit" class="btn btn-primary">{{ 'IXIPC-logout'|l10n(lang) }}</button>
+          </form>  
+        </div>
+      </div>
     </div>
   </div>
-
   {% include "scripts/upload-form.html" -%}
   {% include "scripts/character-counter.html" -%}
   {% include "scripts/open-abstract.html" -%}
@@ -201,7 +245,8 @@
       dropArea = document.getElementById('IXIPC-upload-payment-proof'),
       csrfToken = '{{ csrf_token() }}'
     );
-    const addAbstract = () => {
+    const addAbstract = (event) => {
+      event.preventDefault();
       let id = null;
       let container = document.getElementById('abstract-forms-container');
       fetch("{{ url_for('IX_IPC.create_new_abstract', language=lang) }}", {

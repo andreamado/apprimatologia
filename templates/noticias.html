@@ -7,14 +7,16 @@
           <p class="mb-1 lead">
             {{ 'news-published-on'|l10n(lang) }} {{ news.date }}
             {% if news.modified %}
-              <span class="news-modified">({{ 'news-modified'|l10n(lang) }} {{ news.modified }})</span>
+              <span class="news-modified">({{ 'news-modified-on'|l10n(lang) }} {{ news.modified }})</span>
             {% endif %}
           </p>
           <h2>{{ news.title }}</h2>
           {% if news.image %}
-            {% include 'partials/news-image.html' %}
+          {% include 'partials/news-image.html' %}
           {% endif %}
-          {{ news.body|safe }}
+          <p>
+            {{ news.body|safe }}
+          </p>
         </div>  
         {% endfor -%}
       </div>

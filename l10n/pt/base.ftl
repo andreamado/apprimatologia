@@ -46,6 +46,8 @@ IXIPC-program = Programa
 IXIPC-invited-speakers = Oradores convidados
 IXIPC-timeline = Timeline
 
+IXIPC-personal-data = Dados pessoais
+
 IXIPC-register-to-submit = Regista-te para te inscreveres e submeter resumos
 IXIPC-register-to-submit-logged-in = Submete resumos para os teus posters e apresentações!
 
@@ -67,7 +69,7 @@ IXIPC-abstract-save-fail = Erro ao salvar os dados
 IXIPC-abstract-submit = Submeter
 IXIPC-abstract-submitted = Resumo submetido
 IXIPC-abstract-submitted-on = Submetido a
-IXIPC-abstract-submitted-long = Resumo já submetido
+IXIPC-abstract-submitted-long = Resumo submetido
 IXIPC-abstract-not-submitted-long = Resumo ainda não submetido
 IXIPC-abstract-delete = Apagar
 IXIPC-untitled = sem título

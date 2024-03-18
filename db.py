@@ -33,15 +33,31 @@ def init_db_command():
     Base.metadata.create_all(bind=engine)
 
     with get_session() as db_session:
+        image_file = models.UploadedFile(
+            original_name='pexels-egor-kamelev-802208_small.jpg',
+            file_path='static/img/pexels-egor-kamelev-802208_small.jpg'
+        )
+        db_session.add(image_file)
+
+        image = models.Image(
+             image_file.id,
+             subtitle_pt='APP is happy to announce the IX Iberian Primatological Conference.The conference will take place in Vila do Conde from **21 to 23 November** 2024. Registration will be available from mid-April.', 
+             subtitle_en='APP is happy to announce the IX Iberian Primatological Conference.The conference will take place in Vila do Conde from **21 to 23 November** 2024. Registration will be available from mid-April.', 
+             alt_pt=None, 
+             alt_en=None
+        )
+        db_session.add(image)
+        db_session.commit()
+
         news = models.News(
             title_pt = 'IX Congresso Ibérico de Primatologia', 
             title_en = 'IX Iberian Primatological Conference', 
             body_pt  = "APP is happy to announce the IX Iberian Primatological Conference. \
-                        The conference will take place in Vila do Conde from **21 to 23 November** 2024. \
+                        The conference will take place in Vila do Conde from 21 to 23 November 2024. \
                         Registration will be available from mid-April. \
                         Stay tuned!", 
             body_en  =  "APP is happy to announce the IX Iberian Primatological Conference. \
-                        The conference will take place in Vila do Conde from **21 to 23 November** 2024. \
+                        The conference will take place in Vila do Conde from 21 to 23 November 2024. \
                         Registration will be available from mid-April. \
                         Stay tuned!"
         )
@@ -57,7 +73,8 @@ def init_db_command():
         body_en  =  "APP is happy to announce the IX Iberian Primatological Conference. \
                         The conference will take place in Vila do Conde from **21 to 23 November** 2024. \
                         Registration will be available from mid-April. \
-                        Stay tuned!"
+                        Stay tuned!",
+        image    =  image.id
         )
         db_session.add(news)
 
@@ -69,9 +86,9 @@ def init_db_command():
                     Registration will be available from mid-April. \
                     Stay tuned!", 
         body_en  =  "APP is happy to announce the IX Iberian Primatological Conference. \
-                        The conference will take place in Vila do Conde from **21 to 23 November** 2024. \
-                        Registration will be available from mid-April. \
-                        Stay tuned!"
+                    The conference will take place in Vila do Conde from **21 to 23 November** 2024. \
+                    Registration will be available from mid-April. \
+                    Stay tuned!"
         )
 
         db_session.add(news)
@@ -84,6 +101,12 @@ def init_db_command():
 
         member = models.Member(given_name='Filipa', family_name='Borges', number=3, species='Chimpanzé')
         db_session.add(member)
+
+        db_session.commit()
+
+        news = db_session.get(models.News, 3)
+        news.title_pt = 'Notícia modificada'
+        news.title_en = 'Modified news'
 
         db_session.commit()
 

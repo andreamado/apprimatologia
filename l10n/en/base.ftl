@@ -45,6 +45,8 @@ IXIPC-program = Program
 IXIPC-invited-speakers = Invited speakers
 IXIPC-timeline = Timeline
 
+IXIPC-personal-data = Personal data
+
 IXIPC-register-to-submit = Register or login to enroll and submit abstracts
 IXIPC-register-to-submit-logged-in = Submit abstracts for your posters and presentations!
 

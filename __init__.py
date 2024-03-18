@@ -5,7 +5,7 @@ import json
 
 from uuid import UUID
 
-from flask import Flask, render_template, g, request, url_for
+from flask import Flask, render_template, g, request, url_for, send_from_directory
 from flask_mail import Mail, Message
 
 from sqlalchemy import select
@@ -18,7 +18,7 @@ from flask_wtf.csrf import CSRFProtect
 import markdown
 
 from .i18n import I18N
-from .models import UploadedFile
+from .models import UploadedFile, Image
 from .db import get_session
 
 ALLOWED_EXTENSIONS = {'pdf', 'png', 'jpg', 'jpeg', 'gif'}
@@ -111,17 +111,22 @@ def create_app(test_config=None):
 
         from .models import News
         from sqlalchemy import select
-        with get_session() as session:
-            news_list = session.scalars(select(News).order_by(News.id.desc()).limit(5)).fetchall()
+        with get_session() as db_session:
+            news_list = db_session.scalars(select(News).order_by(News.id.desc()).limit(5)).fetchall()
 
             g.news = []
             for news in news_list:
+                aaa = None
+                if news.image:
+                    aaa = db_session.get(Image, news.image).to_object(language)
+                    print(aaa['id'])
+
                 g.news.append({
                     'title': getattr(news, f'title_{language}'),
                     'body': markdown.markdown(getattr(news, f'body_{language}'), tab_length=2),
                     'date': news.created.strftime("%d/%m/%Y"),
                     'modified': news.modified.strftime("%d/%m/%Y") if news.modified else None,
-                    'image': news.image.to_object() if news.image else None
+                    'image': aaa
                 })
 
             return render_template(
@@ -187,6 +192,11 @@ def create_app(test_config=None):
                 'name': f'{file.original_name}'
             }), 200
 
+    @app.route("/get_file/<uuid:id>")
+    # TODO: find a more performant method
+    # https://tedboy.github.io/flask/generated/flask.send_from_directory.html
+    def get_file(id):
+        return send_from_directory('uploaded_files', str(id))
 
     @app.route("/remove_file", methods=['POST'])
     def remove_file():
@@ -195,17 +205,12 @@ def create_app(test_config=None):
         else:
             # Correct this error
             return json.dumps({'error': 'no file uploaded'}), 400
-        id = UUID(id)
 
         with get_session() as db_session:
-            file = db_session.execute(select(UploadedFile).filter_by(id=id)).scalar_one()
+            file = db_session.execute(select(UploadedFile).filter_by(id=UUID(id))).scalar_one()
             if not file.deleted:
-                file.deleted = True
                 try:
-                    os.rename(
-                        os.path.join('uploaded_files', str(id)), 
-                        os.path.join('deleted_files', str(id))
-                    )
+                    file.delete()
                 except:
                     db_session.rollback()
                     return 'unable to remove file', 500

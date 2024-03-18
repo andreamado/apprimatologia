@@ -6,6 +6,8 @@ from .db import Base
 from werkzeug.utils import secure_filename
 
 import uuid
+import os
+import shutil
 
 class User(Base):
     __tablename__ = 'users'
@@ -31,7 +33,7 @@ class UploadedFile(Base):
     description = Column(Text)
     deleted = Column(Boolean, nullable=False)
 
-    def __init__(self, original_name, description=None, user=None):
+    def __init__(self, original_name, description=None, user=None, file_path=None):
         self.id = uuid.uuid4()
         self.user = user
         self.original_name = secure_filename(original_name)
@@ -39,8 +41,18 @@ class UploadedFile(Base):
         self.description = description
         self.deleted = False
 
+        if file_path:
+            shutil.copy(file_path, os.path.join('uploaded_files', str(self.id)))
+
     def __repr__(self):
         return f'<File {self.original_name} ({self.id})>'
+
+    def delete(self):
+        self.deleted = True
+        os.rename(
+            os.path.join('uploaded_files', str(self.id)), 
+            os.path.join('deleted_files', str(self.id))
+        )
 
 
 class Image(Base):
@@ -62,7 +74,7 @@ class Image(Base):
     def to_object(self, lang):
         return {
             # implement access to uploaded files
-            'url': 'placeholder!',#url_to(),
+            'id': self.file,
             'subtitle': self.subtitle_pt if lang == 'pt' else self.subtitle_en,
             'alt': self.alt_pt if lang == 'pt' else self.alt_en
         }
