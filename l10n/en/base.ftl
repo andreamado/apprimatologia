@@ -72,6 +72,16 @@ IXIPC-abstract-submitted-long = Abstract already submitted
 IXIPC-abstract-not-submitted-long = Abstract not yet submitted
 IXIPC-abstract-delete = Delete
 IXIPC-untitled = untitled
+IXIPC-abstract-new-author = New author
+IXIPC-abstract-authors = Authors
+IXIPC-abstract-authors-available = Available authors
+IXIPC-abstract-authors-select = Selected authors
+IXIPC-abstract-authors-drag-and-drop = Drag and drop the authors for selected authors area
+IXIPC-abstract-authors-edit = Create and modify authors
+
+IXIPC-personal-data-first-name = First name
+IXIPC-personal-data-last-name = Last name
+IXIPC-personal-data-institution = Institution
 
 admission-title = Join APP!
 admission-description = Fill the form below to join APP

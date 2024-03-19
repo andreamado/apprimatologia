@@ -87,6 +87,35 @@
           console.log(e)
         });
       };
+
+      let selectedAuthors = elem.querySelector('#select-authors');
+      let availableAuthors = elem.querySelector('#available-authors');
+      new Sortable(selectedAuthors, {
+        group: 'shared123', // set both lists to same group
+        animation: 150,
+        onSort: (evt) => {
+          selectedAuthors.childNodes.forEach(
+            (child, i) => {
+              child.innerHTML = String(i+1) + '. ' + child.dataset.content;
+            }
+          );
+        }
+      });
+      
+      new Sortable(availableAuthors, {
+        group: 'shared123',
+        animation: 150,
+        onSort: (evt) => {
+          availableAuthors.childNodes.forEach(
+            (child, i) => {
+              if('dataset' in child) {
+                child.innerHTML = child.dataset.content;
+              }
+            }
+          ); 
+        }
+      });
+
       observer.disconnect();
     };
   
@@ -104,6 +133,6 @@
     })
     .catch((e) => {
       console.log(e);
-    });
+    });  
   }
 </script>

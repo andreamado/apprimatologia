@@ -73,6 +73,16 @@ IXIPC-abstract-submitted-long = Resumo submetido
 IXIPC-abstract-not-submitted-long = Resumo ainda não submetido
 IXIPC-abstract-delete = Apagar
 IXIPC-untitled = sem título
+IXIPC-abstract-new-author = Novo autor
+IXIPC-abstract-authors = Autores
+IXIPC-abstract-authors-available = Autores disponíveis
+IXIPC-abstract-authors-select = Autores selecionados
+IXIPC-abstract-authors-drag-and-drop = Arrasta os autores para a área dos autores selecionados
+IXIPC-abstract-authors-edit = Cria e modifica autores
+
+IXIPC-personal-data-first-name = Nome
+IXIPC-personal-data-last-name = Apelido
+IXIPC-personal-data-institution = Instituição
 
 admission-title = Junta-te à APP!
 admission-description = Preenche o formulário abaixo para te juntares à APP 
