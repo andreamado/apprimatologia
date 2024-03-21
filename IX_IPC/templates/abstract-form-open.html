@@ -1,5 +1,5 @@
 {% if not abstract.submitted %}
-<form id="abstract-{{abstract.id}}" action="">
+<form id="abstract-{{abstract.id}}" action="" data-id="{{ abstract.id if abstract }}" data-status="open">
   <input type="hidden" id="abstract-id" name="abstract-id" value="{{ abstract.id if abstract }}">
   {% if reload -%}
   <input type="hidden" name="csrf_token" value="{{ csrf_token }}"/>
@@ -11,7 +11,7 @@
       <button type="button" class="btn-close position-absolute top-0 end-0 m-3 focus-ring" aria-label="Close" style="--bs-focus-ring-color: rgba(54, 81, 28, .25)" id="abstract-close-button"></button>
       <div class="container">
         <h5 class="card-title mb-3">{{ 'IXIPC-abstract-submission'|l10n(lang) }}</h5>
-        <div class="row mb-3">
+        <div class="row mb-3" id="abstract-type">
           <div class="col-3 col-sm-2">
             {% if abstract -%}
             <input type="radio" class="btn-check" name="abstract_type" id="abstract-poster" value="poster" autocomplete="off" {{'checked' if abstract.abstract_type == 1 }}>
@@ -49,16 +49,12 @@
         <h5 class="card-title mb-3">{{ 'IXIPC-abstract-authors'|l10n(lang) }}</h5>
         <div class="row mb-4">
           <div class="col-6 px-2">
-            <label for="select-authors" class="form-label">{{ 'IXIPC-abstract-authors-select'|l10n(lang) }}</label>
-            <div class="authors-box rounded-1 p-1 h-100" id="select-authors"></div>
+            <label for="selected-authors" class="form-label">{{ 'IXIPC-abstract-authors-select'|l10n(lang) }}</label>
+            <div class="authors-box rounded-1 p-1 h-100" id="selected-authors"></div>
           </div>
           <div class="col-6 px-2">
             <label for="available-authors" class="form-label">{{ 'IXIPC-abstract-authors-available'|l10n(lang) }}</label>
-            <div class="authors-box rounded-1 p-1 h-100" id="available-authors">
-              <div class="author-name rounded-1 p-1 mb-1" data-content="AAAAA">AAAAA</div>
-              <div class="author-name rounded-1 p-1 mb-1" data-content="BBBBB">BBBBB</div>
-              <div class="author-name rounded-1 p-1 mb-1" data-content="CCCCC">CCCCC</div>
-            </div>
+            <div class="authors-box rounded-1 p-1 h-100" id="available-authors"></div>
           </div>
         </div>
         <div class="row mb-3">
@@ -69,7 +65,7 @@
 
         <div class="d-flex flex-row mb-3">
           <div class="col">
-            <button type="button" id="abstract-save" class="btn btn-primary">{{ 'IXIPC-abstract-save'|l10n(lang) }}</button>
+            {# <button type="button" id="abstract-save" class="btn btn-primary">{{ 'IXIPC-abstract-save'|l10n(lang) }}</button> #}
             <button type="button" id="abstract-submit" class="btn btn-primary">{{ 'IXIPC-abstract-submit'|l10n(lang) }}</button>
           </div>
           <div class="col d-flex justify-content-end">
@@ -85,7 +81,7 @@
 </form>
 {# If abstract submitted #}
 {% else %}
-<form id="abstract-{{abstract.id}}">
+<form id="abstract-{{abstract.id}}" data-id="{{ abstract.id if abstract }}"  data-status="closed">
   <input type="hidden" id="abstract-id" name="abstract-id" value="{{ abstract.id if abstract }}">
   <input type="hidden" id="abstract-submitted" name="abstract-submitted" value="true">
   {% if reload -%}

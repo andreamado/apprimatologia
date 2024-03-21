@@ -59,39 +59,57 @@
       };
  
       // Save abstract
-      elem.querySelector('#abstract-save').onclick = () => {
-        fetch("{{ url_for('IX_IPC.save_abstract') }}", {
-          method: 'POST',
-          body: new FormData(elem.querySelector('#abstract-' + String(id)))
-        })
-        .then((response) => response.json())
-        .then((data) => {
-          let feedback = elem.querySelector('#save-feedback');
-          if('id' in data) {
-            elem.querySelector('#abstract-id').value = data['id'];
-            feedback.innerHTML = "{{ 'IXIPC-abstract-save-success'|l10n(lang) }}"
-            feedback.classList.add('bg-success')
-            feedback.classList.remove('bg-danger')
-          } else {
-            feedback.innerHTML = "{{ 'IXIPC-abstract-save-fail'|l10n(lang) }}"
-            feedback.classList.remove('bg-success')
-            feedback.classList.add('bg-success')
-          }
-          setTimeout(() => {
-            feedback.innerHTML = '&nbsp;';
-            feedback.classList.remove('bg-success')
-            feedback.classList.remove('bg-danger')
-          }, 4000);
-        })
-        .catch((e) => {
-          console.log(e)
-        });
+      //elem.querySelector('#abstract-save').onclick
+      let abstractModified = false;
+      const saveAbstract = () => {
+        if(abstractModified){
+          abstractModified = false;
+
+          fetch("{{ url_for('IX_IPC.save_abstract') }}", {
+            method: 'POST',
+            body: new FormData(elem.querySelector('#abstract-' + String(id)))
+          })
+          .then((response) => response.json())
+          .then((data) => {
+            let feedback = elem.querySelector('#save-feedback');
+            if('id' in data) {
+              elem.querySelector('#abstract-id').value = data['id'];
+              feedback.innerHTML = "{{ 'IXIPC-abstract-save-success'|l10n(lang) }}"
+              feedback.classList.add('bg-success')
+              feedback.classList.remove('bg-danger')
+            } else {
+              feedback.innerHTML = "{{ 'IXIPC-abstract-save-fail'|l10n(lang) }}"
+              feedback.classList.remove('bg-success')
+              feedback.classList.add('bg-success')
+            }
+            setTimeout(() => {
+              feedback.innerHTML = '&nbsp;';
+              feedback.classList.remove('bg-success')
+              feedback.classList.remove('bg-danger')
+            }, 4000);
+          })
+          .catch((e) => {
+            console.log(e)
+          });
+        }
       };
 
-      let selectedAuthors = elem.querySelector('#select-authors');
+      // Observe the abstract for changes and save them
+      const scheduleAbstractSave = () => {
+        console.log('change detected');
+        abstractModified = true;
+        setTimeout(saveAbstract, 3000);
+      }
+      elem.querySelector('#abstract-type').addEventListener('input', scheduleAbstractSave);
+      elem.querySelector('#abstract-title').addEventListener('input', scheduleAbstractSave);
+      elem.querySelector('#abstract-body').addEventListener('input', scheduleAbstractSave);
+
+      authors.registerAbstract(elem, id);
+
+      let selectedAuthors = elem.querySelector('#selected-authors');
       let availableAuthors = elem.querySelector('#available-authors');
       new Sortable(selectedAuthors, {
-        group: 'shared123', // set both lists to same group
+        group: 'shared-' + String(id), // set both lists to same group
         animation: 150,
         onSort: (evt) => {
           selectedAuthors.childNodes.forEach(
@@ -103,16 +121,26 @@
       });
       
       new Sortable(availableAuthors, {
-        group: 'shared123',
+        group: 'shared-' + String(id),
         animation: 150,
         onSort: (evt) => {
           availableAuthors.childNodes.forEach(
             (child, i) => {
               if('dataset' in child) {
                 child.innerHTML = child.dataset.content;
+                if(evt.to != evt.from) {
+                  origin = (evt.from === availableAuthors)?'availableAuthors':'selectedAuthors';
+                  dest   = (evt.to   === availableAuthors)?'availableAuthors':'selectedAuthors';
+                  authors.moveAuthor(
+                    evt.item.dataset.authorId,
+                    id,
+                    origin,
+                    dest
+                  );
+                }
               }
             }
-          ); 
+          );
         }
       });
 
@@ -133,6 +161,6 @@
     })
     .catch((e) => {
       console.log(e);
-    });  
+    });
   }
 </script>

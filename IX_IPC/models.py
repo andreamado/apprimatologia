@@ -9,21 +9,22 @@ class User(Base):
     __tablename__ = 'users'
     id = Column(Integer, primary_key=True)
     email = Column(String(200), unique=True)
-    participant_id = Column(ForeignKey('participants.id'))
+    author_id = Column(ForeignKey('authors.id'))
     password = Column(String(32))
     name = Column(String(200))
 
-    def __init__(self, name, email, password=None, participant_id=None):
+    def __init__(self, name, email, password=None, author_id=None):
         self.name = name
         self.email = email
         self.password = password if password else token_hex(16)
-        self.participant_id = participant_id
+        self.author_id = author_id
 
 
-class Participant(Base):
-    __tablename__ = 'participants'
+class Author(Base):
+    __tablename__ = 'authors'
     id = Column(Integer, primary_key=True)
-    name =  Column(String(200))
+    first_name =  Column(String(200))
+    last_name =  Column(String(200))
     email = Column(String(200), unique=True)
 
     country = Column(String(200))
@@ -31,13 +32,17 @@ class Participant(Base):
     created = Column(UtcDateTime(), default=utcnow())
     modified = Column(UtcDateTime(), onupdate=utcnow())
 
-    def __init__(self, name, email, country):
-        self.name = name
+    created_by = Column(ForeignKey('users.id'))
+
+    def __init__(self, created_by, first_name=None, last_name=None, email=None, country=None):
+        self.first_name = first_name
+        self.last_name = last_name
         self.email = email
         self.country = country
+        self.created_by = created_by
 
     def __repr__(self):
-        return f'<Participant {self.name!r} {self.email!r}>'
+        return f'<Author {self.first_name!r} {self.last_name!r} ({self.email!r})>'
 
 
 class Institution(Base):
@@ -57,7 +62,7 @@ class Institution(Base):
 class Affiliation(Base):
     __tablename__ = 'affiliation'
     id = Column(Integer, primary_key=True)
-    author_id = Column(Integer, ForeignKey('participants.id'))
+    author_id = Column(Integer, ForeignKey('authors.id'))
     institution_id = Column(Integer, ForeignKey('institutions.id'))
 
     def __init__(self, author_id, institution_id):
@@ -98,7 +103,7 @@ class Abstract(Base):
 class AbstractAuthor(Base):
     __tablename__ = 'abstract_author'
     id = Column(Integer, primary_key=True)
-    author_id = Column(Integer, ForeignKey('participants.id'))
+    author_id = Column(Integer, ForeignKey('authors.id'))
     abstract_id = Column(Integer, ForeignKey('abstracts.id'))
     presenter = Column(Boolean)
     first_author = Column(Boolean)

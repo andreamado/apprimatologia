@@ -79,6 +79,8 @@ IXIPC-abstract-authors-available = Autores disponíveis
 IXIPC-abstract-authors-select = Autores selecionados
 IXIPC-abstract-authors-drag-and-drop = Arrasta os autores para a área dos autores selecionados
 IXIPC-abstract-authors-edit = Cria e modifica autores
+IXIPC-abstract-authors-save = Salva os autores
+IXIPC-saved-author = Autor salvo
 
 IXIPC-personal-data-first-name = Nome
 IXIPC-personal-data-last-name = Apelido

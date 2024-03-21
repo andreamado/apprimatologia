@@ -246,7 +246,7 @@
     </div>
   </form>
   <script>
-    const update_total = function() {
+    const update_total = () => {
       let total = parseFloat(document.getElementById('voluntary_donation').value);
       if (isNaN(total)) {
         total = 0.0;

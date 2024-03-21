@@ -3,7 +3,7 @@ from flask import current_app as app
 from email_validator import validate_email, EmailNotValidError
 
 from .db_IXIPC import get_session
-from .models import User, Abstract, AbstractType
+from .models import User, Abstract, AbstractType, Author
 
 from flask_wtf import FlaskForm
 
@@ -275,7 +275,68 @@ def load_abstract(language, id=None, csrf_token = None):
 def save_abstract():
     return save_abstract_local(request.form, g), 200
 
+@login_IXIPC_required
+@bp.route('/IXIPC/new_author', methods=['POST'])
+def new_author():
+    with get_session() as db_session:
+        author = Author(created_by=g.IXIPC_user.id)
+        db_session.add(author)
+        db_session.commit()
 
+        return json.dumps({'id': author.id}), 200
+
+@login_IXIPC_required
+@bp.route('/IX_IPC/load_authors', methods=['POST'])
+def load_authors():
+    with get_session() as db_session:
+        authors = db_session.execute(select(Author).where(Author.created_by == g.IXIPC_user.id)).scalars()
+        authors_list = []
+        for author in authors:
+            first_name = author.first_name if author.first_name else '' 
+            last_name = author.last_name if author.last_name else '' 
+            authors_list.append({
+                'firstName': first_name,
+                'lastName': last_name,
+                'id': author.id
+            })
+            print(author)
+
+        return json.dumps({'authors': authors_list}), 200
+
+
+@login_IXIPC_required
+@bp.route('/IX_IPC/save_authors', methods=['POST'])
+def save_authors():
+    authors = json.loads(request.form['authors'])
+    with get_session() as db_session:
+        for id in authors:
+            author = db_session.get(Author, int(id))
+            author_new = authors[id]
+            if g.IXIPC_user.id == author.created_by:
+                author.first_name = author_new['firstName']
+                author.last_name = author_new['lastName']
+        
+                db_session.commit()
+    return '', 200
+
+
+@login_IXIPC_required
+@bp.route('/IX_IPC/save_abstract_authors', methods=['POST'])
+def save_abstract_authors():
+    authors = json.loads(request.form['abstractAuthors'])
+    with get_session() as db_session:
+        for id in authors:
+            author = db_session.get(Author, int(id))
+            author_new = authors[id]
+            if g.IXIPC_user.id == author.created_by:
+                author.first_name = author_new['firstName']
+                author.last_name = author_new['lastName']
+        
+                db_session.commit()
+    return '', 200
+
+
+# TODO: limit the submission to the right user!!!
 @login_IXIPC_required
 @bp.route('/IX_IPC/submit_abstract/<language:language>', methods=['POST'])
 def submit_abstract(language):
