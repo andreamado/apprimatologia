@@ -3,11 +3,11 @@ from flask import current_app as app
 from email_validator import validate_email, EmailNotValidError
 
 from .db_IXIPC import get_session
-from .models import User, Abstract, AbstractType, Author
+from .models import User, Abstract, AbstractType, Author, AbstractAuthor
 
 from flask_wtf import FlaskForm
 
-from sqlalchemy import select
+from sqlalchemy import select, delete, update
 
 import json
 
@@ -309,30 +309,35 @@ def load_authors():
 def save_authors():
     authors = json.loads(request.form['authors'])
     with get_session() as db_session:
+        authors_list = []
         for id in authors:
             author = db_session.get(Author, int(id))
             author_new = authors[id]
             if g.IXIPC_user.id == author.created_by:
                 author.first_name = author_new['firstName']
                 author.last_name = author_new['lastName']
-        
-                db_session.commit()
+                authors_list.append(author)
+        db_session.add_all(authors_list)
+        db_session.commit()
     return '', 200
 
 
 @login_IXIPC_required
 @bp.route('/IX_IPC/save_abstract_authors', methods=['POST'])
 def save_abstract_authors():
-    authors = json.loads(request.form['abstractAuthors'])
+    abstracts = json.loads(request.form['abstractAuthors'])
     with get_session() as db_session:
-        for id in authors:
-            author = db_session.get(Author, int(id))
-            author_new = authors[id]
-            if g.IXIPC_user.id == author.created_by:
-                author.first_name = author_new['firstName']
-                author.last_name = author_new['lastName']
-        
-                db_session.commit()
+        for abstract_id in abstracts:
+            db_session.execute(delete(AbstractAuthor).where(
+                AbstractAuthor.abstract_id == abstract_id
+            ))
+
+            # TODO: verify if the abstracts and authors being modified belong to user
+            # TODO: add the presenter tag
+            for (author_id, order) in abstracts[abstract_id]:
+                db_session.add(AbstractAuthor(abstract_id=abstract_id, author_id=author_id, order=order))
+
+        db_session.commit()
     return '', 200
 
 

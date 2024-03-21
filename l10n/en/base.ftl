@@ -80,6 +80,7 @@ IXIPC-abstract-authors-drag-and-drop = Drag and drop the authors for selected au
 IXIPC-abstract-authors-edit = Create and modify authors
 IXIPC-abstract-authors-save = Save authors
 IXIPC-saved-author = Author saved
+IXIPC-no-name = No name
 
 IXIPC-personal-data-first-name = First name
 IXIPC-personal-data-last-name = Last name

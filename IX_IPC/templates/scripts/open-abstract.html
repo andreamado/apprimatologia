@@ -59,7 +59,6 @@
       };
  
       // Save abstract
-      //elem.querySelector('#abstract-save').onclick
       let abstractModified = false;
       const saveAbstract = () => {
         if(abstractModified){
@@ -96,7 +95,6 @@
 
       // Observe the abstract for changes and save them
       const scheduleAbstractSave = () => {
-        console.log('change detected');
         abstractModified = true;
         setTimeout(saveAbstract, 3000);
       }
@@ -108,40 +106,51 @@
 
       let selectedAuthors = elem.querySelector('#selected-authors');
       let availableAuthors = elem.querySelector('#available-authors');
+
+      const eventSource = (source) => {
+        if(source === availableAuthors) {
+          return 'availableAuthors';
+        } else if(source === selectedAuthors) {
+          return 'selectedAuthors';
+        } else {
+          return null;
+        }
+      }
+
+      const dragAuthor = (list, numbered=null) => (evt) => {
+        list.childNodes.forEach(
+          (child, i) => {
+            if('dataset' in child) {
+              child.dataset.order = String(i);
+              if(numbered) {
+                child.innerHTML = String(i+1) + '. ' + child.dataset.content;
+              } else {
+                child.innerHTML = child.dataset.content;
+              }
+              authors.moveAuthor(
+                evt.item.dataset.authorId,
+                id,
+                eventSource(evt.from),
+                eventSource(evt.to),
+                i
+              );
+              authors.flagAndSaveAbstractAuthors(id);
+            }
+          }
+        );
+      };
+
       new Sortable(selectedAuthors, {
         group: 'shared-' + String(id), // set both lists to same group
         animation: 150,
-        onSort: (evt) => {
-          selectedAuthors.childNodes.forEach(
-            (child, i) => {
-              child.innerHTML = String(i+1) + '. ' + child.dataset.content;
-            }
-          );
-        }
+        onSort: dragAuthor(selectedAuthors, numbered=true),
+        onUpdate: dragAuthor(selectedAuthors, numbered=true)
       });
       
       new Sortable(availableAuthors, {
         group: 'shared-' + String(id),
         animation: 150,
-        onSort: (evt) => {
-          availableAuthors.childNodes.forEach(
-            (child, i) => {
-              if('dataset' in child) {
-                child.innerHTML = child.dataset.content;
-                if(evt.to != evt.from) {
-                  origin = (evt.from === availableAuthors)?'availableAuthors':'selectedAuthors';
-                  dest   = (evt.to   === availableAuthors)?'availableAuthors':'selectedAuthors';
-                  authors.moveAuthor(
-                    evt.item.dataset.authorId,
-                    id,
-                    origin,
-                    dest
-                  );
-                }
-              }
-            }
-          );
-        }
+        onSort: dragAuthor(availableAuthors)
       });
 
       observer.disconnect();

@@ -106,13 +106,15 @@ class AbstractAuthor(Base):
     author_id = Column(Integer, ForeignKey('authors.id'))
     abstract_id = Column(Integer, ForeignKey('abstracts.id'))
     presenter = Column(Boolean)
+    order = Column(Integer)
     first_author = Column(Boolean)
     corresponding_author = Column(Boolean)
 
-    def __init__(self, author_id, poster_id, presenter=False, first_author=False, corresponding_author=False):
+    def __init__(self, author_id, abstract_id, order=0, presenter=False, first_author=False, corresponding_author=False):
         self.author_id = author_id
-        self.poster_id = poster_id
+        self.abstract_id = abstract_id
         self.presenter = presenter
         self.first_author = first_author
         self.corresponding_author = corresponding_author
+        self.order = order
 

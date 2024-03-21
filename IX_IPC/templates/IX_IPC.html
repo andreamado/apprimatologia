@@ -312,7 +312,8 @@
     // the elements as they change
     const authorsManager = () => {
       let _authors = {};
-      let authors_to_save = {};
+      let authorsToSave = {};
+      let abstractAuthorsToSave = {};
       let abstracts = {};
 
       // Load authors from database
@@ -330,7 +331,7 @@
           authors[author.id] = author;
           editAuthorsForm.insertAdjacentElement('beforeend', createAuthorHTMLElement(author));
         }
-        authors_to_save = {};
+        authorsToSave = {};
       })
       .catch((e) => console.log(e));
 
@@ -346,7 +347,7 @@
           target[property] = value;
           if(isInteger(property)) {
             const author_id = value.id;
-            authors_to_save[author_id] = value;
+            authorsToSave[author_id] = value;
             setTimeout(saveAuthors, 3000);
             for(const abstract_id in abstracts) {
               let abstract = abstracts[abstract_id];
@@ -371,37 +372,56 @@
           return true;
         }
       });
+
+      /*const selectedAuthorsProxy = (abstractId) => new Proxy({}, {
+        deleteProperty: function(target, property) {
+          target[property] = undefined;
+          if(isInteger(property)) {
+            flagAndSaveAbstractAuthors(abstractId);
+          }
+          return true;
+        },
+        set: function(target, property, value, receiver) {
+          target[property] = value;
+          if(isInteger(property)) {
+            flagAndSaveAbstractAuthors(abstractId);
+          }
+          return true;
+        }
+      });*/
+
       let editAuthorsForm = document.getElementById('accordion-authors');
 
       const authorFullname = (author) => {
         let fullName = author.firstName + ' ' + author.lastName;
         if(fullName === ' ') {
-          fullName = 'No name';
+          fullName = "{{'IXIPC-no-name'|l10n(lang)}}";
         }
         return fullName;
       }
 
-      const moveAuthor = (id, abstractId, origin, destination) => {
+      const moveAuthor = (id, abstractId, origin, destination, order) => {
         let abstract = abstracts[abstractId];
         let author = abstract[origin][id];
+
         if(author) {
-          abstract[destination][id] = abstract[origin][id];
-          abstract[origin][id] = undefined;
-        } 
+          author.order = order;
+          if(destination != origin) {
+            abstract[destination][id] = author;
+            abstract[origin][id] = undefined;
+          }
+        }
       }
 
       const registerAbstract = (abstractElement, abstractId) => {
         let abstract = {
           'id': abstractId,
           'element': abstractElement,
-          'selectedAuthors': {},
-          'availableAuthors': {},
+          'selectedAuthors': {},//selectedAuthorsProxy(abstractId),
+          'availableAuthors': Object.assign({}, _authors),
           'selectedAuthorsBox': abstractElement.querySelector('#selected-authors'),
           'availableAuthorsBox': abstractElement.querySelector('#available-authors')
         };
-
-        // populate the available authors
-        Object.assign(abstract.availableAuthors, _authors);
 
         //TODO: check the database for the authors that are selected and update the lists
         
@@ -416,7 +436,7 @@
         for(let i = 0; i < abstract.selectedAuthors.length; i++) {
           let author = abstract.selectedAuthors[i];
           abstract.selectedAuthorsBox.insertAdjacentHTML('beforeend',
-            `<div id="author-${id}" class="author-name rounded-1 p-1 mb-1" data-content="${author.fullName}" data-author-id="${author.id}">${i+1}. ${author.fullName}</div>`
+            `<div id="author-${id}" class="author-name rounded-1 p-1 mb-1" data-order="${i}" data-content="${author.fullName}" data-author-id="${author.id}">${i+1}. ${author.fullName}</div>`
           );
         }
 
@@ -440,16 +460,16 @@
         authorForm.dataset.id = author.id;
         
         authorForm.classList.add('accordion-item');
-        authorForm.insertAdjacentHTML('beforeend', 
+        authorForm.insertAdjacentHTML('beforeend',
           `<h2 class="accordion-header">
-            <button id="author-header" class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#author-${author.id}" aria-expanded="false" aria-controls="author-${author.id}"></button>
+            <button id="author-header" class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#author-edit-${author.id}" aria-expanded="false" aria-controls="author-edit-${author.id}"></button>
           </h2>`
         );
 
         const firstNameLabel = "{{ 'IXIPC-personal-data-first-name'|l10n(lang) }}";
         const lastNameLabel = "{{ 'IXIPC-personal-data-last-name'|l10n(lang) }}";
-        authorForm.insertAdjacentHTML('beforeend', 
-          `<div id="author-${author.id}" class="accordion-collapse collapse" data-bs-parent="#accordion-authors">
+        authorForm.insertAdjacentHTML('beforeend',
+          `<div id="author-edit-${author.id}" class="accordion-collapse collapse" data-bs-parent="#accordion-authors">
             <div class="accordion-body">
               <form action="">
                 <div class="row mb-3">
@@ -505,12 +525,12 @@
       };
       
       const saveAuthors = () => {
-        if(Object.keys(authors_to_save).length > 0) {
+        if(Object.keys(authorsToSave).length > 0) {
           let form = new FormData();
           form.append('csrf_token', '{{ csrf_token() }}');
-          form.append('authors', JSON.stringify(authors_to_save));
+          form.append('authors', JSON.stringify(authorsToSave));
 
-          for(let id in authors_to_save) {
+          for(let id in authorsToSave) {
             let elem = document.getElementById('author-saved-' + String(id));
             elem.innerHTML = "{{ 'IXIPC-saved-author'|l10n(lang) }}";
             elem.classList.add('bg-primary');
@@ -520,7 +540,7 @@
             }, 4000);
           }
 
-          authors_to_save = {};
+          authorsToSave = {};
   
           fetch("{{ url_for('IX_IPC.save_authors') }}", {
             method: 'POST',
@@ -530,21 +550,36 @@
         }
       }
 
-      const saveAbstractAuthors = () => {
-        let form = new FormData();
-        form.append('csrf_token', '{{ csrf_token() }}');
+      const flagAndSaveAbstractAuthors = (id) => {
+        abstractAuthorsToSave[id] = true;
+        setTimeout(saveAbstractAuthors, 3000);
+      }
 
-        let abstractAuthors = {};
-        for(let id in abstracts) {
-          abstractAuthors[id] = abstracts[id].selectedAuthors;
+      const saveAbstractAuthors = () => {
+        if(Object.keys(abstractAuthorsToSave).length > 0){
+          let form = new FormData();
+          form.append('csrf_token', '{{ csrf_token() }}');
+
+          let abstractAuthors = {};
+          for(let id in abstractAuthorsToSave) {
+            let elem = document.getElementById('abstract-' + String(id));
+            let selectedAuthorsElement = elem.querySelector('#selected-authors');
+
+            abstractAuthors[id] = []
+            let abstract = abstracts[id];
+            selectedAuthorsElement.childNodes.forEach((child, i) => {
+              abstractAuthors[id].push([child.dataset.authorId, child.dataset.order]);
+            });
+          }
+          form.append('abstractAuthors', JSON.stringify(abstractAuthors));
+          abstractAuthorsToSave = {};
+
+          fetch("{{ url_for('IX_IPC.save_abstract_authors') }}", {
+            method: 'POST',
+            body: form
+          })
+          .catch((e) => console.log(e));
         }
-        form.append('abstractAuthors', JSON.stringify(abstractAuthors));
-        
-        fetch("{{ url_for('IX_IPC.save_abstract_authors') }}", {
-          method: 'POST',
-          body: form
-        })
-        .catch((e) => console.log(e));
       }
 
       // Display existing authors in authors editing form
@@ -556,7 +591,9 @@
         'addAuthor': addAuthor,
         'moveAuthor': moveAuthor,
         'registerAbstract': registerAbstract,
-        'saveAuthors': saveAuthors
+        'saveAuthors': saveAuthors,
+        'saveAbstractAuthors': saveAbstractAuthors,
+        'flagAndSaveAbstractAuthors': flagAndSaveAbstractAuthors
       }
     };
     let authors = authorsManager();
