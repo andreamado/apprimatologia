@@ -63,6 +63,7 @@ IXIPC-abstract-body = Resumo
 IXIPC-abstract-characters = caracteres
 IXIPC-abstract-poster = Poster
 IXIPC-abstract-presentation = Apresentação oral
+IXIPC-abstract-select-abstract-type = Seleciona o tipo de resumo
 IXIPC-abstract-save = Salvar
 IXIPC-abstract-save-success = Dados do resumo salvos!
 IXIPC-abstract-save-fail = Erro ao salvar os dados
@@ -82,6 +83,13 @@ IXIPC-abstract-authors-drag-and-drop =
     2. Arrasta os autores selecionados para os ordenar
     3. Seleciona o orador (carregando no símbolo de microfone)
 IXIPC-abstract-speaker = orador
+IXIPC-abstract-validation-errors = Por favor, corrige os seguintes erros antes de submeter:
+IXIPC-abstract-title-empty = O título não está definido
+IXIPC-abstract-title-too-long = O título não pode ter mais de 150 caracteres
+IXIPC-abstract-abstract-empty = O texto do resumo não está definido
+IXIPC-abstract-abstract-too-long = O resumo não pode ter mais de 500 caracteres
+IXIPC-abstract-no-authors = Tens de selecionar pelo menos um autor
+IXIPC-abstract-no-speaker = Nenhum autor foi designado como orador
 
 IXIPC-abstract-authors-edit = Cria e modifica autores
 IXIPC-abstract-authors-save = Salva os autores

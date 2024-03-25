@@ -36,7 +36,7 @@
       const fullName = authorFullname(author);
       const number = (order==null)?'':(String(order+1)+'. ');
       return (
-        `<div id="author-${id}" class="author-name rounded-1 p-1 mb-1" data-content="${fullName}" data-author-id="${id}" data-presenter="${presenter}">
+        `<div id="author-${id}" class="author-name rounded-1 p-1 mb-1" data-content="${fullName}" data-author-id="${id}">
           <div class='d-flex'>
             <div class='flex-grow-1' id='author-name'>${number}${fullName}</div> 
             <div class="speaker${presenter?' speaker-selected':''}" id="speaker-${id}"${(order==null)?' hidden':''}><img style="width:20px;" src='${presenter?speakerEnabled:speakerDisabled}' alt='speaker-icon'></div>
@@ -286,6 +286,12 @@
         let author = abstract[origin][id];
 
         if(author) {
+          if(destination == 'availableAuthors') {
+            author.presenter = false;
+            let element = abstract.element.querySelector('#speaker-' + String(id));
+            element.querySelector('img').src = speakerDisabled;
+            element.classList.remove('speaker-selected');
+          }
           if(destination != origin) {
             abstract[destination][id] = author;
             delete abstract[origin][id];
@@ -308,11 +314,9 @@
           setSpeaker(author.id);
           for(const author_id in abstract.selectedAuthors) {
             let element = abstract.element.querySelector('#speaker-' + String(author_id));
-            element.dataset.presenter = 'false';
             element.querySelector('img').src = speakerDisabled;
             element.classList.remove('speaker-selected');
           }
-          speakerElement.dataset.presenter = 'true';
           speakerElement.querySelector('img').src = speakerEnabled;
           speakerElement.classList.add('speaker-selected');
         });
@@ -398,6 +402,10 @@
       delete abstracts[id];
     }
 
+    const getAbstractSelectedAuthors = (abstractId) => {
+      return Object.values(abstracts[abstractId].selectedAuthors);
+    }
+
     ///////////////////////////////////////////////////////////////////////////////
 
     return {
@@ -405,6 +413,7 @@
       'saveAuthors': saveAuthors,
       'registerAbstract': registerAbstract,
       'deregisterAbstract': deregisterAbstract,
+      'getAbstractSelectedAuthors': getAbstractSelectedAuthors
     }
   };
 

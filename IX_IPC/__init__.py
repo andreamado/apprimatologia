@@ -217,17 +217,23 @@ def save_abstract_local(form, g):
         if form and 'abstract-id' in form and len(form['abstract-id']) > 0:
             id = int(form['abstract-id'])
             abstract = db_session.get(Abstract, id)
+
+            if abstract.owner != g.IXIPC_user.id:
+                return json.dumps({'error': 'access unauthorized'})
         else:
             abstract = Abstract(owner=g.IXIPC_user.id)
             db_session.add(abstract)
 
-        # TODO: Sanitize input!
         if form:
             if 'title' in form:
-                abstract.title = form['title']
+                abstract.title = form['title'].strip()
+                if len(abstract.title) > 150:
+                    return json.dumps({'error': 'title too long'})
 
             if 'abstract-body' in form:
-                abstract.abstract = form['abstract-body']
+                abstract.abstract = form['abstract-body'].strip()
+                if len(abstract.abstract) > 500:
+                    return json.dumps({'error': 'abstract too long'})
 
             if 'abstract_type' in form:
                 abstract_type = form['abstract_type']
@@ -235,6 +241,8 @@ def save_abstract_local(form, g):
                     abstract.abstract_type = AbstractType.POSTER
                 elif abstract_type == 'presentation':
                     abstract.abstract_type = AbstractType.PRESENTATION
+                else:
+                    return json.dumps({'error': 'unrecognized abstract type'})
         else:
             abstract.title = ''
             abstract.abstract = ''
@@ -329,8 +337,8 @@ def save_authors():
             author = db_session.get(Author, int(id))
             author_new = authors[id]
             if g.IXIPC_user.id == author.created_by:
-                author.first_name = author_new['firstName']
-                author.last_name = author_new['lastName']
+                author.first_name = author_new['firstName'].strip()
+                author.last_name = author_new['lastName'].strip()
                 authors_list.append(author)
         db_session.add_all(authors_list)
         db_session.commit()
@@ -342,16 +350,16 @@ def save_authors():
 def save_abstract_authors():
     abstracts = json.loads(request.form['abstractAuthors'])
     with get_session() as db_session:
+        abstract_authors = []
         for abstract_id in abstracts:
-            db_session.execute(delete(AbstractAuthor).where(
-                AbstractAuthor.abstract_id == abstract_id
-            ))
-
-            # TODO: verify if the abstracts and authors being modified belong to user
-            # TODO: add the presenter tag
-            for (author_id, order, presenter) in abstracts[abstract_id]:
-                db_session.add(AbstractAuthor(author_id=author_id, abstract_id=abstract_id, order=order, presenter=presenter))
-
+            if db_session.get(Abstract, abstract_id).owner == g.IXIPC_user.id:
+                db_session.execute(delete(AbstractAuthor).where(
+                    AbstractAuthor.abstract_id == abstract_id
+                ))
+                for (author_id, order, presenter) in abstracts[abstract_id]:
+                    abstract_authors.append(AbstractAuthor(author_id=author_id, abstract_id=abstract_id, order=order, presenter=presenter))
+                
+        db_session.add_all(abstract_authors)
         db_session.commit()
     return '', 200
 

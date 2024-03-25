@@ -62,6 +62,7 @@ IXIPC-abstract-body = Abstract
 IXIPC-abstract-characters = characters
 IXIPC-abstract-poster = Poster
 IXIPC-abstract-presentation = Oral presentation
+IXIPC-abstract-select-abstract-type = Select the abstract type
 IXIPC-abstract-save = Save
 IXIPC-abstract-save-success = Abstract data sucessfully saved!
 IXIPC-abstract-save-fail = Error saving abstract data
@@ -81,6 +82,13 @@ IXIPC-abstract-authors-drag-and-drop =
     2. Drag the selected authors for ordering
     3. Select the speaker (clicking on the microphone symbol)
 IXIPC-abstract-speaker = speaker
+IXIPC-abstract-validation-errors = Please correct the following errors before submitting:
+IXIPC-abstract-title-empty = The title is not defined
+IXIPC-abstract-title-too-long = The title cannot be longer than 150 characters
+IXIPC-abstract-abstract-empty = The abstract text is not defined
+IXIPC-abstract-abstract-too-long = The abstract text cannot be longer than 500 characters
+IXIPC-abstract-no-authors = At least one selected author is required
+IXIPC-abstract-no-speaker = No speaker selected
 
 IXIPC-abstract-authors-edit = Create and modify authors
 IXIPC-abstract-authors-save = Save authors

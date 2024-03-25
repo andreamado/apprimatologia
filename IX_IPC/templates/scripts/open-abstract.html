@@ -45,21 +45,77 @@
         abstractElement.remove();
       };
 
+      const validateSubmission = (authors) => {
+        let submissionValid = true;
+
+        let warningArea = abstractElement.querySelector('#submission-warnings');
+        warningArea.removeAttribute('hidden');
+
+        let warnings = '';
+
+        let title = abstractElement.querySelector('#abstract-title').value.trim();
+        if(title == '') {
+          warnings += '<br>&emsp;- ' + "{{ 'IXIPC-abstract-title-empty'|l10n(lang) }}";
+          submissionValid = false;
+        }
+
+        if(title.length > 150) {
+          warnings += '<br>&emsp;- ' + "{{ 'IXIPC-abstract-title-too-long'|l10n(lang) }}";
+          submissionValid = false;
+        }
+
+        let abstract = abstractElement.querySelector('#abstract-body').value.trim();
+        if(abstract == '') {
+          warnings += '<br>&emsp;- ' + "{{ 'IXIPC-abstract-abstract-empty'|l10n(lang) }}";
+          submissionValid = false;
+        }
+
+        if(abstract.length > 500) {
+          warnings += '<br>&emsp;- ' + "{{ 'IXIPC-abstract-abstract-too-long'|l10n(lang) }}";
+          submissionValid = false;
+        }
+
+        let authors_list = authors.getAbstractSelectedAuthors(id);
+        if(authors_list.length === 0) {
+          warnings += '<br>&emsp;- ' + "{{ 'IXIPC-abstract-no-authors'|l10n(lang) }}";
+          submissionValid = false;
+        } else {
+          let speakerDefined = false;
+          for(const author of authors_list) {
+            if(author.presenter) {
+              speakerDefined = true;
+              break;
+            }
+          }
+          if(!speakerDefined) {
+            warnings += '<br>&emsp;- ' + "{{ 'IXIPC-abstract-no-speaker'|l10n(lang) }}";
+            submissionValid = false;
+          }  
+        }
+
+        if(!submissionValid)
+          warningArea.innerHTML = "{{ 'IXIPC-abstract-validation-errors'|l10n(lang) }}" + warnings;
+
+        return submissionValid;
+      }
+
       // Submit abstract
       abstractElement.querySelector('#abstract-submit').onclick = () => {
-        authors.deregisterAbstract(id);
+        if(validateSubmission(authors)){
+          authors.deregisterAbstract(id);
 
-        fetch("{{ url_for('IX_IPC.submit_abstract', language=lang) }}", {
-          method: 'POST',
-          body: new FormData(abstractElement.querySelector('#abstract-' + String(id)))
-        })
-        .then((response) => response.json())
-        .then((data) => {
-          abstractElement.outerHTML = data['html'];
-        })
-        .catch((e) => {
-          console.log(e)
-        });
+          fetch("{{ url_for('IX_IPC.submit_abstract', language=lang) }}", {
+            method: 'POST',
+            body: new FormData(abstractElement.querySelector('#abstract-' + String(id)))
+          })
+          .then((response) => response.json())
+          .then((data) => {
+            abstractElement.outerHTML = data['html'];
+          })
+          .catch((e) => {
+            console.log(e)
+          });
+        }
       };
  
       // Save abstract
