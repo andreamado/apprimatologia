@@ -1,0 +1,51 @@
+<form id="abstract-{{abstract.id}}" data-id="{{ abstract.id if abstract }}"  data-status="closed">
+  <input type="hidden" id="abstract-id" name="abstract-id" value="{{ abstract.id if abstract }}">
+  <input type="hidden" id="abstract-submitted" name="abstract-submitted" value="true">
+  {% if reload -%}
+  <input type="hidden" name="csrf_token" value="{{ csrf_token }}"/>
+  {% else -%}
+  {{ csrf_token }}
+  {% endif -%}
+  <div class="rounded-4 card mb-3">
+    <div class="card-body">
+      <button type="button" class="btn-close position-absolute top-0 end-0 m-3 focus-ring" style="--bs-focus-ring-color: rgba(54, 81, 28, .25)" aria-label="Close" id="abstract-close-button"></button>
+      <h5 class="card-title mb-3">{{ 'IXIPC-abstract-submitted'|l10n(lang) }} — {{ abstract.abstract_type|abstract_type(lang) }}</h5>
+      <div class="container">
+        <div class="row mb-3">
+          <div class="row mb-3">
+            <div class="col">
+              <h3 id="abstract-title" class="abstract-title">
+                {{ abstract.title }}
+              </h3>
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col">
+              <p>{{ abstract.abstract }}</p>
+            </div>
+          </div>
+          <div class="row mb-1">
+            <div class="col">
+              <h5 class="card-title">{{ 'IXIPC-abstract-authors'|l10n(lang) }}</h5>
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col">
+              <ol>
+                {% for author in authors -%}
+                <li>{{author.firstName}} {{author.lastName}} {{ ('(' + 'IXIPC-abstract-speaker'|l10n(lang) + ')') if author.presenter}}</li>
+                {% endfor -%}
+              </ol>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <div class="form-text">{{ 'IXIPC-abstract-submitted-on'|l10n(lang) }} {{ abstract.submitted_on|date }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-footer"></div>
+  </div>
+</form>

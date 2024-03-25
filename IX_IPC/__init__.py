@@ -261,7 +261,7 @@ def load_abstract(language, id=None, csrf_token = None):
                 return json.dumps({
                   'id': abstract.id,
                   'html': render_template(
-                      'abstract-form-open.html', 
+                      'abstract-form-open-submitted.html', 
                       lang=language, 
                       form=request.form, 
                       reload=True,
@@ -274,7 +274,7 @@ def load_abstract(language, id=None, csrf_token = None):
               return json.dumps({
                   'id': abstract.id,
                   'html': render_template(
-                      'abstract-form-open.html', 
+                      'abstract-form-open-unsubmitted.html', 
                       lang=language, 
                       form=request.form, 
                       reload=True,
