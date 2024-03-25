@@ -9,22 +9,28 @@ class User(Base):
     __tablename__ = 'users'
     id = Column(Integer, primary_key=True)
     email = Column(String(200), unique=True)
-    author_id = Column(ForeignKey('authors.id'))
+    # author_id = Column(ForeignKey('authors.id'))
     password = Column(String(32))
     name = Column(String(200))
+    first_name = Column(String(200))
+    last_name = Column(String(200))
+    institution = Column(String(200))
 
-    def __init__(self, name, email, password=None, author_id=None):
+    def __init__(self, name, email, password=None, first_name=None, last_name=None, institution=None):
         self.name = name
         self.email = email
         self.password = password if password else token_hex(16)
-        self.author_id = author_id
+        # self.author_id = author_id
+        self.first_name = first_name
+        self.last_name = last_name
+        self.institution = institution
 
 
 class Author(Base):
     __tablename__ = 'authors'
     id = Column(Integer, primary_key=True)
-    first_name =  Column(String(200))
-    last_name =  Column(String(200))
+    first_name = Column(String(200))
+    last_name = Column(String(200))
     email = Column(String(200), unique=True)
 
     country = Column(String(200))

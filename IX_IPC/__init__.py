@@ -164,6 +164,20 @@ def load_logged_in_IXIPC_user():
 
 
 @login_IXIPC_required
+@bp.route('/IX_IPC/save_personal_data', methods=['POST'])
+def save_personal_data():
+    with get_session() as db_session:
+        user = db_session.get(User, g.IXIPC_user.id)
+        user.first_name = request.form['first-name'].strip()
+        user.last_name = request.form['last-name'].strip()
+        user.institution = request.form['institution'].strip()
+
+        db_session.commit()
+
+        return json.dumps({}), 200
+
+
+@login_IXIPC_required
 @bp.route('/IX_IPC/create_abstract/<language:language>', methods=['POST'])
 def create_new_abstract(language='pt'):
     id = json.loads(save_abstract_local(None, g))['id']

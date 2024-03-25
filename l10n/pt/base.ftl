@@ -90,6 +90,8 @@ IXIPC-abstract-abstract-empty = O texto do resumo não está definido
 IXIPC-abstract-abstract-too-long = O resumo não pode ter mais de 500 caracteres
 IXIPC-abstract-no-authors = Tens de selecionar pelo menos um autor
 IXIPC-abstract-no-speaker = Nenhum autor foi designado como orador
+IXIPC-abstract-institutions = Instituições
+IXIPC-abstract-new-institution = Nova instituição
 
 IXIPC-abstract-authors-edit = Cria e modifica autores
 IXIPC-abstract-authors-save = Salva os autores

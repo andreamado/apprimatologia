@@ -89,6 +89,8 @@ IXIPC-abstract-abstract-empty = The abstract text is not defined
 IXIPC-abstract-abstract-too-long = The abstract text cannot be longer than 500 characters
 IXIPC-abstract-no-authors = At least one selected author is required
 IXIPC-abstract-no-speaker = No speaker selected
+IXIPC-abstract-institutions = Institutions
+IXIPC-abstract-new-institution = New institution
 
 IXIPC-abstract-authors-edit = Create and modify authors
 IXIPC-abstract-authors-save = Save authors

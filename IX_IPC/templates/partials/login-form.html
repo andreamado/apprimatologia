@@ -1,0 +1,61 @@
+<div class="text-white mb-5" id="personal-area">
+  <h2 class="mb-1">{{ 'IXIPC-personal-area'|l10n(lang) }}</h2>
+  <p class="lead">{{ 'IXIPC-register-to-submit'|l10n(lang) }}</p>
+</div>
+
+<div class="container mb-5">
+  <!-- register form -->
+  <div class="row mb-3">
+    <div class="col-12 col-md-6 g-3">
+      <div class="card rounded-4 mb-3 h-100">
+        <div class="card-body">
+          <h2 class="lh-1 mb-4">{{ 'IXIPC-register'|l10n(lang) }}</h2>
+          <div class="row mb-3">
+            <form action="{{ url_for('IX_IPC.register_user', language=lang) }}" method="post">
+              {{ form.csrf_token }}
+              <div class="col-12 mb-3">
+                <label for="first-name" class="form-label">{{ 'IXIPC-register-first-name'|l10n(lang) }}</label>
+                <input type="text" class="form-control" id="first-name" name="first-name">
+              </div>
+              {# <div class="col-12 mb-3">
+                <label for="last-name" class="form-label">{{ 'IXIPC-register-last-name'|l10n(lang) }}</label>
+                <input type="text" class="form-control" id="last-name" name="last-name">
+              </div> #}
+              <div class="col-12 mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" class="form-control" id="email" name="email">
+              </div>
+              <div class="col-2">
+                <button type="submit" class="btn btn-primary">{{ 'IXIPC-register-submit'|l10n(lang) }}</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- login form -->
+    <div class="col-12 col-md-6 g-3">
+      <div class="card rounded-4 mb-3 h-100">
+        <div class="card-body">
+          <h2 class="lh-1 mb-4">{{ 'IXIPC-login'|l10n(lang) }}</h2>
+          <div class="row mb-3">
+            <form action="{{ url_for('IX_IPC.login', language=lang) }}" method="post">
+              {{ form.csrf_token }}
+              <div class="col-12 mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" class="form-control" id="email" name="email">
+              </div>
+              <div class="col-12 mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" class="form-control" id="password" name="password">
+              </div>
+              <div class="col-2">
+                <button type="submit" class="btn btn-primary">{{ 'IXIPC-register-submit'|l10n(lang) }}</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
