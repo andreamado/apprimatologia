@@ -1,0 +1,416 @@
+<script>
+  const authorsManager = () => {
+    const authorsSaveTimeout = 3000;
+    const warningTimeout = 4000;
+
+    let editAuthorsForm = document.getElementById('accordion-authors');
+
+    //////////////////////////////////////////////////////////////////////////
+    // Utilities
+    const blankForm = () => {
+      let form = new FormData();
+      form.append('csrf_token', '{{ csrf_token() }}');
+      return form;
+    }  
+
+    function isInteger(value) {
+      return !isNaN(parseInt(value)) && isFinite(value);
+    }
+
+    const authorFullname = (author) => {
+      let fullName = author.firstName + ' ' + author.lastName;
+      if(fullName === ' ') {
+        fullName = "{{'IXIPC-no-name'|l10n(lang)}}";
+      }
+      return fullName;
+    }
+    //////////////////////////////////////////////////////////////////////////
+
+    let authorsToSave = {};
+
+    const speakerEnabled  = 'data:image/svg+xml,<svg width="800px" height="800px" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="m 8 0 c -1.660156 0 -3 1.339844 -3 3 v 5 c 0 1.660156 1.339844 3 3 3 s 3 -1.339844 3 -3 v -5 c 0 -1.660156 -1.339844 -3 -3 -3 z m -6 6 v 2.011719 c 0 2.964843 2.164062 5.429687 5 5.90625 v 2.082031 h 2 v -2.082031 c 2.835938 -0.476563 5 -2.941407 5 -5.90625 v -2.011719 h -1.5 v 2.011719 c 0 2.5 -1.992188 4.488281 -4.5 4.488281 s -4.5 -1.988281 -4.5 -4.488281 v -2.011719 z m 0 0" fill="%23fff"/></svg>';
+    const speakerDisabled = 'data:image/svg+xml,<svg width="800px" height="800px" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="m 8 0 c -1.660156 0 -3 1.339844 -3 3 v 0.9375 l -3.46875 -3.46875 l -1.0625 1.0625 l 14 14 l 1.0625 -1.0625 l -2.792969 -2.792969 c 0.789063 -1.011719 1.261719 -2.285156 1.261719 -3.664062 v -2.011719 h -1.5 v 2.011719 c 0 0.972656 -0.304688 1.867187 -0.824219 2.601562 l -1.089843 -1.089843 c 0.261718 -0.445313 0.414062 -0.964844 0.414062 -1.523438 v -5 c 0 -1.660156 -1.339844 -3 -3 -3 z m -6 6 v 2.011719 c 0 2.964843 2.164062 5.429687 5 5.90625 v 2.082031 h 2 v -2.082031 c 0.5 -0.085938 0.976562 -0.230469 1.425781 -0.429688 l -1.164062 -1.164062 c -0.398438 0.113281 -0.824219 0.175781 -1.261719 0.175781 c -2.507812 0 -4.5 -1.988281 -4.5 -4.488281 v -1.449219 l -0.5625 -0.5625 z m 3.003906 2.066406 c 0.035156 1.609375 1.320313 2.894532 2.929688 2.929688 z m 0 0" fill="%23fff"/></svg>';
+
+    const authorSelectHtml = (id, presenter=false, order=null) => {
+      let author = _authors[id]
+      const fullName = authorFullname(author);
+      const number = (order==null)?'':(String(order+1)+'. ');
+      return (
+        `<div id="author-${id}" class="author-name rounded-1 p-1 mb-1" data-content="${fullName}" data-author-id="${id}" data-presenter="${presenter}">
+          <div class='d-flex'>
+            <div class='flex-grow-1' id='author-name'>${number}${fullName}</div> 
+            <div class="speaker${presenter?' speaker-selected':''}" id="speaker-${id}"${(order==null)?' hidden':''}><img style="width:20px;" src='${presenter?speakerEnabled:speakerDisabled}' alt='speaker-icon'></div>
+          </div>
+        </div>`
+      );
+    }
+
+    // Proxy to authors that allows us to intercept any changes in order to 
+    // display or save them
+    let _authors = {};
+    let authors = new Proxy(_authors, {
+      deleteProperty: function(target, property) {
+        let id = target[property].id;
+        return Reflect.deleteProperty(...arguments);
+      },
+      set: function(target, property, author, receiver) {
+        target[property] = author;
+        if(isInteger(property)) {
+          const author_id = author.id;
+          for(const abstract_id in abstracts) {
+            let abstract = abstracts[abstract_id];
+            let fullName = authorFullname(_authors[author_id]);
+
+            if(author_id in abstract.selectedAuthors && abstract.selectedAuthors[author_id]) {
+              let authorElement = abstract.selectedAuthorsElement.querySelector('#author-' + String(author_id));
+              authorElement.dataset.content = fullName;
+              authorElement.querySelector('#author-name').innerHTML = `${author.order}. ${fullName}`;
+            } else if(author_id in abstract.availableAuthors && abstract.availableAuthors[author_id]) {
+              let authorElement = abstract.availableAuthorsElement.querySelector('#author-' + String(author_id));
+              authorElement.dataset.content = fullName;
+              authorElement.querySelector('#author-name').innerHTML = fullName;
+            } else {
+              abstract.availableAuthors[author_id] = author;
+              abstract.availableAuthorsElement.insertAdjacentHTML(
+                'beforeend',
+                authorSelectHtml(author_id)
+              );
+            }
+          }
+          scheduleAuthorsSave(author_id, author);
+        }
+        return true;
+      }
+    });
+    
+    // Load available authors from database
+    fetch("{{ url_for('IX_IPC.load_authors') }}", {
+      method: 'POST',
+      body: blankForm()
+    })
+    .then((response) => response.json())
+    .then((data) => {
+      for(let idx in data.authors) {
+        let author = data.authors[idx];
+        authors[author.id] = author;
+        editAuthorsForm.insertAdjacentElement('beforeend', authorHTMLElement(author));
+      }
+      authorsToSave = {};
+    })
+    .catch((e) => console.log(e));
+
+    const scheduleAuthorsSave = (id=null, author=null) => {
+      if(id && author) authorsToSave[id] = author;
+      setTimeout(saveAuthors, authorsSaveTimeout);
+    }
+
+    const authorHTMLElement = (author) => {
+      let authorForm = document.createElement('div');
+      authorForm.dataset.id = author.id;
+      
+      authorForm.classList.add('accordion-item');
+      authorForm.insertAdjacentHTML('beforeend',
+        `<h2 class="accordion-header">
+          <button id="author-header" class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#author-edit-${author.id}" aria-expanded="false" aria-controls="author-edit-${author.id}"></button>
+        </h2>`
+      );
+  
+      const firstNameLabel = "{{ 'IXIPC-personal-data-first-name'|l10n(lang) }}";
+      const lastNameLabel = "{{ 'IXIPC-personal-data-last-name'|l10n(lang) }}";
+      authorForm.insertAdjacentHTML('beforeend',
+        `<div id="author-edit-${author.id}" class="accordion-collapse collapse" data-bs-parent="#accordion-authors">
+          <div class="accordion-body">
+            <form action="">
+              <div class="row mb-3">
+                <div class="col">
+                  <label for="first-name" class="form-label">${firstNameLabel}</label>
+                  <input name="first-name" id="first-name" type="text" class="form-control" value="${author.firstName}">
+                </div>
+                <div class="col">
+                  <label for="last-name" class="form-label">${lastNameLabel}</label>
+                  <input name="last-name" id="last-name" type="text" class="form-control" value="${author.lastName}">
+                </div>
+              </div>
+              <div class="w-100 card-footer abstract-footer-text text-white text-center p-0" id="author-saved-${author.id}">&nbsp;</div>
+            </form>
+          </div>
+        </div>`
+      );
+  
+      authorForm.addEventListener(
+        'input',
+        updateAuthor(authorForm)
+      );
+      updateAuthor(authorForm)();
+  
+      return authorForm;
+    };
+  
+    const newAuthor = () => {
+      let newAuthor = {
+        'firstName': '',
+        'lastName': '',
+        'id': null
+      };
+      
+      fetch("{{ url_for('IX_IPC.new_author') }}", {
+        method: 'POST',
+        body: blankForm()
+      })
+      .then((response) => response.json())
+      .then((data) => {
+        newAuthor.id = data.id;
+        authors[newAuthor.id] = newAuthor;
+        editAuthorsForm.insertAdjacentElement('beforeend', authorHTMLElement(newAuthor));
+      })
+      .catch((e) => console.log(e));
+    };  
+
+    const updateAuthor = (target) => () => {
+      const id = target.dataset.id;
+      let author = _authors[id];
+      
+      author.firstName = target.querySelector('#first-name').value;
+      author.lastName = target.querySelector('#last-name').value;
+
+      target.querySelector('#author-header').innerHTML = authorFullname(author);
+      authors[id] = author;
+    };
+
+    const saveAuthors = () => {
+      if(Object.keys(authorsToSave).length > 0) {
+        let form = blankForm();
+        form.append('authors', JSON.stringify(authorsToSave));
+
+        for(const id in authorsToSave) {
+          let elem = document.getElementById('author-saved-' + String(id));
+          elem.innerHTML = "{{ 'IXIPC-saved-author'|l10n(lang) }}";
+          elem.classList.add('bg-primary');
+          setTimeout(() => {
+            elem.innerHTML = '&nbsp;';
+            elem.classList.remove('bg-primary');
+          }, warningTimeout);
+        }
+
+        authorsToSave = {};
+
+        fetch("{{ url_for('IX_IPC.save_authors') }}", {
+          method: 'POST',
+          body: form
+        })
+        .catch((e) => console.log(e));
+      }
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    // Abstracts
+    let abstracts = {};
+
+    const registerAbstract = async (abstractElement, id) => {
+      let abstractAuthorsToSave = {};
+
+      const saveAbstractAuthors = async () => {
+        if(Object.keys(abstractAuthorsToSave).length > 0) {
+          let abstractAuthors = {};
+          for(const id in abstractAuthorsToSave) {
+            const abstract = abstracts[id];
+
+            abstractAuthors[id] = []
+            for(const author_id in abstract.selectedAuthors) {
+              const author = abstract.selectedAuthors[author_id];
+              if(author) abstractAuthors[id].push([author_id, author.order, author.presenter]);
+            }
+          }
+          let form = blankForm();
+          form.append('abstractAuthors', JSON.stringify(abstractAuthors));
+          abstractAuthorsToSave = {};
+
+          fetch("{{ url_for('IX_IPC.save_abstract_authors') }}", {
+            method: 'POST',
+            body: form
+          })
+          .catch((e) => console.log(e));
+        }
+      }
+
+      let abstract = {
+        'id': id,
+        'element': abstractElement,
+        'selectedAuthors': {},
+        'availableAuthors': Object.assign({}, _authors),
+        'selectedAuthorsElement': abstractElement.querySelector('#selected-authors'),
+        'availableAuthorsElement': abstractElement.querySelector('#available-authors'),
+        'saveAbstractAuthors': saveAbstractAuthors,
+      };
+
+      /////////////////////////////////////////////////////////////////////////////////////
+      // Load selected authors
+      const load_authors = () => {
+        let form = blankForm();
+        form.append('abstractId', id);
+
+        return fetch("{{ url_for('IX_IPC.load_abstract_authors') }}", {
+          method: 'POST',
+          body: form
+        })
+        .then((response) => response.json())
+        .then((data) => {
+          for(const idx in data.authors) {
+            let id = data.authors[idx].authorId;
+            let author = abstract.availableAuthors[id];
+            delete abstract.availableAuthors[id];
+
+            author.presenter = data.authors[idx].presenter;
+            author.order = data.authors[idx].order;
+            abstract.selectedAuthors[id] = author;
+          }
+        })
+        .catch((e) => console.log(e));
+      };
+      await load_authors();
+      /////////////////////////////////////////////////////////////////////////////////////
+
+      const identifyEventSource = (source) => {
+        if(source == abstract.availableAuthorsElement) {
+          return 'availableAuthors';
+        } else if(source == abstract.selectedAuthorsElement) {
+          return 'selectedAuthors';
+        } else {
+          return null;
+        }
+      }
+
+      const moveAuthor = (id, from, to) => {
+        let origin = identifyEventSource(from);
+        let destination = identifyEventSource(to);
+        let author = abstract[origin][id];
+
+        if(author) {
+          if(destination != origin) {
+            abstract[destination][id] = author;
+            delete abstract[origin][id];
+          }
+        }
+      }
+  
+      const setSpeaker = (id) => {
+        for(const id in abstract.selectedAuthors) {
+          let author = abstract.selectedAuthors[id];
+          if(author) author.presenter = false;
+        }
+        abstract.selectedAuthors[id].presenter = true;
+        scheduleAbstractAuthorsSave();
+      }
+      
+      const addPresenterSelectListener = (author) => {
+        let speakerElement = abstract.element.querySelector('#speaker-' + String(author.id));
+        speakerElement.addEventListener('click', () => {
+          setSpeaker(author.id);
+          for(const author_id in abstract.selectedAuthors) {
+            let element = abstract.element.querySelector('#speaker-' + String(author_id));
+            element.dataset.presenter = 'false';
+            element.querySelector('img').src = speakerDisabled;
+            element.classList.remove('speaker-selected');
+          }
+          speakerElement.dataset.presenter = 'true';
+          speakerElement.querySelector('img').src = speakerEnabled;
+          speakerElement.classList.add('speaker-selected');
+        });
+      }
+
+      for(const id in abstract.availableAuthors) {
+        let author = _authors[id];
+        const fullName = authorFullname(author);
+        abstract.availableAuthorsElement.insertAdjacentHTML(
+          'beforeend',
+          authorSelectHtml(id, presenter=false)
+        );
+        addPresenterSelectListener(author);
+      }
+
+      // order the authors before displaying them
+      authors_ordered = Object.values(abstract.selectedAuthors);
+      authors_ordered.sort((a, b) => (a.order > b.order)?1:-1);
+
+      for(const idx in authors_ordered) {
+        const author = authors_ordered[idx];
+        const fullName = authorFullname(author);
+        abstract.selectedAuthorsElement.insertAdjacentHTML(
+          'beforeend',
+          authorSelectHtml(author.id, presenter=author.presenter, order=parseInt(idx))
+        );
+        addPresenterSelectListener(author);  
+      }
+
+      const scheduleAbstractAuthorsSave = (id=null) => {
+        if(id === null) id = abstract.id;
+        abstractAuthorsToSave[id] = true;
+        setTimeout(saveAbstractAuthors, authorsSaveTimeout);
+      }
+
+      const dragAuthor = (list, numbered=null) => (evt) => {
+        moveAuthor(
+          evt.item.dataset.authorId,
+          evt.from,
+          evt.to
+        );
+  
+        list.childNodes.forEach(
+          (child, i) => {
+            if('dataset' in child) {
+              let authorId = child.dataset.authorId;
+              let speakerElement = child.querySelector(`#speaker-${authorId}`);
+              let nameElement = child.querySelector(`#author-name`);
+
+              if(numbered) {
+                speakerElement.removeAttribute('hidden');
+                nameElement.innerHTML = `${i+1}. ${child.dataset.content}`;
+                abstract.selectedAuthors[authorId].order = i;
+              } else {
+                speakerElement.setAttribute('hidden', '');
+                nameElement.innerHTML = child.dataset.content;
+              }
+            }
+          }
+        );
+
+        scheduleAbstractAuthorsSave(id);
+      }
+
+      new Sortable(abstract.selectedAuthorsElement, {
+        group: 'shared-' + String(id),
+        animation: 150,
+        onSort: dragAuthor(abstract.selectedAuthorsElement, numbered=true),
+        onUpdate: dragAuthor(abstract.selectedAuthorsElement, numbered=true)
+      });
+      
+      new Sortable(abstract.availableAuthorsElement, {
+        group: 'shared-' + String(id),
+        animation: 150,
+        onSort: dragAuthor(abstract.availableAuthorsElement, numbered=false)
+      });
+
+      abstracts[id] = abstract;
+    };
+
+    const deregisterAbstract = async (id) => {
+      await abstracts[id].saveAbstractAuthors();  
+      delete abstracts[id];
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+
+    return {
+      'newAuthor': newAuthor,
+      'saveAuthors': saveAuthors,
+      'registerAbstract': registerAbstract,
+      'deregisterAbstract': deregisterAbstract,
+    }
+  };
+
+  let authors = authorsManager();
+  document.getElementById('new-author-button').addEventListener(
+    'click',
+    authors.newAuthor
+  );
+</script>

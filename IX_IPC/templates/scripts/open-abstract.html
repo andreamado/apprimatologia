@@ -1,78 +1,82 @@
 <script>
   const openAbstract = (id) => {
-    let elem = document.getElementById('abstract-' + String(id));
+    let abstractElement = document.getElementById('abstract-' + String(id));
     let url = "{{ url_for('IX_IPC.load_abstract', language=lang) }}";
 
     const callback = (mutationList, observer) => {
-      elem.querySelector('#abstract-close-button').onclick = () => {
+      abstractElement.querySelector('#abstract-close-button').onclick = () => {
         fetch("{{ url_for('IX_IPC.closed_abstract', language=lang) }}", {
           method: 'POST',
-          body: new FormData(elem.querySelector('#abstract-' + String(id)))
+          body: new FormData(abstractElement.querySelector('#abstract-' + String(id)))
         })
         .then((response) => response.json())
         .then((data) => {
-          elem.innerHTML = data.html;
+          abstractElement.innerHTML = data.html;
         })
         .catch((e) => {
           console.log(e)
         });
       };
 
-      if(elem.querySelector('#abstract-submitted') != null) {
+      if(abstractElement.querySelector('#abstract-submitted') != null) {
         observer.disconnect();
         return;
       } 
 
       registerCounter(
-        elem.querySelector('#abstract-title'), 
-        elem.querySelector('#abstract-title-character-counter')
+        abstractElement.querySelector('#abstract-title'), 
+        abstractElement.querySelector('#abstract-title-character-counter')
       );
       registerCounter(
-        elem.querySelector('#abstract-body'), 
-        elem.querySelector('#abstract-character-counter')
+        abstractElement.querySelector('#abstract-body'), 
+        abstractElement.querySelector('#abstract-character-counter')
       );
 
-      elem.querySelector('#abstract-delete').onclick = () => {
+      abstractElement.querySelector('#abstract-delete').onclick = () => {
+        authors.deregisterAbstract(id);
+
         fetch("{{ url_for('IX_IPC.delete_abstract') }}", {
           method: 'POST',
-          body: new FormData(elem.querySelector('#abstract-' + String(id)))
+          body: new FormData(abstractElement.querySelector('#abstract-' + String(id)))
         })
         .catch((e) => {
           console.log(e)
         });
-        elem.remove();
+        abstractElement.remove();
       };
 
       // Submit abstract
-      elem.querySelector('#abstract-submit').onclick = () => {
+      abstractElement.querySelector('#abstract-submit').onclick = () => {
+        authors.deregisterAbstract(id);
+
         fetch("{{ url_for('IX_IPC.submit_abstract', language=lang) }}", {
           method: 'POST',
-          body: new FormData(elem.querySelector('#abstract-' + String(id)))
+          body: new FormData(abstractElement.querySelector('#abstract-' + String(id)))
         })
         .then((response) => response.json())
         .then((data) => {
-          elem.outerHTML = data['html'];
+          abstractElement.outerHTML = data['html'];
         })
         .catch((e) => {
           console.log(e)
-        })
+        });
       };
  
       // Save abstract
       let abstractModified = false;
       const saveAbstract = () => {
-        if(abstractModified){
+        if(abstractModified) {
           abstractModified = false;
 
           fetch("{{ url_for('IX_IPC.save_abstract') }}", {
             method: 'POST',
-            body: new FormData(elem.querySelector('#abstract-' + String(id)))
+            body: new FormData(abstractElement.querySelector('#abstract-' + String(id)))
           })
           .then((response) => response.json())
           .then((data) => {
-            let feedback = elem.querySelector('#save-feedback');
+            let feedback = abstractElement.querySelector('#save-feedback');
             if('id' in data) {
-              elem.querySelector('#abstract-id').value = data['id'];
+              abstractElement.querySelector('#abstract-id').value = data['id'];
               feedback.innerHTML = "{{ 'IXIPC-abstract-save-success'|l10n(lang) }}"
               feedback.classList.add('bg-success')
               feedback.classList.remove('bg-danger')
@@ -98,75 +102,24 @@
         abstractModified = true;
         setTimeout(saveAbstract, 3000);
       }
-      elem.querySelector('#abstract-type').addEventListener('input', scheduleAbstractSave);
-      elem.querySelector('#abstract-title').addEventListener('input', scheduleAbstractSave);
-      elem.querySelector('#abstract-body').addEventListener('input', scheduleAbstractSave);
+      abstractElement.querySelector('#abstract-type').addEventListener('input', scheduleAbstractSave);
+      abstractElement.querySelector('#abstract-title').addEventListener('input', scheduleAbstractSave);
+      abstractElement.querySelector('#abstract-body').addEventListener('input', scheduleAbstractSave);
 
-      authors.registerAbstract(elem, id);
-
-      let selectedAuthors = elem.querySelector('#selected-authors');
-      let availableAuthors = elem.querySelector('#available-authors');
-
-      const eventSource = (source) => {
-        if(source === availableAuthors) {
-          return 'availableAuthors';
-        } else if(source === selectedAuthors) {
-          return 'selectedAuthors';
-        } else {
-          return null;
-        }
-      }
-
-      const dragAuthor = (list, numbered=null) => (evt) => {
-        list.childNodes.forEach(
-          (child, i) => {
-            if('dataset' in child) {
-              child.dataset.order = String(i);
-              if(numbered) {
-                child.innerHTML = String(i+1) + '. ' + child.dataset.content;
-              } else {
-                child.innerHTML = child.dataset.content;
-              }
-              authors.moveAuthor(
-                evt.item.dataset.authorId,
-                id,
-                eventSource(evt.from),
-                eventSource(evt.to),
-                i
-              );
-              authors.flagAndSaveAbstractAuthors(id);
-            }
-          }
-        );
-      };
-
-      new Sortable(selectedAuthors, {
-        group: 'shared-' + String(id), // set both lists to same group
-        animation: 150,
-        onSort: dragAuthor(selectedAuthors, numbered=true),
-        onUpdate: dragAuthor(selectedAuthors, numbered=true)
-      });
-      
-      new Sortable(availableAuthors, {
-        group: 'shared-' + String(id),
-        animation: 150,
-        onSort: dragAuthor(availableAuthors)
-      });
-
-      observer.disconnect();
+      authors.registerAbstract(abstractElement, id);
     };
   
     const config = { attributes: false, childList: true, subtree: false };
     const observer = new MutationObserver(callback);
-    observer.observe(elem, config);
+    observer.observe(abstractElement, config);
 
     fetch(url, {
       method: 'POST',
-      body: new FormData(elem.firstElementChild)
+      body: new FormData(abstractElement.firstElementChild)
     })
     .then((response) => response.json())
     .then((data) => {
-      elem.innerHTML = data.html;
+      abstractElement.innerHTML = data.html;
     })
     .catch((e) => {
       console.log(e);

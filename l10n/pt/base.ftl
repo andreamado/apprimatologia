@@ -77,7 +77,12 @@ IXIPC-abstract-new-author = Novo autor
 IXIPC-abstract-authors = Autores
 IXIPC-abstract-authors-available = Autores disponíveis
 IXIPC-abstract-authors-select = Autores selecionados
-IXIPC-abstract-authors-drag-and-drop = Arrasta os autores para a área dos autores selecionados
+IXIPC-abstract-authors-drag-and-drop = 
+    1. Arrasta os autores para a área dos autores selecionados
+    2. Arrasta os autores selecionados para os ordenar
+    3. Seleciona o orador (carregando no símbolo de microfone)
+IXIPC-abstract-speaker = orador
+
 IXIPC-abstract-authors-edit = Cria e modifica autores
 IXIPC-abstract-authors-save = Salva os autores
 IXIPC-saved-author = Autor salvo

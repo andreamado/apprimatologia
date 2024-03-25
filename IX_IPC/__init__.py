@@ -199,9 +199,11 @@ def delete_abstract():
         id = request.form['abstract-id']
 
         abstract = db_session.get(Abstract, id)
+        delete_abstract_authors = delete(AbstractAuthor).where(AbstractAuthor.abstract_id == id)
         if g.IXIPC_user.id == abstract.owner:
             try:
                 db_session.delete(abstract)
+                db_session.execute(delete_abstract_authors)
                 db_session.commit()
             except:
                 return '', 500
@@ -255,17 +257,31 @@ def load_abstract(language, id=None, csrf_token = None):
     with get_session() as db_session:
         abstract = db_session.get(Abstract, id)
         if g.IXIPC_user.id == abstract.owner:
-            return json.dumps({
-                'id': abstract.id,
-                'html': render_template(
-                    'abstract-form-open.html', 
-                    lang=language, 
-                    form=request.form, 
-                    reload=True,
-                    abstract=abstract,
-                    csrf_token=csrf_token
-                )
-            }), 200
+            if abstract.submitted:
+                return json.dumps({
+                  'id': abstract.id,
+                  'html': render_template(
+                      'abstract-form-open.html', 
+                      lang=language, 
+                      form=request.form, 
+                      reload=True,
+                      abstract=abstract,
+                      csrf_token=csrf_token,
+                      authors=get_abstract_authors_list(id)
+                  )
+              }), 200
+            else:
+              return json.dumps({
+                  'id': abstract.id,
+                  'html': render_template(
+                      'abstract-form-open.html', 
+                      lang=language, 
+                      form=request.form, 
+                      reload=True,
+                      abstract=abstract,
+                      csrf_token=csrf_token
+                  )
+              }), 200
         else:
             return json.dumps({'error': 'Access not authorized'}), 401
 
@@ -299,7 +315,6 @@ def load_authors():
                 'lastName': last_name,
                 'id': author.id
             })
-            print(author)
 
         return json.dumps({'authors': authors_list}), 200
 
@@ -334,12 +349,40 @@ def save_abstract_authors():
 
             # TODO: verify if the abstracts and authors being modified belong to user
             # TODO: add the presenter tag
-            for (author_id, order) in abstracts[abstract_id]:
-                db_session.add(AbstractAuthor(abstract_id=abstract_id, author_id=author_id, order=order))
+            for (author_id, order, presenter) in abstracts[abstract_id]:
+                db_session.add(AbstractAuthor(author_id=author_id, abstract_id=abstract_id, order=order, presenter=presenter))
 
         db_session.commit()
     return '', 200
 
+
+def get_abstract_authors_list(abstract_id):
+    with get_session() as db_session:
+        query = select(AbstractAuthor.abstract_id, AbstractAuthor.author_id, AbstractAuthor.presenter, AbstractAuthor.order, Author.first_name, Author.last_name)\
+          .select_from(AbstractAuthor)\
+          .join(Author, AbstractAuthor.author_id == Author.id)\
+          .where(AbstractAuthor.abstract_id == abstract_id)\
+          .order_by(AbstractAuthor.order)
+        
+        abstract_authors_list = db_session.execute(query)
+
+        abstract_authors = []
+        for abstract_author in abstract_authors_list:
+            abstract_authors.append({
+                'authorId': abstract_author.author_id,
+                'firstName': abstract_author.first_name,
+                'lastName': abstract_author.last_name,
+                'order': abstract_author.order,
+                'presenter': abstract_author.presenter
+            })
+        
+        return abstract_authors
+
+@login_IXIPC_required
+@bp.route('/IX_IPC/load_abstract_authors', methods=['POST'])
+def load_abstract_authors():
+    abstract_id = json.loads(request.form['abstractId'])
+    return json.dumps({'authors': get_abstract_authors_list(abstract_id)}), 200
 
 # TODO: limit the submission to the right user!!!
 @login_IXIPC_required
