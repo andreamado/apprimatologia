@@ -64,7 +64,7 @@
             if(author_id in abstract.selectedAuthors && abstract.selectedAuthors[author_id]) {
               let authorElement = abstract.selectedAuthorsElement.querySelector('#author-' + String(author_id));
               authorElement.dataset.content = fullName;
-              authorElement.querySelector('#author-name').innerHTML = `${author.order}. ${fullName}`;
+              authorElement.querySelector('#author-name').innerHTML = `${author.order + 1}. ${fullName}`;
             } else if(author_id in abstract.availableAuthors && abstract.availableAuthors[author_id]) {
               let authorElement = abstract.availableAuthorsElement.querySelector('#author-' + String(author_id));
               authorElement.dataset.content = fullName;
