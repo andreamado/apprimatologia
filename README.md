@@ -1,8 +1,8 @@
 # Portuguese Primatological Association website
-This website constains the source code for the Portuguese Primatological Association website server.
+This repository constains the source code for the Portuguese Primatological Association website server.
 
 The website has three main goals:
-- a simple set of pages presenting the association and it's work
+- a simple set of pages presenting the association and its work
 - a members management system (with a backoffice for internal use)
 - a conference page that provides information about the conference and manages participants and abstract submissions
 
