@@ -68,7 +68,7 @@ def login(language='pt'):
         if error is None:
             session.clear()
             session['user_id'] = user.id
-            return redirect(url_for('index', language=language))
+            return redirect(url_for('main_site.index', language=language))
 
         flash(error)
 
@@ -96,7 +96,7 @@ def load_logged_in_user():
 @bp.route('/<language:language>/logout')
 def logout(language='pt'):
     session.clear()
-    return redirect(url_for('index', lang=language))
+    return redirect(url_for('main_site.index', lang=language))
 
 
 def login_required(view):

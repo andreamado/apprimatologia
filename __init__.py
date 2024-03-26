@@ -3,16 +3,13 @@ from copy import deepcopy
 from uuid import UUID
 from dotenv import dotenv_values
 
-from flask import Flask, render_template, g, request, url_for, send_from_directory
+from flask import Flask, render_template, g, request, send_from_directory
 from flask_mail import Mail, Message
 from flask_wtf.csrf import CSRFProtect
 from sqlalchemy import select
 
-# check these options
-import markdown
-
 from .i18n import I18N
-from .models import UploadedFile, Image
+from .models import UploadedFile
 from .db import get_session, init_db_command
 from .auth import login_required, bp as auth_bp
 
@@ -96,83 +93,6 @@ def create_app(test_config=None):
         """Adds the links the request context"""
 
         g.links = deepcopy(links)
-
-
-    @app.route('/<language:language>/')
-    @app.route('/')
-    def index(language='pt'):
-        """Main page"""
-
-        g.links[0]['active'] = True
-
-        return render_template(
-            'index.html', 
-            background_monkey=True,
-            lang=language,
-        )
-
-
-    @app.route('/noticias/<language:language>')
-    @app.route('/noticias/')
-    def noticias(language='pt'):
-        """News page"""
-        # TODO: implement pagination for extra news
-
-        g.links[1]['active'] = True
-
-        from .models import News
-        from sqlalchemy import select
-        with get_session() as db_session:
-            news_list = db_session.scalars(
-                select(News)
-                .order_by(News.id.desc())
-                .limit(5)
-            ).fetchall()
-
-            g.news = []
-            for news in news_list:
-                image = None
-                if news.image:
-                    image = db_session.get(Image, news.image).to_object(language)
-
-                g.news.append({
-                    'title': getattr(news, f'title_{language}'),
-                    'body': markdown.markdown(getattr(news, f'body_{language}'), tab_length=2),
-                    'date': news.created.strftime("%d/%m/%Y"),
-                    'modified': news.modified.strftime("%d/%m/%Y") if news.modified else None,
-                    'image': image
-                })
-
-            return render_template(
-                'noticias.html', 
-                lang=language,
-                text_column=True
-            )
-
-
-    @app.route('/contacto/<language:language>')
-    @app.route('/contacto/')
-    def contacto(language='pt'):
-        """Contacts page"""
-
-        g.links[3]['active'] = True
-        return render_template(
-            'contacto.html', 
-            background_monkey=True, 
-            lang=language
-        )
-
-
-    @app.route('/membros/<language:language>')
-    @app.route('/membros/')
-    def membros(language='pt'):
-        """Members page"""
-
-        g.links[4]['active'] = True
-        return render_template(
-            'membros.html', 
-            lang=language
-        )
 
 
     def allowed_file(filename: str) -> bool:
@@ -279,6 +199,9 @@ def create_app(test_config=None):
     
     from . import member
     app.register_blueprint(member.bp)
+
+    from . import main_site
+    main_site.register(app)
 
     from . import IX_IPC
     IX_IPC.register(app)

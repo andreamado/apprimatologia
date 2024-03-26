@@ -1,9 +1,9 @@
 [
-    {"name": "link-app",     "active": false, "url": "index", "submenus": [
+    {"name": "link-app",     "active": false, "url": "main_site.index", "submenus": [
             {"name": "link-juntate", "active": false, "url": "juntate"}
     ]},
-    {"name": "link-news",    "active": false, "url": "noticias",  "submenus": []},
+    {"name": "link-news",    "active": false, "url": "main_site.noticias",  "submenus": []},
     {"name": "link-events",  "active": false, "url": "IX_IPC.IXIPC",   "submenus": []},
-    {"name": "link-contact", "active": false, "url": "contacto",  "submenus": []},
-    {"name": "link-members", "active": false, "url": "membros",   "submenus": []}
+    {"name": "link-contact", "active": false, "url": "main_site.contacto",  "submenus": []},
+    {"name": "link-members", "active": false, "url": "main_site.membros",   "submenus": []}
 ]
