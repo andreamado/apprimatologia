@@ -2,7 +2,7 @@ title = Portuguese Primatological Association
 
 index-description = Portuguese Primatological Association's (APP) goal is to promote, develop and disseminate the research in Primatology.
 index-join = Join APP!
-index-IXIPC-enroll = Enroll here!
+index-IXIPC-enroll = Register here!
 
 members-title = Direction
 
@@ -70,7 +70,7 @@ IXIPC-login-wrong-email-or-password = Wrong email or password
 
 IXIPC-personal-data = Personal data
 
-IXIPC-register-to-submit = Register or login to enroll and submit abstracts
+IXIPC-register-to-submit = Register or login submit abstracts
 IXIPC-register-to-submit-logged-in = Submit abstracts for your posters and presentations!
 
 IXIPC-register-first-name = First name
