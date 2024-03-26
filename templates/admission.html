@@ -209,13 +209,13 @@
           <div class="row mb-3">
             {% for subfield in form.payment_method -%}
             <div class="col">
-              {{subfield}} {{ subfield|label(lang)|safe }}
+              {{ subfield }} {{ subfield|label(lang)|safe }}
               {% if subfield.id == 'payment_method-0' -%}
               <div class="form-text">
                 {{ 'registration-form-transfer-explanation'|l10n(lang)|safe }}
               </div>
               {% else -%}
-              ({{ 'number'|l10n(lang) }} {{form.check_number}})
+              ({{ 'number'|l10n(lang) }} {{ form.check_number }})
               <div class="form-text">
                 {{ 'registration-form-check-explanation'|l10n(lang) }}
               </div>
@@ -262,9 +262,19 @@
       }
       document.getElementById('registration-form-total-show').innerHTML = total.toFixed(2).toString() + ' €';
     };
-    document.getElementById('voluntary_donation').onchange = update_total;
-    document.getElementById('quota_type-0').onchange = update_total;
-    document.getElementById('quota_type-1').onchange = update_total;
+    
+    document.getElementById('voluntary_donation').addEventListener(
+      'input',
+      update_total
+    );
+    document.getElementById('quota_type-0').addEventListener(
+      'change',
+      update_total
+    );
+    document.getElementById('quota_type-1').addEventListener(
+      'change',
+      update_total
+    );
     update_total();
   </script>
   {% include "scripts/upload-form.html" %}
