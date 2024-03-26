@@ -1,12 +1,12 @@
-<div class="container">
-  {% with messages = get_flashed_messages(with_categories=true) -%}
-    {% if messages -%}
-      {% for category, message in messages -%}
-        <div class="alert alert-{{category}} rounded-4" role="alert">
-          {{ message|safe }}
-        </div>
-      {% endfor -%}
-      <hr class="separator mb-5">
-    {% endif -%}
-  {% endwith -%}
-</div>
+{% with messages = get_flashed_messages(with_categories=true) -%}
+{% if messages -%}
+  <div class="container mb-5">  
+    {% for category, message in messages -%}
+      <div class="alert alert-{{category}} rounded-4" role="alert">
+        {{ message|safe }}
+      </div>
+    {% endfor -%}
+  </div>
+  <hr class="separator mb-5">
+{% endif -%}
+{% endwith -%}

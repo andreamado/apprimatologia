@@ -1,15 +1,14 @@
-import enum
-from sqlalchemy import Column, Boolean, Enum, ForeignKey, Integer, String, Text
+from sqlalchemy import Column, Boolean, ForeignKey, Integer, String, Text
 from sqlalchemy_utc import UtcDateTime, utcnow
 
 from .db_IXIPC import Base
 from secrets import token_hex
 
+
 class User(Base):
     __tablename__ = 'users'
     id = Column(Integer, primary_key=True)
     email = Column(String(200), unique=True)
-    # author_id = Column(ForeignKey('authors.id'))
     password = Column(String(32))
     name = Column(String(200))
     first_name = Column(String(200))
@@ -20,7 +19,6 @@ class User(Base):
         self.name = name
         self.email = email
         self.password = password if password else token_hex(16)
-        # self.author_id = author_id
         self.first_name = first_name
         self.last_name = last_name
         self.institution = institution
@@ -81,6 +79,7 @@ class AbstractType:
     PRESENTATION = 2
     BOTH = 3
 
+
 class Abstract(Base):
     __tablename__ = 'abstracts'
     id = Column(Integer, primary_key=True)
@@ -123,4 +122,3 @@ class AbstractAuthor(Base):
         self.first_author = first_author
         self.corresponding_author = corresponding_author
         self.order = order
-

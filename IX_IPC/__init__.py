@@ -604,5 +604,5 @@ def register(app) -> None:
 
     app.jinja_env.filters['abstract_type'] = abstract_type_filter
 
-    from .db_IXIPC import init_IX_IPC_db_command
-    app.cli.add_command(init_IX_IPC_db_command)
+    from .db_IXIPC import init_IXIPC_db_command
+    app.cli.add_command(init_IXIPC_db_command)

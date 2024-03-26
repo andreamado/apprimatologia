@@ -4,25 +4,35 @@ import click
 
 import sqlite3
 
-conn = sqlite3.connect('IX_IPC.db')
+# makes sure IXIPC database file exists
+conn = sqlite3.connect('IXIPC.db')
 conn.close()
 
-engine = create_engine('sqlite:///IX_IPC.db')
-db_session = scoped_session(sessionmaker(autocommit=False,
-                                         autoflush=False,
-                                         bind=engine))
-Base = declarative_base()
-Base.query = db_session.query_property()    
+engine = create_engine('sqlite:///IXIPC.db')
 
 def get_session() -> Session:
+    """Returns an IX IPC database session"""
+
     return Session(bind=engine)
 
+db_session = scoped_session(
+    sessionmaker(
+        autocommit=False,
+        autoflush=False,
+        bind=engine
+    )
+)
+
+Base = declarative_base()
+Base.query = db_session.query_property()
+
 @click.command('init-IXIPC-db')
-def init_IX_IPC_db_command():
-    """Clear the existing data and create new tables."""
+def init_IXIPC_db_command():
+    """Clears the existing data and create new tables."""
+
     from . import models
-    Base.metadata.create_all(bind=engine)
+    with get_session() as db_session:
+        Base.metadata.create_all(bind=engine)
+        db_session.commit()
 
-    db_session.commit()
-
-    click.echo('Initialized the IX IPC database.')
+        click.echo('Initialized the IX IPC database.')
