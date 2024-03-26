@@ -1,29 +1,35 @@
 from flask import flash, render_template, redirect, url_for, Blueprint, g, request, session
 from flask import current_app as app
+from flask_wtf import FlaskForm
+from sqlalchemy import select, delete
+
 from email_validator import validate_email, EmailNotValidError
 
 from .db_IXIPC import get_session
 from .models import User, Abstract, AbstractType, Author, AbstractAuthor
 
-from flask_wtf import FlaskForm
-
-from sqlalchemy import select, delete, update
-
-import json
+import json, functools
 
 bp = Blueprint('IX_IPC', __name__, template_folder='templates')
 
-import functools
+
 def login_IXIPC_required(view):
+    """Guarantees the user is logged in
+     
+    Decorator that guarantees the user is logged in, redirecting to the main 
+    page if they are not.
+    """
+
     @functools.wraps(view)
     def wrapped_view(**kwargs):
         if g.IXIPC_user is None:
-            return redirect(url_for('IX_IPC.IXIPC', language=kwargs['language']))
+            return redirect(
+                url_for('IX_IPC.IXIPC', language=kwargs['language'])
+            )
 
         return view(**kwargs)
 
     return wrapped_view
-
 
 
 @bp.route('/IX_IPC/<language:language>')
@@ -33,12 +39,16 @@ def login_IXIPC_required(view):
 @bp.route('/IX_Iberian_Primatological_Conference/<language:language>')
 @bp.route('/IX_Iberian_Primatological_Conference')
 def IXIPC(language='pt'):
+    """IXIPC main page"""
+
     g.links[2]['active'] = True
 
     with get_session() as db_session:
         abstracts = []
         if g.IXIPC_user:
-            abstracts = db_session.execute(select(Abstract).filter_by(owner=g.IXIPC_user.id)).scalars()
+            abstracts = db_session.execute(
+                select(Abstract).filter_by(owner=g.IXIPC_user.id)
+            ).scalars()
 
         return render_template(
             'IX_IPC.html',
@@ -49,7 +59,10 @@ def IXIPC(language='pt'):
             site_map=True
         )
 
+
 def sanitize_email(email: str) -> str|None:
+    """Helper function to sanitize input emails"""
+
     try:
         emailinfo = validate_email(email, check_deliverability=False)
         email = emailinfo.normalized
@@ -57,11 +70,20 @@ def sanitize_email(email: str) -> str|None:
         return None
     return email
 
+
 @bp.route('/IX_IPC/register/<language:language>', methods=['POST'])
 def register_user(language):
+    """Registers a new user
+    
+    This route registers a new user and logs them in, redirecting to the main
+    page with a welcoming message. In the registration process, an email is sent 
+    to the user informing their credentials. If anything goes wrong (invalid 
+    email, the email is already registered, etc) a warning is displayed.
+    """
+
     g.links[2]['active'] = True
 
-    name = request.form['first-name']
+    name = request.form['first-name'].strip()
     email = request.form['email']
 
     if not email:
@@ -78,80 +100,129 @@ def register_user(language):
                     db_session.commit()
                     session['IXIPC_user_id'] = user.id
                 except:
+                    url = url_for(
+                        'IX_IPC.recover_credentials', 
+                        language=language, 
+                        email=email
+                    )
                     flash(
-                        app.i18n.l10n[language].format_value(
-                            'IXIPC-email-already-registered', {
-                                'email': email, 
-                                'recover_credentials': url_for('IX_IPC.recover_credentials', language=language, email=email)
-                            }
+                        app.translate(
+                          'IXIPC-email-already-registered', 
+                          language, {
+                              'email': email, 
+                              'recover_credentials': url
+                          }
                         ), 'warning'
                     )
                 else:
                     try:
                         app.send_email(
-                            'Bem-vindo/a ao Congresso Ibérico de Primatologia!', 
-                            f'Olá {name},\n\nBem-vindo/a ao Congresso Ibérico de Primatologia!\nO teu username é este email ({email}) tua password é {user.password}. Usa estes dados no site para alterar a tua inscrição e submeter candidaturas a posters e apresentações orais.\n\nEsperamos ver-te em breve!',
+                            app.translate('IXIPC-welcome-email-subject', language),
+                            app.translate(
+                                'IXIPC-welcome-email-body', 
+                                language, {
+                                'email': email,
+                                'name': name,
+                                'password': user.password
+                            }),
                             [email]
                         )
                     except:
-                        flash(f"Could not send email {email}. Please contact the organization.", 'warning')
+                        flash(
+                            app.translate(
+                              'IXIPC-email-failed', language, {'email': email}
+                            ), 'warning'
+                        )
                     else:
-                        flash('Your account was successfully created! You can proceed with an abstract submission now or login again later with the credentials sent to your email.', 'success')
+                        flash(
+                            app.translate(
+                                'IXIPC-account-creation-successful', language
+                            ), 'success'
+                        )
                         return redirect(url_for("IX_IPC.IXIPC", language=language))
         else:
-            flash('Email not valid', 'warning')
+            flash(app.translate('IXIPC-invalid-email', language), 'warning')
 
     return redirect(url_for("IX_IPC.IXIPC", language=language))
 
 
 @bp.route('/IX_IPC/recover_credentials/<language:language>/<string:email>')
 def recover_credentials(language, email):
+    """Resends the email with the credentials"""
+
     email = sanitize_email(email)
     if email:
         with get_session() as db_session:
             user = db_session.execute(select(User).filter_by(email=email)).scalar_one()
             app.send_email(
-                'Bem-vindo/a ao Congresso Ibérico de Primatologia!', 
-                f'Olá {user.name},\n\nBem-vindo/a ao Congresso Ibérico de Primatologia!\nO teu username é este email ({email}) tua password é {user.password}. Usa estes dados no site para alterar a tua inscrição e submeter candidaturas a posters e apresentações orais.\n\nEsperamos ver-te em breve!',
+                app.translate('IXIPC-recover-credentials-email-subject', language),
+                app.translate(
+                    'IXIPC-recover-credentials-email-body', 
+                    language, {
+                    'email': email,
+                    'name': user.name,
+                    'password': user.password
+                }),
                 [email]
             )
-            flash('We have sent you the login credentials again! If you don\'t seen them in you inbox within a few minutes, please check you spam box.', 'success')
+            flash(
+                app.translate(
+                    'IXIPC-recover-credentials-notification', 
+                    language
+                ), 'success'
+            )
     else:
-        flash('Invalid email.', 'warning')
+        flash(app.translate('IXIPC-invalid-email', language), 'warning')
     return redirect(url_for("IX_IPC.IXIPC", language=language))
 
 
 @bp.route('/IX_IPC/login/<language:language>', methods=['POST'])
 def login(language):
-    email = request.form['email']
+    """Logs a user in
+    
+    Logs a user in and redirects to the main page. Displays a warning in case
+    the login is unsuccessful. 
+    """
+
+    email = sanitize_email(request.form['email'])
     password = request.form['password']
-    error = None
 
     with get_session() as db_session:
-        user = db_session.execute(select(User).filter_by(email=email)).scalar_one()
+        user = db_session.execute(
+            select(User).filter_by(email=email)
+        ).scalar_one()
 
-    if user is None:
-        error = 'Incorrect email.'
-    elif user.password != password:
-        error = 'Incorrect password.'
-
-    if error is None:
+    if user and user.password == password:
         session.clear()
         session['IXIPC_user_id'] = user.id
-        return redirect(url_for('IX_IPC.IXIPC', language=language))
-
-    flash(error, 'warning')
+    else:
+        flash(
+            app.translate('IXIPC-login-wrong-email-or-password', language), 
+            'warning'
+        )
+    
     return redirect(url_for('IX_IPC.IXIPC', language=language))
 
 
+@login_IXIPC_required
 @bp.route('/IX_IPC/logout/<language:language>', methods=['POST'])
 def logout(language):
+    """Logs a user out
+    
+    Logs a user out and redirects to the main page.
+    """
+
     session.clear()
     return redirect(url_for('IX_IPC.IXIPC', language=language))
 
 
 @bp.before_app_request
-def load_logged_in_IXIPC_user():
+def load_logged_in_IXIPC_user() -> None:
+    """Loads the current user
+    
+    Function that runs before every request and adds the current user to g.
+    """
+
     user_IXIPC_id = session.get('IXIPC_user_id')
     if user_IXIPC_id is None:
         g.IXIPC_user = None
@@ -166,6 +237,8 @@ def load_logged_in_IXIPC_user():
 @login_IXIPC_required
 @bp.route('/IX_IPC/save_personal_data', methods=['POST'])
 def save_personal_data():
+    """Saves current user's data to the database"""
+
     with get_session() as db_session:
         user = db_session.get(User, g.IXIPC_user.id)
         user.first_name = request.form['first-name'].strip()
@@ -180,52 +253,83 @@ def save_personal_data():
 @login_IXIPC_required
 @bp.route('/IX_IPC/create_abstract/<language:language>', methods=['POST'])
 def create_new_abstract(language='pt'):
-    id = json.loads(save_abstract_local(None, g))['id']
+    """Creates and returns a new abstract"""
+
+    id = int(json.loads(save_abstract_local(None, g))['id'])
     return load_closed_abstract(id, language), 200
 
 
 @login_IXIPC_required
 @bp.route('/IX_IPC/closed_abstract/<language:language>', methods=['POST'])
 def closed_abstract(language='pt'):
-    id = request.form['abstract-id']
-    return load_closed_abstract(id, language), 200
+    """Returns the closed form of an existing abstract"""
 
-
-def load_closed_abstract(id, language):
+    id = int(request.form['abstract-id'])
     with get_session() as db_session:
         abstract = db_session.get(Abstract, id)
-        
-        return json.dumps({
-            'id': id,
-            'html': render_template(
-                'abstract-form-closed.html',
-                abstract = abstract,
-                csrf_token = request.form['csrf_token'],
-                reload=True,
-                lang=language
-            )})
+
+        if abstract.owner == g.IXIPC_user.id:
+            return load_closed_abstract(id, language), 200
+        else:
+            return json.dumps({'error': 'access unauthorized'}), 401
+
+
+def load_closed_abstract(abstract: int|Abstract, language) -> str:
+    """Returns a closed abstract HTML element
+    
+    Receives an Abstract object or an index to an abstract and return a json 
+    string containing the abstract id and the HTML element for the closed 
+    abstract.
+    """
+
+    if isinstance(abstract, int):
+        with get_session() as db_session:
+            abstract = db_session.get(Abstract, abstract)
+    
+    return json.dumps({
+        'id': abstract.id,
+        'html': render_template(
+            'abstract-form-closed.html',
+            abstract = abstract,
+            csrf_token = request.form['csrf_token'],
+            reload=True,
+            lang=language
+        )})
 
 
 @login_IXIPC_required
 @bp.route('/IX_IPC/delete_abstract', methods=['POST'])
 def delete_abstract():
+    """Deletes an existing abstract
+    
+    Deletes the abstract data as well as the corresponding abstract authors.
+    """
+
     with get_session() as db_session:
         id = request.form['abstract-id']
 
         abstract = db_session.get(Abstract, id)
-        delete_abstract_authors = delete(AbstractAuthor).where(AbstractAuthor.abstract_id == id)
+        delete_abstract_authors = delete(AbstractAuthor)\
+                                    .where(AbstractAuthor.abstract_id == id)
+        
         if g.IXIPC_user.id == abstract.owner:
             try:
                 db_session.delete(abstract)
                 db_session.execute(delete_abstract_authors)
                 db_session.commit()
             except:
-                return '', 500
-            return '', 204
-        return '', 400
+                return json.dumps({'error': 'error deleting abstract'}), 500
+            return json.dumps({}), 204
+        return json.dumps({'error': 'access unauthorized'}), 401
 
 
-def save_abstract_local(form, g):
+def save_abstract_local(form, g) -> str:
+    """Saves an abstract to the database
+    
+    Helper function that saves an abstract to the database, creating a new
+    abstract if an abstract id is not provided in the request.
+    """
+
     with get_session() as db_session:
         abstract = None
         if form and 'abstract-id' in form and len(form['abstract-id']) > 0:
@@ -270,6 +374,13 @@ def save_abstract_local(form, g):
 @login_IXIPC_required
 @bp.route('/IX_IPC/load_abstract/<language:language>/', methods=['POST'])
 def load_abstract(language, id=None, csrf_token = None):
+    """Loads an abstract in the open form
+    
+    Returns a json string containing the abstract id and an HTML element 
+    representing the open abstract in the submitted or unsubmitted form 
+    depending on submission status.
+    """
+
     if not id:
         id = request.form['abstract-id']
     
@@ -305,17 +416,22 @@ def load_abstract(language, id=None, csrf_token = None):
                   )
               }), 200
         else:
-            return json.dumps({'error': 'Access not authorized'}), 401
+            return json.dumps({'error': 'access unauthorized'}), 401
 
 
 @login_IXIPC_required
 @bp.route('/IX_IPC/save_abstract', methods=['POST'])
 def save_abstract():
+    """Saves an abstract"""
+
     return save_abstract_local(request.form, g), 200
+
 
 @login_IXIPC_required
 @bp.route('/IXIPC/new_author', methods=['POST'])
 def new_author():
+    """Creates a new author"""
+
     with get_session() as db_session:
         author = Author(created_by=g.IXIPC_user.id)
         db_session.add(author)
@@ -323,11 +439,17 @@ def new_author():
 
         return json.dumps({'id': author.id}), 200
 
+
 @login_IXIPC_required
 @bp.route('/IX_IPC/load_authors', methods=['POST'])
 def load_authors():
+    """Loads available authors to current user"""
+
     with get_session() as db_session:
-        authors = db_session.execute(select(Author).where(Author.created_by == g.IXIPC_user.id)).scalars()
+        authors = db_session.execute(
+            select(Author).where(Author.created_by == g.IXIPC_user.id)
+        ).scalars()
+
         authors_list = []
         for author in authors:
             first_name = author.first_name if author.first_name else '' 
@@ -344,86 +466,134 @@ def load_authors():
 @login_IXIPC_required
 @bp.route('/IX_IPC/save_authors', methods=['POST'])
 def save_authors():
+    """Saves a list of authors
+    
+    Saves a list of authors provided in the request.
+    """
+
     authors = json.loads(request.form['authors'])
     with get_session() as db_session:
         authors_list = []
-        for id in authors:
+        for (id, author_new) in authors.items():
             author = db_session.get(Author, int(id))
-            author_new = authors[id]
             if g.IXIPC_user.id == author.created_by:
                 author.first_name = author_new['firstName'].strip()
                 author.last_name = author_new['lastName'].strip()
                 authors_list.append(author)
+        
         db_session.add_all(authors_list)
         db_session.commit()
-    return '', 200
+    
+    return json.dumps({}), 200
 
 
 @login_IXIPC_required
 @bp.route('/IX_IPC/save_abstract_authors', methods=['POST'])
 def save_abstract_authors():
+    """Saves the abstract authors
+    
+    Saves the abstract authors for a list of abstracts provided in the request.
+    """
+
     abstracts = json.loads(request.form['abstractAuthors'])
     with get_session() as db_session:
         abstract_authors = []
-        for abstract_id in abstracts:
+        for (abstract_id, abstract) in abstracts.items():
             if db_session.get(Abstract, abstract_id).owner == g.IXIPC_user.id:
                 db_session.execute(delete(AbstractAuthor).where(
                     AbstractAuthor.abstract_id == abstract_id
                 ))
-                for (author_id, order, presenter) in abstracts[abstract_id]:
-                    abstract_authors.append(AbstractAuthor(author_id=author_id, abstract_id=abstract_id, order=order, presenter=presenter))
+                for (author_id, order, presenter) in abstract:
+                    abstract_author = AbstractAuthor(
+                        author_id=author_id, 
+                        abstract_id=abstract_id, 
+                        order=order, 
+                        presenter=presenter
+                    )
+                    abstract_authors.append(abstract_author)
                 
         db_session.add_all(abstract_authors)
         db_session.commit()
-    return '', 200
+    
+    return json.dumps({}), 200
 
 
-def get_abstract_authors_list(abstract_id):
+def get_abstract_authors_list(abstract_id: int) -> list[object]|None:
+    """Returns a list of abstract authors
+
+    Returns a list of the abstract authors for a given abstract id or None if
+    the abstract owner is not the current user.
+    """
+
     with get_session() as db_session:
-        query = select(AbstractAuthor.abstract_id, AbstractAuthor.author_id, AbstractAuthor.presenter, AbstractAuthor.order, Author.first_name, Author.last_name)\
-          .select_from(AbstractAuthor)\
-          .join(Author, AbstractAuthor.author_id == Author.id)\
-          .where(AbstractAuthor.abstract_id == abstract_id)\
-          .order_by(AbstractAuthor.order)
-        
-        abstract_authors_list = db_session.execute(query)
+        if db_session.get(Abstract, abstract_id).owner == g.IXIPC_user.id:
+            query = select(
+                  AbstractAuthor.abstract_id, AbstractAuthor.author_id, 
+                  AbstractAuthor.presenter, AbstractAuthor.order, 
+                  Author.first_name, Author.last_name
+              ).select_from(AbstractAuthor)\
+              .join(Author, AbstractAuthor.author_id == Author.id)\
+              .where(AbstractAuthor.abstract_id == abstract_id)\
+              .order_by(AbstractAuthor.order)
+            
+            abstract_authors_list = db_session.execute(query)
 
-        abstract_authors = []
-        for abstract_author in abstract_authors_list:
-            abstract_authors.append({
-                'authorId': abstract_author.author_id,
-                'firstName': abstract_author.first_name,
-                'lastName': abstract_author.last_name,
-                'order': abstract_author.order,
-                'presenter': abstract_author.presenter
-            })
-        
-        return abstract_authors
+            abstract_authors = []
+            for abstract_author in abstract_authors_list:
+                abstract_authors.append({
+                    'authorId': abstract_author.author_id,
+                    'firstName': abstract_author.first_name,
+                    'lastName': abstract_author.last_name,
+                    'order': abstract_author.order,
+                    'presenter': abstract_author.presenter
+                })
+            
+            return abstract_authors
+        else:
+            return None
+
 
 @login_IXIPC_required
 @bp.route('/IX_IPC/load_abstract_authors', methods=['POST'])
 def load_abstract_authors():
+    """Loads abstract authors
+    
+    Loads the abstract authors for the abstract in request.
+    """
+    
     abstract_id = json.loads(request.form['abstractId'])
     return json.dumps({'authors': get_abstract_authors_list(abstract_id)}), 200
 
-# TODO: limit the submission to the right user!!!
+
 @login_IXIPC_required
 @bp.route('/IX_IPC/submit_abstract/<language:language>', methods=['POST'])
 def submit_abstract(language):
+    """Submits an abstract
+    
+    Submits the abstract and returns the corresponding submitted abstract HTML 
+    element or an error message.
+    """
+    
     id = request.form['abstract-id']
-    save_abstract_local(request.form, g)
+    output = json.loads(save_abstract_local(request.form, g))
 
-    with get_session() as db_session:
-        abstract = db_session.get(Abstract, id)
-        abstract.submit()
-        db_session.commit()
+    if 'error' not in output:
+        with get_session() as db_session:
+            abstract = db_session.get(Abstract, id)
+            abstract.submit()
+            db_session.commit()
 
-        return load_abstract(language=language, id=id)
+            return load_abstract(language=language, id=id)
+    else:
+        return output, 500
 
-def register(app):
+
+def register(app) -> None:
+    """Registers the IXIPC blueprint with the Flask app"""
+
     app.register_blueprint(bp)
 
-    def filter(abstract_type, language) -> str:
+    def abstract_type_filter(abstract_type, language) -> str:
         abstract = ''
         if abstract_type == 1:
             abstract = app.i18n.l10n[language].format_value('IXIPC-abstract-poster')
@@ -432,8 +602,7 @@ def register(app):
         
         return abstract
 
-    app.jinja_env.filters['abstract_type'] = filter
-
+    app.jinja_env.filters['abstract_type'] = abstract_type_filter
 
     from .db_IXIPC import init_IX_IPC_db_command
     app.cli.add_command(init_IX_IPC_db_command)

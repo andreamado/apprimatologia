@@ -45,6 +45,29 @@ IXIPC-program = Program
 IXIPC-invited-speakers = Invited speakers
 IXIPC-timeline = Timeline
 
+IXIPC-welcome-email-subject = Welcome to the IX Iberian Primatological Conference!
+IXIPC-welcome-email-body = 
+    Hello {$name},
+    
+    Welcome to the IX Iberian Primatological Conference!
+    Your username is this email ({$email}) and your password is {$password}. Use these credentials in the website to modify your registration and apply to posters and oral presentation.
+
+    We hope to see you soon!    
+IXIPC-email-failed = Could not send email to {$email}. Please contact the organization.
+IXIPC-invalid-email = Email not valid
+IXIPC-account-creation-successful = Your account was successfully created! You can proceed with an abstract submission now or login again later with the credentials sent to your email.
+IXIPC-recover-credentials-email-subject = Welcome to the IX Iberian Primatological Conference!
+IXIPC-recover-credentials-email-body =
+    Hello {$name},
+    
+    Welcome to the IX Iberian Primatological Conference!
+    Your username is this email ({$email}) and your password is {$password}. Use these credentials in the website to modify your registration and apply to posters and oral presentation.
+
+    We hope to see you soon!    
+IXIPC-recover-credentials-notification =
+    We have sent you the login credentials again! If you do not see them in you inbox within a few minutes, please check you spam box.
+IXIPC-login-wrong-email-or-password = Wrong email or password
+
 IXIPC-personal-data = Personal data
 
 IXIPC-register-to-submit = Register or login to enroll and submit abstracts

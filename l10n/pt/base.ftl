@@ -46,6 +46,29 @@ IXIPC-program = Programa
 IXIPC-invited-speakers = Oradores convidados
 IXIPC-timeline = Timeline
 
+IXIPC-welcome-email-subject = Bem-vindo/a ao IX Congresso Ibérico de Primatologia!
+IXIPC-welcome-email-body =
+    Olá {$name},
+    
+    Bem-vindo/a ao IX Congresso Ibérico de Primatologia!
+    O teu username é este email ({$email}) e a tua password é {$password}. Usa estas credenciais no site para alterar a tua inscrição e submeter candidaturas a posters e apresentações orais.
+    
+    Esperamos ver-te em breve!
+IXIPC-email-failed = Não conseguimos enviar email para {$email}. Por favor, contacta a organização.
+IXIPC-invalid-email = Email inválido
+IXIPC-account-creation-successful = A tua conta foi criada com sucesso! Podes submeter resumos agora ou fazer login mais tarde com as credenciais enviadas para o teu email.
+IXIPC-recover-credentials-email-subject = Bem-vindo/a ao IX Congresso Ibérico de Primatologia!
+IXIPC-recover-credentials-email-body =
+    Olá {$name},
+    
+    Bem-vindo/a ao IX Congresso Ibérico de Primatologia!
+    O teu username é este email ({$email}) e a tua password é {$password}. Usa estas credenciais no site para alterar a tua inscrição e submeter candidaturas a posters e apresentações orais.
+    
+    Esperamos ver-te em breve!
+IXIPC-recover-credentials-notification =
+    Reenviámos-te as credenciais de login! Se não as vires na tua caixa de entrada dentro de uns minutos, verifica a caixa de spam.
+IXIPC-login-wrong-email-or-password = Email ou password errada
+
 IXIPC-personal-data = Dados pessoais
 
 IXIPC-register-to-submit = Regista-te para te inscreveres e submeter resumos

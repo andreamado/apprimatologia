@@ -28,7 +28,11 @@ class I18N():
         app.jinja_env.filters['l10n'] = self.i18n_filter_generator()
         app.jinja_env.filters['date'] = lambda date: date.strftime("%d/%m/%y")
 
-        app.i18n = self        
+        app.i18n = self
+        
+        app.translate = \
+            lambda fluent_str, language, params=None: \
+                self.l10n[language].format_value(fluent_str, params)
 
     def lazy_translator(self, string):
         return lambda language: self.l10n[language].format_value(string)
