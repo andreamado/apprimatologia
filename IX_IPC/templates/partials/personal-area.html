@@ -22,17 +22,17 @@
       <div class="row mb-3">
         <div class="col">
           <label for="first-name" class="form-label">{{ 'IXIPC-personal-data-first-name'|l10n(lang) }}</label>
-          <input name="first-name" id="first-name" type="text" class="form-control" value="{{g.IXIPC_user.first_name}}">
+          <input name="first-name" id="first-name" type="text" class="form-control" value="{{g.IXIPC_user.first_name if g.IXIPC_user.first_name else ''}}">
         </div>
         <div class="col">
           <label for="last-name" class="form-label">{{ 'IXIPC-personal-data-last-name'|l10n(lang) }}</label>
-          <input name="last-name" id="last-name" type="text" class="form-control" value="{{g.IXIPC_user.last_name}}">
+          <input name="last-name" id="last-name" type="text" class="form-control" value="{{g.IXIPC_user.last_name if g.IXIPC_user.last_name else ''}}">
         </div>
       </div>
       <div class="row mb-3">
         <div class="col">
           <label for="institution" class="form-label">{{ 'IXIPC-personal-data-institution'|l10n(lang) }}</label>
-          <input name="institution" id="institution" type="text" class="form-control" value="{{g.IXIPC_user.institution}}">
+          <input name="institution" id="institution" type="text" class="form-control" value="{{g.IXIPC_user.institution if g.IXIPC_user.institution else ''}}">
         </div>
       </div>
     </form>
