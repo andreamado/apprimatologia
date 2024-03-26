@@ -1,30 +1,26 @@
-import os
-import threading
+import os, threading, json
 from copy import deepcopy
-import json
-
 from uuid import UUID
+from dotenv import dotenv_values
 
 from flask import Flask, render_template, g, request, url_for, send_from_directory
 from flask_mail import Mail, Message
-
-from sqlalchemy import select
-
-from dotenv import dotenv_values
-
 from flask_wtf.csrf import CSRFProtect
+from sqlalchemy import select
 
 # check these options
 import markdown
 
 from .i18n import I18N
 from .models import UploadedFile, Image
-from .db import get_session
+from .db import get_session, init_db_command
+from .auth import login_required, bp as auth_bp
 
 ALLOWED_EXTENSIONS = {'pdf', 'png', 'jpg', 'jpeg', 'gif'}
 
 def create_app(test_config=None):
-    # create and configure the app
+    """Creates and configures the app"""
+
     app = Flask(__name__, instance_relative_config=True)
 
     config = dotenv_values(os.path.join(app.root_path, '.env'))
@@ -32,8 +28,8 @@ def create_app(test_config=None):
     app.config.from_mapping(
         SECRET_KEY='dev',
         CSRF_SECRET_KEY='dev',
-        DATABASE=os.path.join(app.instance_path, 'apprimatologia.sqlite'),
-        DATABASE_IXIPC=os.path.join(app.instance_path, 'IX_IPC.sqlite'),
+        DATABASE=os.path.join(app.instance_path, 'apprimatologia.db'),
+        DATABASE_IXIPC=os.path.join(app.instance_path, 'IXIPC.db'),
         RECAPTCHA_PUBLIC_KEY = "6LeYIbsSAAAAACRPIllxA7wvXjIE411PfdB2gt2J",
         RECAPTCHA_PRIVATE_KEY = "6LeYIbsSAAAAAJezaIq3Ft_hSTo0YtyeFG-JgRtu",
         MAIL_SERVER = 'smtp.gmail.com',
@@ -53,16 +49,19 @@ def create_app(test_config=None):
     # register the internationalization module
     I18N(app)
 
+    # register the csrf protection
     csrf = CSRFProtect()
     csrf.init_app(app)
 
+    # register the email methods
     app.mail = Mail(app)
 
-    def send_email(subject, body, recipients):
+    def send_email(subject: str, body: str, recipients: list[str]) -> None:
         def _send_email():
             with app.app_context():
                 msg = Message(subject, recipients=recipients, body=body)
                 app.mail.send(msg)
+                # TODO: log the emails
                 print(f'Email sent to {recipients}.')
         t1 = threading.Thread(target=_send_email, name="email")
         t1.start()
@@ -75,7 +74,10 @@ def create_app(test_config=None):
 
     if test_config is None:
         # load the instance config, if it exists, when not testing
-        app.config.from_pyfile(os.path.join(app.root_path, 'config.py'), silent=True)
+        app.config.from_pyfile(
+            os.path.join(app.root_path, 'config.py'), 
+            silent=True
+        )
     else:
         # load the test config if passed in
         app.config.from_mapping(test_config)
@@ -91,11 +93,16 @@ def create_app(test_config=None):
 
     @app.before_request
     def add_links():
+        """Adds the links the request context"""
+
         g.links = deepcopy(links)
+
 
     @app.route('/<language:language>/')
     @app.route('/')
     def index(language='pt'):
+        """Main page"""
+
         g.links[0]['active'] = True
 
         return render_template(
@@ -104,29 +111,36 @@ def create_app(test_config=None):
             lang=language,
         )
 
+
     @app.route('/noticias/<language:language>')
     @app.route('/noticias/')
     def noticias(language='pt'):
+        """News page"""
+        # TODO: implement pagination for extra news
+
         g.links[1]['active'] = True
 
         from .models import News
         from sqlalchemy import select
         with get_session() as db_session:
-            news_list = db_session.scalars(select(News).order_by(News.id.desc()).limit(5)).fetchall()
+            news_list = db_session.scalars(
+                select(News)
+                .order_by(News.id.desc())
+                .limit(5)
+            ).fetchall()
 
             g.news = []
             for news in news_list:
-                aaa = None
+                image = None
                 if news.image:
-                    aaa = db_session.get(Image, news.image).to_object(language)
-                    print(aaa['id'])
+                    image = db_session.get(Image, news.image).to_object(language)
 
                 g.news.append({
                     'title': getattr(news, f'title_{language}'),
                     'body': markdown.markdown(getattr(news, f'body_{language}'), tab_length=2),
                     'date': news.created.strftime("%d/%m/%Y"),
                     'modified': news.modified.strftime("%d/%m/%Y") if news.modified else None,
-                    'image': aaa
+                    'image': image
                 })
 
             return render_template(
@@ -135,9 +149,12 @@ def create_app(test_config=None):
                 text_column=True
             )
 
+
     @app.route('/contacto/<language:language>')
     @app.route('/contacto/')
     def contacto(language='pt'):
+        """Contacts page"""
+
         g.links[3]['active'] = True
         return render_template(
             'contacto.html', 
@@ -145,9 +162,12 @@ def create_app(test_config=None):
             lang=language
         )
 
+
     @app.route('/membros/<language:language>')
     @app.route('/membros/')
     def membros(language='pt'):
+        """Members page"""
+
         g.links[4]['active'] = True
         return render_template(
             'membros.html', 
@@ -155,12 +175,21 @@ def create_app(test_config=None):
         )
 
 
-    def allowed_file(filename):
+    def allowed_file(filename: str) -> bool:
+        """Helper function to validate file extension"""
+
         return '.' in filename and \
             filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
     
+    @login_required
     @app.route('/upload_file/', methods=['POST'])
     def upload_file():
+        """Uploads a file
+        
+        Saves a file locally and adds it to the database, returning file name 
+        and id or an error message.
+        """
+
         if 'file' in request.files:
             f = request.files['file']
         elif 'file' in request.form:
@@ -175,7 +204,10 @@ def create_app(test_config=None):
             return json.dumps({'error': 'file type not allowed'}), 415
 
         #TODO: sanitize the description
-        description = request.form['description'] if 'description' in request.form else None
+        description = \
+          request.form['description'].strip() \
+            if 'description' in request.form \
+            else None
         
         with get_session() as db_session:
             file = UploadedFile(f.filename, description, g.user)
@@ -192,22 +224,36 @@ def create_app(test_config=None):
                 'name': f'{file.original_name}'
             }), 200
 
+
     @app.route("/get_file/<uuid:id>")
     # TODO: find a more performant method
     # https://tedboy.github.io/flask/generated/flask.send_from_directory.html
     def get_file(id):
+        """Sends a file from the upload directory"""
+
+        # TODO: add verification that the file can be openly accessed
         return send_from_directory('uploaded_files', str(id))
+
 
     @app.route("/remove_file", methods=['POST'])
     def remove_file():
+        """Removes a file from the uploaded files
+        
+        Mark a file as removed in the database and move it to the deleted files
+        folder.
+        """
+
         if 'id' in request.form:
             id = request.form['id']
         else:
-            # Correct this error
+            # TODO: Correct this error
             return json.dumps({'error': 'no file uploaded'}), 400
 
         with get_session() as db_session:
-            file = db_session.execute(select(UploadedFile).filter_by(id=UUID(id))).scalar_one()
+            file = db_session.execute(
+                select(UploadedFile).filter_by(id=UUID(id))
+            ).scalar_one()
+
             if not file.deleted:
                 try:
                     file.delete()
@@ -217,18 +263,19 @@ def create_app(test_config=None):
                 else:
                     db_session.commit()
 
-        return '', 204
+        return json.dumps({}), 204
 
 
     @app.errorhandler(404)
     def not_found(e):
+        """Returns page not found"""
+
         return render_template("404.html")
 
-    from .db import init_db_command
+
     app.cli.add_command(init_db_command)
 
-    from . import auth
-    app.register_blueprint(auth.bp)
+    app.register_blueprint(auth_bp)
     
     from . import member
     app.register_blueprint(member.bp)

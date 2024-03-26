@@ -5,9 +5,7 @@ from .db import Base
 
 from werkzeug.utils import secure_filename
 
-import uuid
-import os
-import shutil
+import os, shutil, uuid
 
 class User(Base):
     __tablename__ = 'users'

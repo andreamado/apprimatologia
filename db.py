@@ -2,24 +2,26 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker, declarative_base, Session
 import click
 
-import sqlite3
-import os
+import os, sqlite3
 
 database_path = ''
 if os.path.isdir('apprimatologia'):
-    database_path = os.path.join('apprimatologia', 'test.db')
+    database_path = os.path.join('apprimatologia', 'apprimatologia.db')
 else:
-    database_path = 'test.db'
-
-print('sqlite:///' + database_path)
+    database_path = 'apprimatologia.db'
 
 conn = sqlite3.connect(database_path)
 conn.close()
 
 engine = create_engine('sqlite:///' + database_path)
-_db_session = scoped_session(sessionmaker(autocommit=False,
-                                         autoflush=False,
-                                         bind=engine))
+_db_session = scoped_session(
+    sessionmaker(
+        autocommit=False,
+        autoflush=False,
+        bind=engine
+    )
+)
+
 Base = declarative_base()
 Base.query = _db_session.query_property()
 
@@ -27,8 +29,9 @@ def get_session() -> Session:
     return Session(bind=engine)
 
 @click.command('init-db')
-def init_db_command():
+def init_db_command() -> None:
     """Clear the existing data and create new tables."""
+    
     from . import models
     Base.metadata.create_all(bind=engine)
 
