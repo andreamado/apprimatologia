@@ -83,9 +83,10 @@ class AbstractType:
 class Abstract(Base):
     __tablename__ = 'abstracts'
     id = Column(Integer, primary_key=True)
-    title = Column(String(500))
+    title = Column(Text)
     abstract = Column(Text)
     abstract_type = Column(Integer)
+    keywords = Column(Text)
     owner = Column(ForeignKey('users.id'))
     submitted = Column(Boolean)
     submitted_on = Column(UtcDateTime())
@@ -93,10 +94,11 @@ class Abstract(Base):
     created = Column(UtcDateTime(), default=utcnow())
     modified = Column(UtcDateTime(), onupdate=utcnow())
 
-    def __init__(self, owner, title=None, abstract=None, abstract_type=None, submitted=False):
+    def __init__(self, owner, title=None, abstract=None, abstract_type=None, keywords='', submitted=False):
         self.title = title
         self.abstract = abstract
         self.abstract_type = abstract_type
+        self.keywords = keywords
         self.owner = owner
         self.submitted = submitted
 

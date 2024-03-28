@@ -209,6 +209,20 @@ def create_app(test_config=None):
     from .admission import register_admission
     register_admission(app)
 
+    # word counter filter
+    def word_counter_generator(separator=None):
+      def word_counter(s: str|None):
+          if s:
+              s = s.strip().split(separator)
+              s = list(filter(lambda x: len(x.strip()) > 0, s))
+              return len(s)
+          else:
+              return 0
+      return word_counter
+
+    app.jinja_env.filters['word_counter'] = word_counter_generator()
+    app.jinja_env.filters['keyword_counter'] = word_counter_generator(';')
+
     return app
 
 if __name__ == '__main__':

@@ -34,8 +34,6 @@ def login_IXIPC_required(view):
 
 @bp.route('/IX_IPC/<language:language>')
 @bp.route('/IX_IPC')
-@bp.route('/IPC/<language:language>')
-@bp.route('/IPC')
 @bp.route('/IX_Iberian_Primatological_Conference/<language:language>')
 @bp.route('/IX_Iberian_Primatological_Conference')
 def IXIPC(language='pt'):

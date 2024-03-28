@@ -84,6 +84,9 @@ IXIPC-abstract-submission = Resumo
 IXIPC-abstract-title = Título
 IXIPC-abstract-body = Resumo
 IXIPC-abstract-characters = caracteres
+IXIPC-abstract-words = palavras
+IXIPC-abstract-keywords-explanation = Introduz 3-5 palavras-chave separadas por ponto e vírgula (;).
+IXIPC-abstract-keywords = Palavras-chave
 IXIPC-abstract-poster = Poster
 IXIPC-abstract-presentation = Apresentação oral
 IXIPC-abstract-select-abstract-type = Seleciona o tipo de resumo
@@ -102,15 +105,16 @@ IXIPC-abstract-authors = Autores
 IXIPC-abstract-authors-available = Autores disponíveis
 IXIPC-abstract-authors-select = Autores selecionados
 IXIPC-abstract-authors-drag-and-drop = 
-    1. Arrasta os autores para a área dos autores selecionados
-    2. Arrasta os autores selecionados para os ordenar
-    3. Seleciona o orador (carregando no símbolo de microfone)
+    1. Cria autores usando o formulário abaixo
+    2. Arrasta os autores para a área dos autores selecionados
+    3. Arrasta os autores selecionados para os ordenar
+    4. Seleciona o orador (carregando no símbolo de microfone)
 IXIPC-abstract-speaker = orador
 IXIPC-abstract-validation-errors = Por favor, corrige os seguintes erros antes de submeter:
 IXIPC-abstract-title-empty = O título não está definido
-IXIPC-abstract-title-too-long = O título não pode ter mais de 150 caracteres
+IXIPC-abstract-title-too-long = O título não pode ter mais de 20 palavras
 IXIPC-abstract-abstract-empty = O texto do resumo não está definido
-IXIPC-abstract-abstract-too-long = O resumo não pode ter mais de 500 caracteres
+IXIPC-abstract-abstract-too-long = O resumo não pode ter mais de 200 palavras
 IXIPC-abstract-no-authors = Tens de selecionar pelo menos um autor
 IXIPC-abstract-no-speaker = Nenhum autor foi designado como orador
 IXIPC-abstract-institutions = Instituições

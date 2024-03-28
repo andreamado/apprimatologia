@@ -83,6 +83,9 @@ IXIPC-abstract-submission = Abstract
 IXIPC-abstract-title = Title
 IXIPC-abstract-body = Abstract
 IXIPC-abstract-characters = characters
+IXIPC-abstract-words = words
+IXIPC-abstract-keywords-explanation = Introduce 3-5 keywords separated by a semicolon (;).
+IXIPC-abstract-keywords = Keywords
 IXIPC-abstract-poster = Poster
 IXIPC-abstract-presentation = Oral presentation
 IXIPC-abstract-select-abstract-type = Select the abstract type
@@ -101,15 +104,16 @@ IXIPC-abstract-authors = Authors
 IXIPC-abstract-authors-available = Available authors
 IXIPC-abstract-authors-select = Selected authors
 IXIPC-abstract-authors-drag-and-drop = 
-    1. Drag and drop the authors for selected authors area
-    2. Drag the selected authors for ordering
-    3. Select the speaker (clicking on the microphone symbol)
+    1. Create authors in the form below
+    2. Drag and drop the authors for selected authors area
+    3. Drag the selected authors for ordering
+    4. Select the speaker (clicking on the microphone symbol)
 IXIPC-abstract-speaker = speaker
 IXIPC-abstract-validation-errors = Please correct the following errors before submitting:
 IXIPC-abstract-title-empty = The title is not defined
-IXIPC-abstract-title-too-long = The title cannot be longer than 150 characters
+IXIPC-abstract-title-too-long = The title cannot be longer than 20 words
 IXIPC-abstract-abstract-empty = The abstract text is not defined
-IXIPC-abstract-abstract-too-long = The abstract text cannot be longer than 500 characters
+IXIPC-abstract-abstract-too-long = The abstract text cannot be longer than 200 words
 IXIPC-abstract-no-authors = At least one selected author is required
 IXIPC-abstract-no-speaker = No speaker selected
 IXIPC-abstract-institutions = Institutions

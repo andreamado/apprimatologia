@@ -1,0 +1,30 @@
+<script>
+  const registerWordCounter = (inputElement, outputElement, options={}) => {
+    const empty_words = (x) => x.trim().length > 0;
+
+    options.separator ??= /\s+/;
+    options.word_counter_selector ??= '.word-counter';
+    options.wrong_class ??= 'too-many-words';
+    let min_length = options.min_length;
+    let max_length = options.max_length;
+
+    let word_counter = outputElement.querySelector(options.word_counter_selector);
+
+    inputElement.oninput = () => {
+      let n_words = 
+        inputElement.value
+          .trim()
+          .split(options.separator)
+          .filter(empty_words)
+          .length;
+      
+      word_counter.innerHTML = n_words;
+
+      if((max_length && n_words > max_length) || (min_length && n_words < min_length)) {
+        outputElement.classList.add(options.wrong_class);
+      } else {
+        outputElement.classList.remove(options.wrong_class);
+      }
+    }
+  }
+</script>

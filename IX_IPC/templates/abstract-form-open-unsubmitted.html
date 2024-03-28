@@ -29,23 +29,39 @@
           </div>
           <div class="form-text">{{ 'IXIPC-abstract-select-abstract-type'|l10n(lang) }}</div>
         </div>
+
+        <!-- Title -->
         <div class="row mb-3">
           <div class="col">
-            {% set max_title_length = 150 -%}
+            {% set max_title_length = 20 -%}
             <label for="abstract-title" class="form-label">{{ 'IXIPC-abstract-title'|l10n(lang) }}</label>
-            <input type="text" name="title" id="abstract-title" class="form-control abstract-title" maxlength="{{ max_title_length }}" value="{{ abstract.title if abstract }}">
-            <div class="form-text"><span id="abstract-title-character-counter" class="abstract-title-character-counter">{{abstract.title|length if abstract}}</span>/{{ max_title_length }} {{ 'IXIPC-abstract-characters'|l10n(lang) }}</div>
-          </div>
-        </div>
-        <div class="row mb-3">
-          <div class="col">
-            {% set max_abstract_length = 500 -%}
-            <label for="abstract-body" class="form-label">{{ 'IXIPC-abstract-body'|l10n(lang) }}</label>
-            <textarea name="abstract-body" id="abstract-body" rows="6" class="form-control" maxlength="{{ max_abstract_length }}" aria-describedby="abstract-character-counter">{{ abstract.abstract if abstract }}</textarea>
-            <div class="form-text"><span id="abstract-character-counter">{{abstract.abstract|length if abstract}}</span>/{{ max_abstract_length }} {{ 'IXIPC-abstract-characters'|l10n(lang) }}</div>
+            <input type="text" name="title" id="abstract-title" class="form-control abstract-title" value="{{ abstract.title if abstract }}">
+            <div class="form-text{{' too-many-words' if ((abstract.title|word_counter > max_title_length) or (abstract.title|word_counter < 1))}}" id="abstract-title-word-counter"><span class="word-counter">{{abstract.title|word_counter if abstract}}</span>/{{ max_title_length }} {{ 'IXIPC-abstract-words'|l10n(lang) }}</div>
           </div>
         </div>
 
+        <!-- Body -->
+        <div class="row mb-3">
+          <div class="col">
+            {% set max_abstract_length = 200 -%}
+            <label for="abstract-body" class="form-label">{{ 'IXIPC-abstract-body'|l10n(lang) }}</label>
+            <textarea name="abstract-body" id="abstract-body" rows="6" class="form-control" aria-describedby="abstract-character-counter">{{ abstract.abstract if abstract }}</textarea>
+            <div class="form-text{{' too-many-words' if ((abstract.abstract|word_counter > max_abstract_length) or (abstract.abstract|word_counter < 1))}}" id="abstract-word-counter"><span class="word-counter">{{abstract.abstract|word_counter if abstract}}</span>/{{ max_abstract_length }} {{ 'IXIPC-abstract-words'|l10n(lang) }}</div>
+          </div>
+        </div>
+
+        <!-- Keywords -->
+        <div class="row mb-3">
+          <div class="col">
+            {% set max_keywords = 150 -%}
+            <label for="abstract-keywords" class="form-label">{{ 'IXIPC-abstract-keywords'|l10n(lang) }}</label>
+            <input type="text" name="keywords" id="abstract-keywords" class="form-control abstract-title" value="{{ abstract.keywords if abstract }}">
+            <div class="form-text{{' too-many-words' if ((abstract.keywords|word_counter > 5) or (abstract.keywords|word_counter < 3))}}" id="abstract-keywords-word-counter"><span class="word-counter">{{abstract.keywords|keyword_counter if abstract}}</span> {{ 'IXIPC-abstract-words'|l10n(lang) }}</div>
+            <div class="form-text">{{ 'IXIPC-abstract-keywords-explanation'|l10n(lang) }}</div>
+          </div>
+        </div>
+
+        <!-- Authors -->
         <h5 class="card-title mb-3">{{ 'IXIPC-abstract-authors'|l10n(lang) }}</h5>
         <div class="row mb-4">
           <div class="col-6 px-2">

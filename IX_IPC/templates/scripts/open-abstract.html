@@ -23,13 +23,27 @@
         return;
       } 
 
-      registerCounter(
+      registerWordCounter(
         abstractElement.querySelector('#abstract-title'), 
-        abstractElement.querySelector('#abstract-title-character-counter')
+        abstractElement.querySelector('#abstract-title-word-counter'), {
+          'min_length': 1,
+          'max_length': 20
+        }
       );
-      registerCounter(
+      registerWordCounter(
         abstractElement.querySelector('#abstract-body'), 
-        abstractElement.querySelector('#abstract-character-counter')
+        abstractElement.querySelector('#abstract-word-counter'), {
+          'min_length': 1,
+          'max_length': 200
+        }
+      );
+      registerWordCounter(
+        abstractElement.querySelector('#abstract-keywords'), 
+        abstractElement.querySelector('#abstract-keywords-word-counter'), {
+          'min_length': 3,
+          'max_length': 5,
+          'separator': ';'
+        }
       );
 
       abstractElement.querySelector('#abstract-delete').onclick = () => {

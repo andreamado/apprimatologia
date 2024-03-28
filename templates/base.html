@@ -20,6 +20,14 @@
       <div class="row">
         <div class="col float-center designed-by"><a href="https://andreamado.github.io/me">{{ 'designed-by'|l10n(lang) }} André Amado</a></div>
       </div>
-    </div>    
+    </div>
+    <script defer>
+      // Reloads the page after 50 mins to refresh the csrf tokens and the 
+      // scripts keep being able to access the server 
+      setTimeout(
+        () => {  location.reload(); },
+        3000000
+      );
+    </script>
   </body>
 </html>
