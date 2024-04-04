@@ -1,20 +1,33 @@
 <script>
-  const authorsManager = () => {
-    const authorsSaveTimeout = 3000;
-    const warningTimeout = 4000;
+  //////////////////////////////////////////////////////////////////////////
+  // Utilities
+  const saveTimeout = 3000;
+  const warningTimeout = 4000;
+  //////////////////////////////////////////////////////////////////////////
 
+  //////////////////////////////////////////////////////////////////////////
+  // Utilities
+  const blankForm = () => {
+    let form = new FormData();
+    form.append('csrf_token', '{{ csrf_token() }}');
+    return form;
+  }
+
+  function isInteger(value) {
+    return !isNaN(parseInt(value)) && isFinite(value);
+  }
+  //////////////////////////////////////////////////////////////////////////
+
+  const authorsManager = () => {
     let editAuthorsForm = document.getElementById('accordion-authors');
 
-    //////////////////////////////////////////////////////////////////////////
-    // Utilities
-    const blankForm = () => {
-      let form = new FormData();
-      form.append('csrf_token', '{{ csrf_token() }}');
-      return form;
-    }  
+    let institutions = {};
+    let affiliationsToSave = {};
+    let scheduleAffiliationsSave = null;
 
-    function isInteger(value) {
-      return !isNaN(parseInt(value)) && isFinite(value);
+    const registerInstitutions = (insts) => {
+      scheduleAffiliationsSave = insts.scheduleAffiliationsSave;
+      institutions = insts.list;
     }
 
     const authorFullname = (author) => {
@@ -24,7 +37,6 @@
       }
       return fullName;
     }
-    //////////////////////////////////////////////////////////////////////////
 
     let authorsToSave = {};
 
@@ -90,10 +102,13 @@
     })
     .then((response) => response.json())
     .then((data) => {
-      for(let idx in data.authors) {
-        let author = data.authors[idx];
+      for(let author of data.authors) {
+        author.selectedAffiliations = {};
+        author.availableAffiliations = Object.assign(institutions);
         authors[author.id] = author;
-        editAuthorsForm.insertAdjacentElement('beforeend', authorHTMLElement(author));
+        load_affiliations(author).then(
+          editAuthorsForm.insertAdjacentElement('beforeend', authorHTMLElement(author))
+        ).catch((e) => console.log(e) );
       }
       authorsToSave = {};
     })
@@ -101,41 +116,232 @@
 
     const scheduleAuthorsSave = (id=null, author=null) => {
       if(id && author) authorsToSave[id] = author;
-      setTimeout(saveAuthors, authorsSaveTimeout);
+      setTimeout(saveAuthors, saveTimeout);
     }
 
     const authorHTMLElement = (author) => {
       let authorForm = document.createElement('div');
       authorForm.dataset.id = author.id;
-      
       authorForm.classList.add('accordion-item');
-      authorForm.insertAdjacentHTML('beforeend',
-        `<h2 class="accordion-header">
-          <button id="author-header" class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#author-edit-${author.id}" aria-expanded="false" aria-controls="author-edit-${author.id}"></button>
-        </h2>`
-      );
-  
+      
+      // Header
+      let header = document.createElement('h2');
+      header.classList.add('accordion-header');
+      header.innerHTML = `<button id="author-header" class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#author-edit-${author.id}" aria-expanded="false" aria-controls="author-edit-${author.id}"></button>`
+      authorForm.appendChild(header);
+
+      // Main tab
       const firstNameLabel = "{{ 'IXIPC-personal-data-first-name'|l10n(lang) }}";
       const lastNameLabel = "{{ 'IXIPC-personal-data-last-name'|l10n(lang) }}";
-      authorForm.insertAdjacentHTML('beforeend',
-        `<div id="author-edit-${author.id}" class="accordion-collapse collapse" data-bs-parent="#accordion-authors">
-          <div class="accordion-body">
-            <form action="">
-              <div class="row mb-3">
-                <div class="col">
-                  <label for="first-name" class="form-label">${firstNameLabel}</label>
-                  <input name="first-name" id="first-name" type="text" class="form-control" value="${author.firstName}">
-                </div>
-                <div class="col">
-                  <label for="last-name" class="form-label">${lastNameLabel}</label>
-                  <input name="last-name" id="last-name" type="text" class="form-control" value="${author.lastName}">
-                </div>
-              </div>
-              <div class="w-100 card-footer abstract-footer-text text-white text-center p-0" id="author-saved-${author.id}">&nbsp;</div>
-            </form>
-          </div>
-        </div>`
-      );
+
+      let main = document.createElement('div');
+      main.id = 'author-edit-' + String(author.id);
+      main.classList.add('accordion-collapse', 'collapse');
+      main.dataset.bsParent = "#accordion-authors";
+
+      let accordionBody = document.createElement('div');
+      accordionBody.classList.add('accordion-body');
+      let form = document.createElement('form');
+      form.setAttribute('action', '');
+
+      let row1 = document.createElement('div');
+      row1.classList.add('row', 'mb-3');
+
+      // First name
+      let col11 = document.createElement('div');
+      col11.classList.add('col');
+
+      let label11 = document.createElement('label');
+      // label11.setAttribute('for', 'first-name');
+      label11.classList.add('form-label');
+      label11.innerHTML = firstNameLabel;
+
+      let input11 = document.createElement('input');
+      input11.id = 'first-name'
+      input11.setAttribute('type', 'text');
+      input11.classList.add('form-control');
+      input11.value = author.firstName;
+
+      col11.appendChild(label11);
+      col11.appendChild(input11);
+
+      // Last name
+      let col12 = document.createElement('div');
+      col12.classList.add('col');
+      let label12 = document.createElement('label');
+      // label12.setAttribute('for', 'last-name');
+      label12.classList.add('form-label');
+      label12.innerHTML = lastNameLabel;
+
+      let input12 = document.createElement('input');
+      input12.id = 'last-name'
+      input12.setAttribute('type', 'text');
+      input12.classList.add('form-control');
+      input12.value = author.lastName;
+
+      col12.appendChild(label12);
+      col12.appendChild(input12);
+
+      row1.appendChild(col11);
+      row1.appendChild(col12);
+
+      form.appendChild(row1);
+
+      // Affiliations
+      let row2 = document.createElement('div');
+      row2.classList.add('row', 'mb-4');
+
+      let col21 = document.createElement('div');
+      col21.classList.add('col-6', 'px-2');
+
+      let label21 = document.createElement('label');
+      label21.setAttribute('for', 'selected-institutions');
+      label21.classList.add('form-label');
+      label21.innerHTML = "{{ 'IXIPC-abstract-institutions-select'|l10n(lang) }}";
+
+      let selectedBox = document.createElement('div');
+      selectedBox.classList.add('authors-box', 'rounded-1', 'p-1', 'h-100');
+      selectedBox.id = 'selected-institutions';
+
+      col21.appendChild(label21);
+      col21.appendChild(selectedBox);
+
+      let col22 = document.createElement('div');
+      col22.classList.add('col-6', 'px-2');
+
+      let label22 = document.createElement('label');
+      label22.setAttribute('for', 'available-institutions');
+      label22.classList.add('form-label');
+      label22.innerHTML = "{{ 'IXIPC-abstract-institutions-available'|l10n(lang) }}";
+
+      let availableBox = document.createElement('div');
+      availableBox.classList.add('authors-box', 'rounded-1', 'p-1', 'h-100');
+      availableBox.id = 'available-institutions';
+
+      col22.appendChild(label22);
+      col22.appendChild(availableBox);
+
+      row2.appendChild(col21);
+      row2.appendChild(col22);
+      form.appendChild(row2);
+
+      // Instructions
+      let row3 = document.createElement('div');
+      row3.classList.add('row', 'mb-3');
+
+      let col3 = document.createElement('div');
+      col3.classList.add('col');
+
+      let instructions = document.createElement('div');
+      instructions.classList.add('form-text');
+      instructions.innerHTML = `{{'IXIPC-abstract-institutions-drag-and-drop'|l10n(lang)}}`;
+
+      col3.appendChild(instructions);
+      row3.appendChild(col3);
+      form.appendChild(row3);
+
+      // Feedback display
+      let feedbackDisplay = document.createElement('div');
+      feedbackDisplay.classList.add('w-100', 'card-footer', 'abstract-footer-text', 'text-white', 'text-center', 'p-0');
+      feedbackDisplay.id = 'author-saved-' + String(author.id)
+      feedbackDisplay.innerHTML = '&nbsp;'
+
+      form.appendChild(feedbackDisplay);
+
+      accordionBody.appendChild(form);
+      main.appendChild(accordionBody);
+      authorForm.appendChild(main);
+
+      const identifyEventSource = (source) => {
+        if(source.id === 'available-institutions' ) {
+          return 'availableAffiliations';
+        } else if(source.id === 'selected-institutions') {
+          return 'selectedAffiliations';
+        } else {
+          return null;
+        }
+      }
+
+      const moveInstitution = (id, from, to) => {
+        let origin = identifyEventSource(from);
+        let destination = identifyEventSource(to);
+        let institution = author[origin][id];
+
+        if(institution) {
+          if(destination != origin) {
+            author[destination][id] = institution;
+            delete author[origin][id];
+          }
+        }
+      }
+
+      /* const saveAbstractAuthors = async () => {
+        if(Object.keys(abstractAuthorsToSave).length > 0) {
+          let abstractAuthors = {};
+          for(const id in abstractAuthorsToSave) {
+            const abstract = abstracts[id];
+
+            abstractAuthors[id] = [];
+            for(const author_id in abstract.selectedAuthors) {
+              const author = abstract.selectedAuthors[author_id];
+              if(author) abstractAuthors[id].push([author_id, author.order, author.presenter]);
+            }
+          }
+          let form = blankForm();
+          form.append('abstractAuthors', JSON.stringify(abstractAuthors));
+          abstractAuthorsToSave = {};
+
+          fetch("{{ url_for('IX_IPC.save_abstract_authors') }}", {
+            method: 'POST',
+            body: form
+          })
+          .catch((e) => console.log(e));
+        }
+      } */
+
+      const dragInstitution = (list, numbered=null) => (evt) => {
+        console.log(author);
+        console.log(evt.item.dataset.institutionId);
+        console.log(evt.from);
+        console.log(evt.to);
+        moveInstitution(
+          evt.item.dataset.institutionId,
+          evt.from,
+          evt.to
+        );
+        console.log(author);
+
+        list.childNodes.forEach(
+          (child, i) => {
+            if('dataset' in child) {
+              let institutionId = child.dataset.institutionId;
+              let nameElement = child.querySelector(`#institution-name`);
+
+              if(numbered) {
+                nameElement.innerHTML = `${i+1}. ${child.dataset.content}`;
+                author.selectedAffiliations[institutionId].order = i;
+              } else {
+                nameElement.innerHTML = child.dataset.content;
+              }
+            }
+          }
+        );
+
+        scheduleAffiliationsSave(author.id);
+      }
+
+      new Sortable(selectedBox, {
+        group: 'shared-affiliations-' + String(author.id),
+        animation: 150,
+        onSort: dragInstitution(selectedBox, numbered=true),
+        onUpdate: dragInstitution(selectedBox, numbered=true)
+      });
+      
+      new Sortable(availableBox, {
+        group: 'shared-affiliations-' + String(author.id),
+        animation: 150,
+        onSort: dragInstitution(availableBox, numbered=false)
+      });
   
       authorForm.addEventListener(
         'input',
@@ -146,11 +352,35 @@
       return authorForm;
     };
   
+    const load_affiliations = async (author) => {
+      let form = blankForm();
+      form.append('authorId', author.id);
+
+      return fetch("{{ url_for('IX_IPC.load_affiliations') }}", {
+        method: 'POST',
+        body: form
+      })
+      .then((response) => response.json())
+      .then((data) => {
+        for(const idx in data.affiliations) {
+          let id = data.affiliations[idx].institutionId;
+          let institution = author.availableAffiliations[id];
+          delete author.availableAffiliations[id];
+
+          institution.order = data.affiliations[idx].order;
+          author.selectedAffiliations[id] = institution;
+        }
+      });
+    };
+
     const newAuthor = () => {
       let newAuthor = {
         'firstName': '',
         'lastName': '',
-        'id': null
+        'id': null,
+        'presenter': false,
+        'selectedAffiliations': {},
+        'availableAffiliations': Object.assign({}, institutions),
       };
       
       fetch("{{ url_for('IX_IPC.new_author') }}", {
@@ -162,6 +392,9 @@
         newAuthor.id = data.id;
         authors[newAuthor.id] = newAuthor;
         editAuthorsForm.insertAdjacentElement('beforeend', authorHTMLElement(newAuthor));
+        for(abstract_id in abstracts) {
+          abstracts[abstract_id].addPresenterSelectListener(newAuthor);
+        }
       })
       .catch((e) => console.log(e));
     };  
@@ -215,7 +448,7 @@
           for(const id in abstractAuthorsToSave) {
             const abstract = abstracts[id];
 
-            abstractAuthors[id] = []
+            abstractAuthors[id] = [];
             for(const author_id in abstract.selectedAuthors) {
               const author = abstract.selectedAuthors[author_id];
               if(author) abstractAuthors[id].push([author_id, author.order, author.presenter]);
@@ -233,6 +466,20 @@
         }
       }
 
+      const addPresenterSelectListener = (author) => {
+        let speakerElement = abstract.element.querySelector('#speaker-' + String(author.id));
+        speakerElement.addEventListener('click', () => {
+          setSpeaker(author.id);
+          for(const author_id in abstract.selectedAuthors) {
+            let element = abstract.element.querySelector('#speaker-' + String(author_id));
+            element.querySelector('img').src = speakerDisabled;
+            element.classList.remove('speaker-selected');
+          }
+          speakerElement.querySelector('img').src = speakerEnabled;
+          speakerElement.classList.add('speaker-selected');
+        });
+      }
+
       let abstract = {
         'id': id,
         'element': abstractElement,
@@ -241,11 +488,12 @@
         'selectedAuthorsElement': abstractElement.querySelector('#selected-authors'),
         'availableAuthorsElement': abstractElement.querySelector('#available-authors'),
         'saveAbstractAuthors': saveAbstractAuthors,
+        'addPresenterSelectListener': addPresenterSelectListener
       };
 
       /////////////////////////////////////////////////////////////////////////////////////
       // Load selected authors
-      const load_authors = () => {
+      const load_abstract_authors = () => {
         let form = blankForm();
         form.append('abstractId', id);
 
@@ -267,7 +515,7 @@
         })
         .catch((e) => console.log(e));
       };
-      await load_authors();
+      await load_abstract_authors();
       /////////////////////////////////////////////////////////////////////////////////////
 
       const identifyEventSource = (source) => {
@@ -307,20 +555,6 @@
         abstract.selectedAuthors[id].presenter = true;
         scheduleAbstractAuthorsSave();
       }
-      
-      const addPresenterSelectListener = (author) => {
-        let speakerElement = abstract.element.querySelector('#speaker-' + String(author.id));
-        speakerElement.addEventListener('click', () => {
-          setSpeaker(author.id);
-          for(const author_id in abstract.selectedAuthors) {
-            let element = abstract.element.querySelector('#speaker-' + String(author_id));
-            element.querySelector('img').src = speakerDisabled;
-            element.classList.remove('speaker-selected');
-          }
-          speakerElement.querySelector('img').src = speakerEnabled;
-          speakerElement.classList.add('speaker-selected');
-        });
-      }
 
       for(const id in abstract.availableAuthors) {
         let author = _authors[id];
@@ -349,7 +583,7 @@
       const scheduleAbstractAuthorsSave = (id=null) => {
         if(id === null) id = abstract.id;
         abstractAuthorsToSave[id] = true;
-        setTimeout(saveAbstractAuthors, authorsSaveTimeout);
+        setTimeout(saveAbstractAuthors, saveTimeout);
       }
 
       const dragAuthor = (list, numbered=null) => (evt) => {
@@ -406,20 +640,324 @@
       return Object.values(abstracts[abstractId].selectedAuthors);
     }
 
-    ///////////////////////////////////////////////////////////////////////////////
+    const updateInstitution = (institution) => {
+      institutions[institution.id] = institution;
+      for(let author_id in _authors) {
+        let author = _authors[author_id];
+        if(institution.id in author.selectedAffiliations && author.selectedAffiliations[institution.id]) {
+          let institutionElement = author.querySelector('#author-' + String(author.id));
+          authorElement.dataset.content = fullName;
+          authorElement.querySelector('#author-name').innerHTML = `${author.order + 1}. ${fullName}`;
+        }
+      }
+      /* for(const author_id in authors.authors_list) {
+        let abstract = abstracts[abstract_id];
+        let fullName = authorFullname(_authors[author_id]);
+
+        if(author_id in abstract.selectedAuthors && abstract.selectedAuthors[author_id]) {
+          let authorElement = abstract.selectedAuthorsElement.querySelector('#author-' + String(author_id));
+          authorElement.dataset.content = fullName;
+          authorElement.querySelector('#author-name').innerHTML = `${author.order + 1}. ${fullName}`;
+        } else if(author_id in abstract.availableAuthors && abstract.availableAuthors[author_id]) {
+          let authorElement = abstract.availableAuthorsElement.querySelector('#author-' + String(author_id));
+          authorElement.dataset.content = fullName;
+          authorElement.querySelector('#author-name').innerHTML = fullName;
+        } else {
+          abstract.availableAuthors[author_id] = author;
+          abstract.availableAuthorsElement.insertAdjacentHTML(
+            'beforeend',
+            authorSelectHtml(author_id)
+          );
+        }
+      } */
+    }
 
     return {
       'newAuthor': newAuthor,
       'saveAuthors': saveAuthors,
       'registerAbstract': registerAbstract,
       'deregisterAbstract': deregisterAbstract,
-      'getAbstractSelectedAuthors': getAbstractSelectedAuthors
+      'getAbstractSelectedAuthors': getAbstractSelectedAuthors,
+      'updateInstitution': updateInstitution,
+      'authorList': _authors,
+      'registerInstitutions': registerInstitutions,
     }
   };
+
+  const institutionsManager = (authors) => {
+    let institutionsToSave = {};
+    let affiliationsToSave = {};
+    let editInstitutionsForm = document.getElementById('accordion-institutions');
+
+    const institutionName = (institution) => {
+      if(institution.name && institution.name.trim().length > 0) {
+        let name = institution.name.trim();
+        if(institution.country && institution.country.trim().length > 0) {
+          name += ' (' + institution.country.trim() + ')';
+        }
+        return name;
+      }
+      return "{{'IXIPC-no-name'|l10n(lang)}}";
+    }
+
+    const institutionSelectHTML = (id, order=null) => {
+      let institution = _institutions[id];
+      const number = (order==null)?'':(String(order+1)+'. ');
+      let name = institutionName(institution);
+      return (
+        `<div id="institution-${id}" class="author-name rounded-1 p-1 mb-1" data-content="${name}" data-institution-id="${id}">
+          <div class='d-flex'>
+            <div class='flex-grow-1' id='institution-name'>${number}${name}</div> 
+          </div>
+        </div>`
+      );
+    }
+
+    // Proxy to institutions that allows us to intercept any changes in order to 
+    // display or save them
+    let _institutions = {};
+    let institutions = new Proxy(_institutions, {
+      deleteProperty: function(target, property) {
+        let id = target[property].id;
+        return Reflect.deleteProperty(...arguments);
+      },
+      set: function(target, property, institution, receiver) {
+        target[property] = institution;
+        if(isInteger(property)) {
+          authors.updateInstitution(institution);
+          scheduleInstitutionsSave(institution.id, institution);
+
+          let author_list = authors.authorList;
+          for(const author_id in author_list) {
+            let author = author_list[author_id];
+            let authorElement = document.getElementById('author-edit-' + String(author.id));
+
+            if(institution.id in author.selectedAffiliations) {
+              let institutionElement = authorElement
+                .querySelector('#selected-institutions')
+                .querySelector('#institution-' + String(institution.id));
+              if(institutionElement) {
+                institutionElement.dataset.content = institution.name;
+                institutionElement.querySelector('#institution-name').innerHTML = `${institution.order + 1}. ${institution.name}`;
+              } else {
+                authorElement
+                  .querySelector('#selected-institutions')
+                  .insertAdjacentHTML(
+                    'beforeend',
+                    institutionSelectHTML(institution.id)
+                  );
+              }
+            } else if(institution.id in author.availableAffiliations) {
+              let institutionElement = authorElement
+                .querySelector('#available-institutions')
+                .querySelector('#institution-' + String(institution.id));
+              if(institutionElement) {
+                institutionElement.dataset.content = institution.name;
+                institutionElement.querySelector('#institution-name').innerHTML = institution.name;
+              } else {
+                authorElement
+                  .querySelector('#available-institutions')
+                  .insertAdjacentHTML(
+                    'beforeend',
+                    institutionSelectHTML(institution.id)
+                  );
+              }
+            } else {
+              author.availableAffiliations[institution.id] = institution;
+              authorElement
+                .querySelector('#available-institutions')
+                .insertAdjacentHTML(
+                  'beforeend',
+                  institutionSelectHTML(institution.id)
+                );
+            }
+          }
+        }
+        return true;
+      }
+    });
+
+    // Load available institutions from database
+    fetch("{{ url_for('IX_IPC.load_institutions') }}", {
+      method: 'POST',
+      body: blankForm()
+    })
+    .then((response) => response.json())
+    .then((data) => {
+      for(let institution of data.institutions) {
+        institutions[institution.id] = institution;
+        editInstitutionsForm.insertAdjacentElement('beforeend', institutionHTMLElement(institution));
+      }
+      institutionsToSave = {};
+    })
+    .catch((e) => console.log(e));
+
+    const saveAffiliations = () => {
+      if(Object.keys(affiliationsToSave).length > 0) {
+        let affiliations = {};
+        for(const author_id in affiliationsToSave) {
+          const author = authors.authorList[author_id];
+
+          affiliations[author_id] = [];
+          for(const institution_id in author.selectedAffiliations) {
+            const institution = author.selectedAffiliations[institution_id];
+            if(institution) 
+              affiliations[author_id].push([institution_id, institution.order]);
+          }
+          let form = blankForm();
+          form.append('affiliations', JSON.stringify(affiliations));
+          affiliationsToSave = {};
+
+          fetch("{{ url_for('IX_IPC.save_affiliations') }}", {
+            method: 'POST',
+            body: form
+          })
+          .catch((e) => console.log(e));  
+        }
+      }
+    }
+
+    const scheduleAffiliationsSave = (id=null) => {
+      if(id != null) id = affiliationsToSave[id] = true;
+      setTimeout(saveAffiliations, saveTimeout);
+    }
+
+    const institutionHTMLElement = (institution) => {
+      let institutionForm = document.createElement('div');
+      institutionForm.dataset.id = institution.id;
+      
+      institutionForm.classList.add('accordion-item');
+      institutionForm.insertAdjacentHTML('beforeend',
+        `<h2 class="accordion-header">
+          <button id="institution-header" class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#institution-edit-${institution.id}" aria-expanded="false" aria-controls="institution-edit-${institution.id}"></button>
+        </h2>`
+      );
+  
+      const institutionNameLabel = "{{ 'IXIPC-institutions-name'|l10n(lang) }}";
+      const institutionAddressLabel = "{{ 'IXIPC-institutions-address'|l10n(lang) }}";
+      const institutionCountryLabel = "{{ 'IXIPC-institutions-country'|l10n(lang) }}";
+
+      institutionForm.insertAdjacentHTML('beforeend',
+        `<div id="institution-edit-${institution.id}" class="accordion-collapse collapse" data-bs-parent="#accordion-institutions">
+          <div class="accordion-body">
+            <form action="">
+              <div class="row mb-3">
+                <div class="col">
+                  <label for="name" class="form-label">${institutionNameLabel}</label>
+                  <input name="name" id="name" type="text" class="form-control" value="${institution.name}">
+                </div>
+              </div>
+              <div class="row mb-3">
+                <div class="col-8">
+                  <label for="address" class="form-label">${institutionAddressLabel}</label>
+                  <input name="address" id="address" type="text" class="form-control" value="${institution.address}">
+                </div>
+                <div class="col-4">
+                  <label for="country" class="form-label">${institutionCountryLabel}</label>
+                  <input name="country" id="country" type="text" class="form-control" value="${institution.country}">
+                </div>
+              </div>
+              <div class="w-100 card-footer abstract-footer-text text-white text-center p-0" id="institution-saved-${institution.id}">&nbsp;</div>
+            </form>
+          </div>
+        </div>`
+      );
+
+      institutionForm.addEventListener(
+        'input',
+        updateInstitution(institutionForm)
+      );
+      updateInstitution(institutionForm)();
+  
+      return institutionForm;
+    }
+
+    const newInstitution = () => {
+      let institution = {
+        'name': '',
+        'address': '',
+        'country': ''
+      };
+
+      fetch("{{ url_for('IX_IPC.new_institution') }}", {
+        method: 'POST',
+        body: blankForm()
+      })
+      .then((response) => response.json())
+      .then((data) => {
+        institution.id = data.id;
+        institutions[institution.id] = institution;
+        editInstitutionsForm.insertAdjacentElement(
+          'beforeend', 
+          institutionHTMLElement(institution)
+        );
+      })
+      .catch((e) => console.log(e));
+    }
+
+    const saveInstitutions = () => {
+      if(Object.keys(institutionsToSave).length > 0) {
+        let form = blankForm();
+        form.append('institutions', JSON.stringify(institutionsToSave));
+
+        for(const id in institutionsToSave) {
+          let elem = document.getElementById('institution-saved-' + String(id));
+          elem.innerHTML = "{{ 'IXIPC-saved-institution'|l10n(lang) }}";
+          elem.classList.add('bg-primary');
+          setTimeout(() => {
+            elem.innerHTML = '&nbsp;';
+            elem.classList.remove('bg-primary');
+          }, warningTimeout);
+        }
+
+        institutionsToSave = {};
+
+        fetch("{{ url_for('IX_IPC.save_institutions') }}", {
+          method: 'POST',
+          body: form
+        })
+        .catch((e) => console.log(e));
+      }
+    }
+
+    const scheduleInstitutionsSave = (id=null, institution=null) => {
+      if(id && institution) institutionsToSave[id] = institution;
+      setTimeout(saveInstitutions, saveTimeout);
+    }
+
+    const updateInstitution = (target) => () => {
+      const id = target.dataset.id;
+      let institution = institutions[id];
+      
+      institution.name = target.querySelector('#name').value;
+      institution.address = target.querySelector('#address').value;
+      institution.country = target.querySelector('#country').value;
+
+      target.querySelector('#institution-header').innerHTML = institutionName(institution);
+      institutions[id] = institution;
+    };
+
+    return {
+      'newInstitution': newInstitution,
+      'saveInstitutions': saveInstitutions,
+      'scheduleInstitutionsSave': scheduleInstitutionsSave,
+      'updateInstitution': updateInstitution,
+      'scheduleAffiliationsSave': scheduleAffiliationsSave,
+      'list': _institutions
+    };
+  }
 
   let authors = authorsManager();
   document.getElementById('new-author-button').addEventListener(
     'click',
     authors.newAuthor
   );
+
+  let institutions = institutionsManager(authors);
+  document.getElementById('new-institution-button').addEventListener(
+    'click',
+    institutions.newInstitution
+  );
+
+  authors.registerInstitutions(institutions);
 </script>
