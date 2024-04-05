@@ -114,6 +114,8 @@ IXIPC-abstract-title-empty = The title is not defined
 IXIPC-abstract-title-too-long = The title cannot be longer than 20 words
 IXIPC-abstract-abstract-empty = The abstract text is not defined
 IXIPC-abstract-abstract-too-long = The abstract text cannot be longer than 200 words
+IXIPC-abstract-few-keywords = Use at least 3 keywords
+IXIPC-abstract-many-keywords = Use at most 5 keywords
 IXIPC-abstract-no-authors = At least one selected author is required
 IXIPC-abstract-no-speaker = No speaker selected
 IXIPC-abstract-institutions = Institutions
@@ -123,6 +125,18 @@ IXIPC-abstract-authors-edit = Create and modify authors
 IXIPC-abstract-authors-save = Save authors
 IXIPC-saved-author = Author saved
 IXIPC-no-name = No name
+
+IXIPC-institutions-name = Institution
+IXIPC-institutions-address = Address
+IXIPC-institutions-country = Country
+IXIPC-saved-institution = Institution saved
+IXIPC-authors-affiliations = Affiliations
+IXIPC-abstract-institutions-select = Selected affiliations
+IXIPC-abstract-institutions-available = Available affiliations
+IXIPC-abstract-institutions-drag-and-drop = 
+    1. Create institutions in the form below
+    2. Drag and drop the institution for selected affiliations area
+    3. Drag the selected institution for ordering
 
 IXIPC-personal-data-first-name = First name
 IXIPC-personal-data-last-name = Last name

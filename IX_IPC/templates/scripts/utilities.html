@@ -1,0 +1,14 @@
+<script defer>
+  const blankForm = () => {
+    let form = new FormData();
+    form.append('csrf_token', '{{ csrf_token() }}');
+    return form;
+  }
+
+  function isInteger(value) {
+    return !isNaN(parseInt(value)) && isFinite(value);
+  }
+
+  const saveTimeout = 1000;
+  const warningTimeout = 3000;
+</script>

@@ -65,12 +65,12 @@
         <h5 class="card-title mb-3">{{ 'IXIPC-abstract-authors'|l10n(lang) }}</h5>
         <div class="row mb-4">
           <div class="col-6 px-2">
-            <label for="selected-authors" class="form-label">{{ 'IXIPC-abstract-authors-select'|l10n(lang) }}</label>
-            <div class="authors-box rounded-1 p-1 h-100" id="selected-authors"></div>
+            <label for="selected-authors-{{ abstract.id }}" class="form-label">{{ 'IXIPC-abstract-authors-select'|l10n(lang) }}</label>
+            <div class="authors-box rounded-1 p-1 h-100" id="selected-authors-{{ abstract.id }}"></div>
           </div>
           <div class="col-6 px-2">
-            <label for="available-authors" class="form-label">{{ 'IXIPC-abstract-authors-available'|l10n(lang) }}</label>
-            <div class="authors-box rounded-1 p-1 h-100" id="available-authors"></div>
+            <label for="available-authors-{{ abstract.id }}" class="form-label">{{ 'IXIPC-abstract-authors-available'|l10n(lang) }}</label>
+            <div class="authors-box rounded-1 p-1 h-100" id="available-authors-{{ abstract.id }}"></div>
           </div>
         </div>
         <div class="row mb-3">

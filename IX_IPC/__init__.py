@@ -6,7 +6,7 @@ from sqlalchemy import select, delete
 from email_validator import validate_email, EmailNotValidError
 
 from .db_IXIPC import get_session
-from .models import User, Abstract, AbstractType, Author, AbstractAuthor
+from .models import User, Abstract, AbstractType, Author, AbstractAuthor, Institution, Affiliation
 
 import json, functools
 
@@ -343,13 +343,15 @@ def save_abstract_local(form, g) -> str:
         if form:
             if 'title' in form:
                 abstract.title = form['title'].strip()
-                if len(abstract.title) > 150:
-                    return json.dumps({'error': 'title too long'})
+                # TODO: update this rejection criteria
+                # if len(abstract.title) > 150:
+                #     return json.dumps({'error': 'title too long'})
 
             if 'abstract-body' in form:
                 abstract.abstract = form['abstract-body'].strip()
-                if len(abstract.abstract) > 500:
-                    return json.dumps({'error': 'abstract too long'})
+                # TODO: update this rejection criteria
+                # if len(abstract.abstract) > 500:
+                #     return json.dumps({'error': 'abstract too long'})
 
             if 'abstract_type' in form:
                 abstract_type = form['abstract_type']
@@ -359,6 +361,10 @@ def save_abstract_local(form, g) -> str:
                     abstract.abstract_type = AbstractType.PRESENTATION
                 else:
                     return json.dumps({'error': 'unrecognized abstract type'})
+            
+            if 'keywords' in form:
+                # TODO: process keywords to guarantee they are shown in a uniform fashion
+                abstract.keywords = form['keywords'].strip()
         else:
             abstract.title = ''
             abstract.abstract = ''
@@ -441,7 +447,7 @@ def new_author():
 @login_IXIPC_required
 @bp.route('/IX_IPC/load_authors', methods=['POST'])
 def load_authors():
-    """Loads available authors to current user"""
+    """Loads authors available to current user"""
 
     with get_session() as db_session:
         authors = db_session.execute(
@@ -483,6 +489,76 @@ def save_authors():
         db_session.commit()
     
     return json.dumps({}), 200
+
+
+@login_IXIPC_required
+@bp.route('/IX_IPC/save_affiliations', methods=['POST'])
+def save_affiliations():
+    """Saves authors' affiliations
+    
+    Saves the affiliations for a list of authors provided in the request.
+    """
+
+    affiliations = json.loads(request.form['affiliations'])
+    print(affiliations)
+    with get_session() as db_session:
+        new_affiliations = []
+        for (author_id, institution) in affiliations.items():
+            db_session.execute(delete(Affiliation).where(
+                Affiliation.author_id == author_id
+            ))
+            for (institution_id, order) in institution:
+                affiliation = Affiliation(
+                    author_id=author_id, 
+                    institution_id=institution_id, 
+                    order=order
+                )
+                new_affiliations.append(affiliation)
+
+        db_session.add_all(new_affiliations)
+        db_session.commit()
+
+    return json.dumps({}), 200
+
+
+def get_affiliations(author_id: int) -> list[object]|None:
+    """Returns a list of authors' affiliations
+
+    Returns a list of authors' affiliations for a given author if or None if
+    the author owner is not the current user.
+    """
+
+    with get_session() as db_session:
+        if db_session.get(Author, author_id).created_by == g.IXIPC_user.id:
+            query = select(Affiliation)\
+              .where(Affiliation.author_id == author_id)\
+              .order_by(Affiliation.order)
+            
+            affiliations_list = db_session.execute(query).scalars()
+
+            affiliations = []
+            for affiliation in affiliations_list:
+                affiliations.append({
+                    'authorId': author_id,
+                    'institutionId': affiliation.institution_id,
+                    'order': affiliation.order,
+                })
+            
+            return affiliations
+        else:
+            return None
+
+
+@login_IXIPC_required
+@bp.route('/IX_IPC/load_affiliations', methods=['POST'])
+def load_affiliations():
+    """Loads authors' affiliations
+    
+    Loads the authors' affiliations in request.
+    """
+    
+    author_id = json.loads(request.form['authorId'])
+    return json.dumps({'affiliations': get_affiliations(author_id)}), 200
 
 
 @login_IXIPC_required
@@ -584,6 +660,116 @@ def submit_abstract(language):
             return load_abstract(language=language, id=id)
     else:
         return output, 500
+
+
+@login_IXIPC_required
+@bp.route('/IXIPC/new_institution', methods=['POST'])
+def new_institution():
+    """Creates a new institution"""
+
+    with get_session() as db_session:
+        institution = Institution(created_by=g.IXIPC_user.id)
+        db_session.add(institution)
+        db_session.commit()
+
+        return json.dumps({'id': institution.id}), 200
+
+
+@login_IXIPC_required
+@bp.route('/IX_IPC/load_institution', methods=['POST'])
+def load_institution():
+    """Loads an institution"""
+
+    id = json.loads(request.form['id'])
+    with get_session() as db_session:
+        institution = db_session.get(Institution, id)
+
+        if institution.created_by == g.IXIPC_user.id:
+            data = {}
+            data['id'] = id
+            data['name'] = institution.name if institution.name else ''
+            data['address'] = institution.address if institution.address else ''
+            data['country'] = institution.country if institution.country else ''
+            return json.dumps({'institution': data}), 200
+        else:
+            return json.dumps({'error': 'access unauthorized'}), 401
+
+
+@login_IXIPC_required
+@bp.route('/IX_IPC/load_institutions', methods=['POST'])
+def load_institutions():
+    """Loads institutions available to current user"""
+
+    with get_session() as db_session:
+        institutions = db_session.execute(
+            select(Institution).where(Institution.created_by == g.IXIPC_user.id)
+        ).scalars()
+
+        institutions_list = []
+        for institution in institutions:
+            name = institution.name if institution.name else '' 
+            address = institution.address if institution.address else '' 
+            country = institution.country if institution.country else '' 
+            institutions_list.append({
+                'name': name,
+                'address': address,
+                'country': country,
+                'id': institution.id
+            })
+
+        return json.dumps({'institutions': institutions_list}), 200
+
+@login_IXIPC_required
+@bp.route('/IX_IPC/load_all_affiliations', methods=['POST'])
+def load_all_affiliations():
+    """Loads all affiliations of the current user's authors"""
+
+    with get_session() as db_session:
+        # db_session.add(Affiliation(2, 1, 0))
+        # db_session.commit()
+
+        affiliations = db_session.execute(
+            select(Affiliation)
+            .select_from(Affiliation)
+            .join(Author, Affiliation.author_id == Author.id)
+            .where(Author.created_by == g.IXIPC_user.id)
+            .order_by(Affiliation.order)
+        ).scalars()
+
+        affiliations_list = []
+        for affiliation in affiliations:
+            affiliations_list.append({
+                'author_id': affiliation.author_id,
+                'institution_id': affiliation.institution_id,
+                'order': affiliation.order
+            })
+
+        return json.dumps({'affiliations': affiliations_list}), 200
+
+
+@login_IXIPC_required
+@bp.route('/IX_IPC/save_institutions', methods=['POST'])
+def save_institutions():
+    """Saves a list of institutions
+    
+    Saves the list of institutions provided in the request.
+    """
+
+    institutions = json.loads(request.form['institutions'])
+    with get_session() as db_session:
+        institutions_list = []
+        for (id, institution_new) in institutions.items():
+            institution = db_session.get(Institution, int(id))
+            if g.IXIPC_user.id == institution.created_by:
+                institution.name = institution_new['name'].strip()
+                institution.address = institution_new['address'].strip()
+                institution.country = institution_new['country'].strip()
+                institutions_list.append(institution)
+        
+        db_session.add_all(institutions_list)
+        db_session.commit()
+    
+    return json.dumps({}), 200
 
 
 def register(app) -> None:

@@ -1,0 +1,211 @@
+
+
+
+
+<script defer>
+  const institutionsManager = async () => {
+    let institutionsToSave = {};
+
+    let editInstitutionsForm = document.getElementById('accordion-institutions');
+
+    const institutionName = (institution) => {
+      if(institution.name && institution.name.trim().length > 0) {
+        let name = institution.name.trim();
+        if(institution.country && institution.country.trim().length > 0) {
+          name += ' (' + institution.country.trim() + ')';
+        }
+        return name;
+      }
+      return "{{'IXIPC-no-name'|l10n(lang)}}";
+    }
+
+    // Register callbacks so other objects can be alerted when updates happen 
+    let updateCallbacks = [];
+    const onupdate = (func) => {
+      updateCallbacks.push(func);
+    };
+
+    // Proxy to institutions that allows us to intercept any changes in order to 
+    // display or save them
+    let institutions = new Proxy({}, {
+      deleteProperty: function(target, property) {
+        //let id = target[property].id;
+        return Reflect.deleteProperty(...arguments);
+      },
+      // If an institution is created or modified, save the changes to the 
+      // database and update the corresponding authors
+      set: function(target, property, institution, receiver) {
+        target[property] = institution;
+
+        // If the property is an index
+        if(isInteger(property)) {
+          scheduleInstitutionsSave(institution.id, institution);
+
+          for(const callback of updateCallbacks) {
+            callback(institution);
+          }
+        }
+        return true;
+      }
+    });
+
+    const institutionNameById = (institutionId) => {
+      return institutionName(institutions[institutionId]);
+    }
+
+    // Updates an institution
+    const updateInstitution = (target) => () => {
+      const id = target.dataset.id;
+      let institution = institutions[id];
+      
+      institution.name = target.querySelector('#name-' + String(id)).value;
+      institution.address = target.querySelector('#address-' + String(id)).value;
+      institution.country = target.querySelector('#country-' + String(id)).value;
+
+      target.querySelector('#institution-header-' + String(id)).innerHTML = institutionName(institution);
+      institutions[id] = institution;
+    };
+
+    // Create a new html element to edit the institution
+    const institutionHTMLElement = (institution) => {
+      let institutionForm = document.createElement('div');
+      institutionForm.dataset.id = institution.id;
+      
+      institutionForm.classList.add('accordion-item');
+      institutionForm.insertAdjacentHTML('beforeend',
+        `<h2 class="accordion-header">
+          <button id="institution-header-${institution.id}" class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#institution-edit-${institution.id}" aria-expanded="false" aria-controls="institution-edit-${institution.id}">
+            ${institutionName(institution)}
+          </button>
+        </h2>`
+      );
+  
+      const institutionNameLabel = "{{ 'IXIPC-institutions-name'|l10n(lang) }}";
+      const institutionAddressLabel = "{{ 'IXIPC-institutions-address'|l10n(lang) }}";
+      const institutionCountryLabel = "{{ 'IXIPC-institutions-country'|l10n(lang) }}";
+
+      institutionForm.insertAdjacentHTML('beforeend',
+        `<div id="institution-edit-${institution.id}" class="accordion-collapse collapse" data-bs-parent="#accordion-institutions">
+          <div class="accordion-body">
+            <form action="">
+              <div class="row mb-3">
+                <div class="col">
+                  <label for="name-${institution.id}" class="form-label">${institutionNameLabel}</label>
+                  <input name="name" id="name-${institution.id}" type="text" class="form-control" value="${institution.name}">
+                </div>
+              </div>
+              <div class="row mb-3">
+                <div class="col-8">
+                  <label for="address-${institution.id}" class="form-label">${institutionAddressLabel}</label>
+                  <input name="address" id="address-${institution.id}" type="text" class="form-control" value="${institution.address}">
+                </div>
+                <div class="col-4">
+                  <label for="country-${institution.id}" class="form-label">${institutionCountryLabel}</label>
+                  <input name="country" id="country-${institution.id}" type="text" class="form-control" value="${institution.country}">
+                </div>
+              </div>
+              <div class="w-100 card-footer abstract-footer-text text-white text-center p-0" id="institution-saved-${institution.id}">&nbsp;</div>
+            </form>
+          </div>
+        </div>`
+      );
+
+      institutionForm.addEventListener(
+        'input',
+        updateInstitution(institutionForm)
+      );
+      updateInstitution(institutionForm)();
+  
+      return institutionForm;
+    }
+    
+    // Load available institutions from database
+    fetch("{{ url_for('IX_IPC.load_institutions') }}", {
+      method: 'POST',
+      body: blankForm()
+    })
+    .then((response) => response.json())
+    .then((data) => {
+      for(const institution of data.institutions) {
+        institutions[institution.id] = institution;
+        editInstitutionsForm.insertAdjacentElement(
+          'beforeend', 
+          institutionHTMLElement(institution)
+        );
+      }
+      institutionsToSave = {};
+    })
+    .catch((e) => console.log(e));
+    
+    // Save institutions
+    const saveInstitutions = () => {
+      if(Object.keys(institutionsToSave).length > 0) {
+        let form = blankForm();
+        form.append('institutions', JSON.stringify(institutionsToSave));
+
+        for(const id in institutionsToSave) {
+          let elem = document.getElementById('institution-saved-' + String(id));
+          elem.innerHTML = "{{ 'IXIPC-saved-institution'|l10n(lang) }}";
+          elem.classList.add('bg-primary');
+          setTimeout(() => {
+            elem.innerHTML = '&nbsp;';
+            elem.classList.remove('bg-primary');
+          }, warningTimeout);
+        }
+
+        institutionsToSave = {};
+
+        fetch("{{ url_for('IX_IPC.save_institutions') }}", {
+          method: 'POST',
+          body: form
+        })
+        .catch((e) => console.log(e));
+      }
+    }
+
+    // Schedule institution saving
+    const scheduleInstitutionsSave = (id=null, institution=null) => {
+      if(id && institution) institutionsToSave[id] = institution;
+      setTimeout(saveInstitutions, saveTimeout);
+    }
+    
+    // Create a new institution
+    const newInstitution = () => {
+      let newInstitution = {
+        'name': '',
+        'address': '',
+        'country': ''
+      };
+
+      fetch("{{ url_for('IX_IPC.new_institution') }}", {
+        method: 'POST',
+        body: blankForm()
+      })
+      .then((response) => response.json())
+      .then((data) => {
+        newInstitution.id = data.id;
+        institutions[newInstitution.id] = newInstitution;
+        editInstitutionsForm.insertAdjacentElement(
+          'beforeend',
+          institutionHTMLElement(newInstitution)
+        );
+      })
+      .catch((e) => console.log(e));
+    }
+
+    // Add functionality to the new institution button
+    document.getElementById('new-institution-button').addEventListener(
+      'click',
+      newInstitution
+    );
+
+    return {
+      'list': institutions,
+      'keys': () => Object.keys(institution),
+      'scheduleSave': scheduleInstitutionsSave,
+      'name': institutionNameById,
+      'onUpdate': onupdate
+    }
+  }
+</script>
+

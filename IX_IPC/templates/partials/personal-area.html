@@ -126,11 +126,16 @@
   </div>
 </div>
 
+{% include "scripts/utilities.html" -%}
 {% include "scripts/upload-form.html" -%}
 {% include "scripts/word-counter.html" -%}
 {% include "scripts/open-abstract.html" -%}
 <script src="{{ url_for('static', filename='js/Sortable.js') }}"></script>
+{# {% include "scripts/authors-manager.html" -%} #}
+{% include "scripts/institutions-manager.html" -%}
 {% include "scripts/authors-manager.html" -%}
+{% include "scripts/affiliations-manager.html" -%}
+{% include "scripts/abstract-authors.html" %}
 
 <script defer>
 // Display a warning when navigating out of the page
@@ -172,6 +177,18 @@ const personalDataManager = () => {
   }
 }
 let personalData = personalDataManager();
+
+let authors = authorsManager();
+let institutions = institutionsManager();
+
+let affiliations = {};
+let abstractAuthors = {};
+Promise.all([authors, institutions]).then((values) =>{
+  authors = values[0];
+  institutions = values[1];
+  affiliations = affiliationsManager(authors, institutions);
+  abstractAuthors = abstractAuthorsManager(authors);
+});
 
 makeUploader(
   dropArea = document.getElementById('IXIPC-upload-payment-proof'),

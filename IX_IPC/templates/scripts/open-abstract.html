@@ -4,6 +4,8 @@
     let url = "{{ url_for('IX_IPC.load_abstract', language=lang) }}";
 
     const callback = (mutationList, observer) => {
+      observer.disconnect();
+
       abstractElement.querySelector('#abstract-close-button').onclick = () => {
         fetch("{{ url_for('IX_IPC.closed_abstract', language=lang) }}", {
           method: 'POST',
@@ -19,7 +21,7 @@
       };
 
       if(abstractElement.querySelector('#abstract-submitted') != null) {
-        observer.disconnect();
+        //observer.disconnect();
         return;
       } 
 
@@ -47,7 +49,7 @@
       );
 
       abstractElement.querySelector('#abstract-delete').onclick = () => {
-        authors.deregisterAbstract(id);
+        abstractAuthors.deregisterAbstract(id);
 
         fetch("{{ url_for('IX_IPC.delete_abstract') }}", {
           method: 'POST',
@@ -59,7 +61,7 @@
         abstractElement.remove();
       };
 
-      const validateSubmission = (authors) => {
+      const validateSubmission = (abstractAuthors) => {
         let submissionValid = true;
 
         let warningArea = abstractElement.querySelector('#submission-warnings');
@@ -67,29 +69,40 @@
 
         let warnings = '';
 
-        let title = abstractElement.querySelector('#abstract-title').value.trim();
-        if(title == '') {
+        let titleLength = parseInt(abstractElement.querySelector('#abstract-title-word-counter').querySelector('.word-counter').innerHTML);
+        if(titleLength === 0) {
           warnings += '<br>&emsp;- ' + "{{ 'IXIPC-abstract-title-empty'|l10n(lang) }}";
           submissionValid = false;
         }
 
-        if(title.length > 150) {
+        if(titleLength > 20) {
           warnings += '<br>&emsp;- ' + "{{ 'IXIPC-abstract-title-too-long'|l10n(lang) }}";
           submissionValid = false;
         }
 
-        let abstract = abstractElement.querySelector('#abstract-body').value.trim();
-        if(abstract == '') {
+        let abstractLength = parseInt(abstractElement.querySelector('#abstract-word-counter').querySelector('.word-counter').innerHTML);
+        if(abstractLength === 0) {
           warnings += '<br>&emsp;- ' + "{{ 'IXIPC-abstract-abstract-empty'|l10n(lang) }}";
           submissionValid = false;
         }
 
-        if(abstract.length > 500) {
+        if(abstractLength > 200) {
           warnings += '<br>&emsp;- ' + "{{ 'IXIPC-abstract-abstract-too-long'|l10n(lang) }}";
           submissionValid = false;
         }
 
-        let authors_list = authors.getAbstractSelectedAuthors(id);
+        let keywordCounts = parseInt(abstractElement.querySelector('#abstract-keywords-word-counter').querySelector('.word-counter').innerHTML);
+        if(keywordCounts < 3) {
+          warnings += '<br>&emsp;- ' + "{{ 'IXIPC-abstract-few-keywords'|l10n(lang) }}";
+          submissionValid = false;
+        }
+
+        if(keywordCounts > 5) {
+          warnings += '<br>&emsp;- ' + "{{ 'IXIPC-abstract-many-keywords'|l10n(lang) }}";
+          submissionValid = false;
+        }
+
+        let authors_list = Object.values(abstractAuthors.list[id]);
         if(authors_list.length === 0) {
           warnings += '<br>&emsp;- ' + "{{ 'IXIPC-abstract-no-authors'|l10n(lang) }}";
           submissionValid = false;
@@ -115,8 +128,8 @@
 
       // Submit abstract
       abstractElement.querySelector('#abstract-submit').onclick = () => {
-        if(validateSubmission(authors)){
-          authors.deregisterAbstract(id);
+        if(validateSubmission(abstractAuthors)){
+          abstractAuthors.deregisterAbstract(id);
 
           fetch("{{ url_for('IX_IPC.submit_abstract', language=lang) }}", {
             method: 'POST',
@@ -153,13 +166,13 @@
             } else {
               feedback.innerHTML = "{{ 'IXIPC-abstract-save-fail'|l10n(lang) }}"
               feedback.classList.remove('bg-success')
-              feedback.classList.add('bg-success')
+              feedback.classList.add('bg-danger')
             }
             setTimeout(() => {
               feedback.innerHTML = '&nbsp;';
               feedback.classList.remove('bg-success')
               feedback.classList.remove('bg-danger')
-            }, 4000);
+            }, warningTimeout);
           })
           .catch((e) => {
             console.log(e)
@@ -170,13 +183,13 @@
       // Observe the abstract for changes and save them
       const scheduleAbstractSave = () => {
         abstractModified = true;
-        setTimeout(saveAbstract, 3000);
+        setTimeout(saveAbstract, saveTimeout);
       }
       abstractElement.querySelector('#abstract-type').addEventListener('input', scheduleAbstractSave);
       abstractElement.querySelector('#abstract-title').addEventListener('input', scheduleAbstractSave);
       abstractElement.querySelector('#abstract-body').addEventListener('input', scheduleAbstractSave);
 
-      authors.registerAbstract(abstractElement, id);
+      abstractAuthors.registerAbstract(id);
     };
   
     const config = { attributes: false, childList: true, subtree: false };

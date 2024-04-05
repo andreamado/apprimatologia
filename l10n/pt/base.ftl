@@ -115,6 +115,8 @@ IXIPC-abstract-title-empty = O título não está definido
 IXIPC-abstract-title-too-long = O título não pode ter mais de 20 palavras
 IXIPC-abstract-abstract-empty = O texto do resumo não está definido
 IXIPC-abstract-abstract-too-long = O resumo não pode ter mais de 200 palavras
+IXIPC-abstract-few-keywords = Usa pelo menos 3 palavras-chave
+IXIPC-abstract-many-keywords = Usa no máximo 5 palavras-chave
 IXIPC-abstract-no-authors = Tens de selecionar pelo menos um autor
 IXIPC-abstract-no-speaker = Nenhum autor foi designado como orador
 IXIPC-abstract-institutions = Instituições
@@ -124,6 +126,18 @@ IXIPC-abstract-authors-edit = Cria e modifica autores
 IXIPC-abstract-authors-save = Salva os autores
 IXIPC-saved-author = Autor salvo
 IXIPC-no-name = Sem nome
+
+IXIPC-institutions-name = Instituição
+IXIPC-institutions-address = Endereço
+IXIPC-institutions-country = País
+IXIPC-saved-institution = Instituição salva
+IXIPC-authors-affiliations = Afiliações
+IXIPC-abstract-institutions-select = Afiliações selecionadas
+IXIPC-abstract-institutions-available = Afiliações disponíveis
+IXIPC-abstract-institutions-drag-and-drop = 
+    1. Cria instituições usando o formulário abaixo
+    2. Arrasta instituições para a área das afiliações selecionadas
+    3. Arrasta as afiliações selecionadas para as ordenar
 
 IXIPC-personal-data-first-name = Nome
 IXIPC-personal-data-last-name = Apelido
@@ -162,8 +176,7 @@ registration-form-current-studies = Estudos em curso
 registration-form-address-correspondence = Endereço para correspondência
 private = Privado
 work = Trabalho
-# Sugestão: Autorizo que os meus dados apareçam no directório da APP
-registration-form-data-authorization = Dou a minha autorização para que os meus dados apareçam no directório da APP
+registration-form-data-authorization = Autorizo que os meus dados apareçam no directório da APP
 yes = Sim
 no = Não
 registration-form-upload-payment-proof = Comprovativo de pagamento
@@ -182,7 +195,7 @@ registration-form-total = Total
 registration-form-payment-method = Forma de pagamento
 transfer = Transferência Bancária
 check = Cheque
-registration-form-transfer-explanation = 
+registration-form-transfer-explanation =
     Associação Portuguesa de Primatologia <br>
     Conta nº.: 2169030322930 <br>
     NIB: 003521690003032293030 <br>

@@ -1,0 +1,208 @@
+<script defer>
+  class Affiliation {
+    authorId = 0;
+    institutionId = 0;
+    order = 0;
+
+    constructor(authorId, institutionId, order) {
+      this.authorId = authorId;
+      this.institutionId = institutionId;
+      this.order = order;
+    }
+  }
+
+  const affiliationsManager = async (authors, institutions) => {
+    let affiliationsToSave = {};
+
+    const scheduleAffiliationsSave = (author_id=null) => {
+      if(author_id != null) affiliationsToSave[author_id] = true;
+      setTimeout(saveAffiliations, saveTimeout);
+    }
+
+    const saveAffiliations = () => {
+      if(Object.keys(affiliationsToSave).length > 0) {
+        let affiliations_list = {};
+        for(const authorId in affiliationsToSave) {
+          affiliations_list[authorId] = [];
+          for(const institutionId in _affiliations[authorId]) {
+            affiliations_list[authorId].push(
+              [institutionId, _affiliations[authorId][institutionId].order]
+            )
+          }
+
+          let form = blankForm();
+          form.append('affiliations', JSON.stringify(affiliations_list));
+          affiliationsToSave = {};
+
+          fetch("{{ url_for('IX_IPC.save_affiliations') }}", {
+            method: 'POST',
+            body: form
+          })
+          .catch((e) => console.log(e));  
+        }
+      }
+    }
+
+    let _affiliations = {};
+    for(const authorId of authors.keys()) {
+      _affiliations[authorId] = {};
+    }
+
+    let affiliations = new Proxy(_affiliations, {
+      set: function(target, property, affiliation, receiver) {
+        target[property] = affiliation;
+
+        // If property is an index
+        if(isInteger(property)) {
+          if(!(affiliation.authorId in _affiliations)) {
+            _affiliations[affiliation.author_id] = {};
+          }
+          target[property][affiliation.institutionId] = affiliation;
+          scheduleAffiliationsSave(affiliation.author_id);
+        }
+        return true;
+      }
+    });
+
+    const selectHTML = (authorId, institutionId, order=null) => {
+      const number = (order==null)?'':(String(order+1) + '. ');
+      let name = institutions.name(institutionId);
+      let container = document.createElement('div');
+      container.innerHTML = 
+        `<div id="institution-${authorId}-${institutionId}" class="author-name rounded-1 p-1 mb-1" data-content="${name}" data-institution-id="${institutionId}" data-author-id="${authorId}">
+          <div class='d-flex'>
+            <div class='flex-grow-1' id='institution-name-${authorId}-${institutionId}'>${number}${name}</div> 
+          </div>
+        </div>`;
+      return container.firstElementChild;
+    }
+
+    // Load affiliations
+    await fetch("{{ url_for('IX_IPC.load_all_affiliations') }}", {
+      method: 'POST',
+      body: blankForm()
+    })
+    .then((response) => response.json())
+    .then((data) => {
+      for(const affiliation of data.affiliations) {
+        if(!(affiliation.author_id in _affiliations)) {
+          _affiliations[affiliation.author_id] = {};
+        }
+        _affiliations[affiliation.author_id][affiliation.institution_id] =
+          new Affiliation(
+            affiliation.author_id,
+            affiliation.institution_id,
+            affiliation.order
+          );
+      }
+    })
+    .catch((e) => console.log(e));
+
+    const updateSelect = (authorId) => {
+      _affiliations[authorId] = {};
+      let selectedElement = document.getElementById('selected-institutions-' + String(authorId))
+      let availableElement = document.getElementById('available-institutions-' + String(authorId))
+
+      selectedElement.childNodes.forEach(
+        (child, i) => {
+          if('dataset' in child) {
+            let institutionId = child.dataset.institutionId;
+            _affiliations[authorId][institutionId] = new Affiliation(authorId, institutionId, i);
+
+            let nameElement = child.querySelector(`#institution-name-${authorId}-${institutionId}`);
+            nameElement.innerHTML = `${i+1}. ${institutions.name(institutionId)}`;
+          }
+        }
+      );
+
+      availableElement.childNodes.forEach(
+        (child, i) => {
+          let institutionId = child.dataset.institutionId;
+          let nameElement = child.querySelector(`#institution-name-${authorId}-${institutionId}`);
+          nameElement.innerHTML = institutions.name(institutionId);
+        }
+      )
+
+      scheduleAffiliationsSave(authorId);
+    }
+
+    const dragInstitution = (evt) => {
+      updateSelect(evt.item.dataset.authorId);
+    }
+
+    const createAffiliationSelector = (authorId) => {
+      let selectedElement = document.getElementById('selected-institutions-' + String(authorId));
+      let availableElement = document.getElementById('available-institutions-' + String(authorId));
+
+      for(const institutionId in institutions.list) {
+        if(institutionId in _affiliations[authorId]) {
+          selectedElement.appendChild(selectHTML(authorId, institutionId, _affiliations[authorId][institutionId].order));
+        } else {
+          availableElement.appendChild(selectHTML(authorId, institutionId));
+        }
+      }
+
+      // Reorder the elements to correct order
+      let order_list = []
+      for(const institutionId in _affiliations[authorId]) {
+        order_list.push([institutionId, _affiliations[authorId][institutionId].order]);
+      }
+      order_list.sort((a, b) => a[1] > b[1]);
+      for(let order in order_list) {
+        let institutionId = order_list[order][0];
+        selectedElement.appendChild(document.getElementById(`institution-${authorId}-${institutionId}`))
+      }
+
+      // Make the boxes sortable
+      new Sortable(selectedElement, {
+        group: 'box-affiliations-' + String(authorId),
+        animation: 150,
+        onSort: dragInstitution,
+        onUpdate: dragInstitution
+      });
+      
+      new Sortable(availableElement, {
+        group: 'box-affiliations-' + String(authorId),
+        animation: 150,
+        onSort: dragInstitution
+      });
+      availableElement.dataset.initiated = 1;
+    }
+
+    // Create the affiliation selectors
+    for(const authorId in authors.list) {
+      createAffiliationSelector(authorId);
+    }
+
+    // Register a callback to intercept changes to the institutions and update
+    // affiliations accordingly
+    institutions.onUpdate((institution) => {
+      const institutionId = institution.id;
+
+      for(const authorId in authors.list) {
+        let element = document.getElementById(`institution-name-${authorId}-${institutionId}`);
+        if(element) {
+          updateSelect(authorId);
+        } else {
+          document
+            .getElementById('available-institutions-' + String(authorId))
+            .appendChild(selectHTML(authorId, institutionId));
+        }
+      }
+    });
+
+    authors.onUpdate((author) => {
+      const authorId = author.id;
+      let availableInstitutions = document.getElementById(`available-institutions-${authorId}`);
+      if(availableInstitutions.dataset.initiated == 0) {
+        _affiliations[authorId] = {};
+        createAffiliationSelector(authorId);
+      }
+    });
+
+    return {
+      'list': affiliations,
+      'scheduleSave': scheduleAffiliationsSave
+    }
+  }
+</script>

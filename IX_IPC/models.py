@@ -54,10 +54,15 @@ class Institution(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String(200))
     address = Column(String(200))
+    country = Column(String(200))
 
-    def __init__(self, name, address):
+    created_by = Column(ForeignKey('users.id'))
+
+    def __init__(self, created_by, name=None, address=None, country=None):
         self.name = name
         self.address = address
+        self.country = country
+        self.created_by = created_by
 
     def __repr__(self):
         return f'<Institution {self.name!r}>'
@@ -66,12 +71,14 @@ class Institution(Base):
 class Affiliation(Base):
     __tablename__ = 'affiliation'
     id = Column(Integer, primary_key=True)
-    author_id = Column(Integer, ForeignKey('authors.id'))
-    institution_id = Column(Integer, ForeignKey('institutions.id'))
+    author_id = Column(ForeignKey('authors.id'))
+    institution_id = Column(ForeignKey('institutions.id'))
+    order = Column(Integer)
 
-    def __init__(self, author_id, institution_id):
+    def __init__(self, author_id, institution_id, order):
         self.author_id = author_id
         self.institution_id = institution_id
+        self.order = order
 
 
 class AbstractType:
