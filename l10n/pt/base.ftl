@@ -70,6 +70,8 @@ IXIPC-recover-credentials-notification =
 IXIPC-login-wrong-email-or-password = Email ou password errada
 
 IXIPC-personal-data = Dados pessoais
+IXIPC-personal-data-student = Estudante
+IXIPC-personal-data-volunteer = Contacta os organizadores se te quiseres voluntariar
 
 IXIPC-register-to-submit = Regista-te para te inscreveres e submeter resumos
 IXIPC-register-to-submit-logged-in = Submete resumos para os teus posters e apresentações!

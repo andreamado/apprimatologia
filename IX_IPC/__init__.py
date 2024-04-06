@@ -242,6 +242,7 @@ def save_personal_data():
         user.first_name = request.form['first-name'].strip()
         user.last_name = request.form['last-name'].strip()
         user.institution = request.form['institution'].strip()
+        user.student = request.form['student'] == 'true'
 
         db_session.commit()
 

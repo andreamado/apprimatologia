@@ -14,14 +14,16 @@ class User(Base):
     first_name = Column(String(200))
     last_name = Column(String(200))
     institution = Column(String(200))
+    student = Column(Boolean)
 
-    def __init__(self, name, email, password=None, first_name=None, last_name=None, institution=None):
+    def __init__(self, name, email, password=None, first_name=None, last_name=None, institution=None, student=False):
         self.name = name
         self.email = email
         self.password = password if password else token_hex(16)
         self.first_name = first_name
         self.last_name = last_name
         self.institution = institution
+        self.student = student
 
 
 class Author(Base):
