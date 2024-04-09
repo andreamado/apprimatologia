@@ -49,6 +49,96 @@
     </form>
   </div>
 
+  <!-- Payment form -->
+  <div class="container text-white mb-5">
+    <div class="rounded-4 card mb-3 abstract-new">
+      <div class="card-body">
+        <h5 class="card-title mb-0">
+          Inscrição {# {{ 'IXIPC-personal-data'|l10n(lang) }} #}
+        </h5>
+      </div>
+    </div>
+    <div class="mt-3" id="payment">
+      {# <h5>Preços</h5> #}
+      <div class="row mb-3">
+        <div class="col">
+          <table class="table table-borderless rounded-2 overflow-hidden">
+            <thead class="table-dark">
+              <tr class="text-center">
+                <th class="invisible" scope="col"></th>
+                <th scope="col">Early bird (until 15/08/2024)</th>
+                <th scope="col">After 15/08/2024</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">Normal</th>
+                <td class="text-center">80€</td>
+                <td class="text-center">100€</td>
+              </tr>
+              <tr>
+                <th scope="row">Student</th>
+                <td class="text-center">35€</td>
+                <td class="text-center">50€</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      {# <h5>Métodos de pagamento</h5> #}
+      <div class="row">
+        <div class="col me-0 pe-0">
+          <div class="list-group rounded-end-0">
+            <div class="list-group-item">
+              <form class="form-inline" id="mbway-form">
+                <div class="row d-flex py-3">
+                  {{ form.csrf_token }}
+                  <div class="col-3">
+                    <img class="position-relative top-50 start-50 translate-middle" src="{{ url_for('static', filename='img/Logo_MBWay.svg') }}" alt="MBway logo" style="width:80px;">
+                  </div>
+                  <div class="col">
+                    <div class="input-group">
+                      <label for="mbway-contact" class="input-group-text">Número</label>
+                      <input type="tel" class="form-control" id="mbway-contact">
+                    </div>
+                  </div>
+                  <div class="col-auto">
+                    <button type="submit" class="btn btn-primary" id="mbway-payment">Pagar</button>
+                  </div>
+                </div>
+              </form>
+            </div>
+            <div class="list-group-item">
+              <form class="form-inline" id="mbway-form">
+                <div class="row py-3">
+                  {{ form.csrf_token }}
+                  <div class="col-3">
+                    <img class="position-relative top-50 start-50 translate-middle" src="{{ url_for('static', filename='img/mastercard-visa.png') }}" alt="MBway logo" style="width:50px;">
+                  </div>
+                  <div class="col"></div>
+                  <div class="col-auto">
+                    <button type="submit" class="btn btn-primary" id="card-payment">Pagar</button>
+                  </div>
+                </div>
+              </form>
+            {# <div class="row">
+                <div class="col d-flex justify-content-end">
+                  <div class="form-text p-0 m-0">(Vais ser redireccionado para uma página de pagamento)</div>
+                </div>
+              </div> #}
+            </div>
+          </div>
+        </div>
+        <div class="col-2 ms-0 ps-0">
+          <div class="card text-center w-100 h-100 pt-5 rounded-start-0 price">
+            <h5 class="card-title mt-2">Total</h5>
+            <p class="card-text lead" id="final-price">50€</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Abstracts -->
   <div class="container text-white mb-5">
     <div class="rounded-4 card mb-3 abstract-new">
@@ -118,14 +208,14 @@
   </div>
 
   <!-- Payment proof -->
-  <div class="mb-5">
+  <!--<div class="mb-5">
     <h4 class="mb-0">{{'IXIPC-upload-payment-proof'|l10n(lang)}}</h4>
     <img src="" alt="" id="upload-result" class="upload-result">
     {% with upload_area={'id': 'IXIPC-upload-payment-proof'} -%}
       {% include "partials/upload-form.html" -%}
     {% endwith -%}
     <p id="upload-result-text" class="lead upload-result-text">&nbsp;</p>
-  </div>
+  </div>-->
 
   <!-- Logout -->
   <div class="mb-5">

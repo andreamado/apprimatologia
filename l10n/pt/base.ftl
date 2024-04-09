@@ -46,6 +46,8 @@ IXIPC-program = Programa
 IXIPC-invited-speakers = Oradores convidados
 IXIPC-timeline = Timeline
 
+IXIPC-payment-description = Pagamento da inscrição no IX Congresso Ibérico de Primatologia 
+
 IXIPC-welcome-email-subject = Bem-vindo/a ao IX Congresso Ibérico de Primatologia!
 IXIPC-welcome-email-body =
     Olá {$name},

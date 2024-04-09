@@ -40,7 +40,10 @@ def create_app(test_config=None):
         # MAIL_MAX_EMAILS = default None,
         # MAIL_SUPPRESS_SEND = default app.testing,
         # MAIL_ASCII_ATTACHMENTS = default False
-        UPLOAD_FOLDER = 'uploaded_files'
+        UPLOAD_FOLDER = 'uploaded_files',
+        MBWAY_KEY = config['MBWAY_KEY'],
+        ANTI_PHISHING_KEY = config['ANTI_PHISHING_KEY'],
+        MAINTENANCE_EMAIL = config['MAINTENANCE_EMAIL']
     )
 
     # register the internationalization module

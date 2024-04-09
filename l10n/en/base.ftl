@@ -45,6 +45,8 @@ IXIPC-program = Program
 IXIPC-invited-speakers = Invited speakers
 IXIPC-timeline = Timeline
 
+IXIPC-payment-description = IX Iberian Primatological Conference registration fee
+
 IXIPC-welcome-email-subject = Welcome to the IX Iberian Primatological Conference!
 IXIPC-welcome-email-body = 
     Hello {$name},

@@ -3,10 +3,14 @@ from flask import current_app as app
 from flask_wtf import FlaskForm
 from sqlalchemy import select, delete
 
+import requests
+
 from email_validator import validate_email, EmailNotValidError
+import phonenumbers
+import re
 
 from .db_IXIPC import get_session
-from .models import User, Abstract, AbstractType, Author, AbstractAuthor, Institution, Affiliation
+from .models import User, Abstract, AbstractType, Author, AbstractAuthor, Institution, Affiliation, Payment, PaymentMethod, PaymentStatus
 
 import json, functools
 
@@ -771,6 +775,180 @@ def save_institutions():
         db_session.commit()
     
     return json.dumps({}), 200
+
+
+# https://helpdesk.ifthenpay.com/en/support/solutions/articles/79000141345-api-mbway-v2-rest
+# If then pay API request
+# {
+#     "mbWayKey": "MBWAY_KEY", //(string) mandatory (assigned by ifthenpay)
+#     "orderId": "ORDER_ID", //(string) mandatory (15 chars max)
+#     "amount": "AMOUNT", //(string) mandatory (decimal separator ".")
+#     "mobileNumber": "MOBILE_NUMBER", //(string) mandatory
+#     "email": "EMAIL", //(string) optional (100 chars max)
+#     "description": "DESCRIPTION", //(string) optional (100 chars max)
+# }
+#
+# and response:
+# {
+#     "Amount": "33.61",
+#     "Message": "Pending",
+#     "OrderId": "1887",
+#     "RequestId": "i2szvoUfPYBMWdSxqO3n",
+#     "Status": "000"
+# }
+#
+# possible status:
+# 000 - Request initialized successfully (pending acceptance).
+# 100 - The initialization request could not be completed. You can try again.
+# 122 - Transaction declined to the user.
+# 999 - Error on initializing the request. You can try again.
+
+@login_IXIPC_required
+@bp.route('/IX_IPC/payment_mbway/<language:language>', methods=['POST'])
+def payment_mbway(language='pt'):
+    """Starts an MBWay payment"""
+
+    # parse and validate the phone number
+    try:
+        number = phonenumbers.parse(json.loads(request.form['number']), 'PT')
+        if phonenumbers.is_valid_number(number):
+            compact = phonenumbers.format_number(
+                number, 
+                phonenumbers.PhoneNumberFormat.E164
+            )
+            national_number = number.national_number
+            national_number[2:-2] = re.sub('\d', '*', national_number[2:-2])
+            masked = '+' + number.country_code + ' ' + national_number
+        else:
+            raise phonenumbers.NumberParseException
+    except:
+        return json.dumps({'error': 'Invalid phone number'}), 400
+    
+    with get_session() as db_session:
+        payment = Payment(g.IXIPC_user.id, PaymentMethod.MBWay, method_id=masked)
+        db_session.add(payment)
+        db_session.commit()
+
+        # Request to ifthenpay
+        url = "https://ifthenpay.com/api/spg/payment/mbway"
+
+        request = {
+            "mbWayKey": app.config['MBWAY_KEY'], #(string) mandatory (assigned by ifthenpay)
+            "orderId": payment.transaction_id, #//(string) mandatory (15 chars max)
+            "amount": payment.value, #(string) mandatory (decimal separator ".")
+            "mobileNumber": str(number.country_code) + '#' + str(number.country_code), #(string) mandatory
+            "email": "", #(string) optional (100 chars max)
+            "description": app.i18n.l10n[language].format_value('IXIPC-payment-description'), #(string) optional (100 chars max)
+        }
+        headers = {
+            "accept": "application/json",
+            "content-type": "application/json"
+        }
+
+        return_content = None
+        tries = 0
+        while tries < 3:
+            response = requests.post(url, json=request, headers=headers)
+            response_data = response.json() 
+            payment.status_code = response_data['Status']
+            payment.request_id = response_data['RequestId']
+
+            if payment.status_code == '000':
+                return_content = json.dumps({'id': payment.id}), 200
+                break
+            elif payment.status_code in {'100', '999'}:
+                tries += 1 
+            elif payment.status_code == '122':
+                payment.failed()
+                return_content = json.dumps({'error': 'Phone number declined by the payment processor'}), 400
+                break
+            else:
+                payment.failed()
+                return_content = json.dumps({'error': 'Payment failed for unknown reason'}), 400
+                break
+                
+        if tries >= 3:
+            return_content = json.dumps({'error': 'Maximum payment tries exceeded. Try again later'}), 400
+            payment.failed()
+
+        db_session.commit()
+
+        return return_content
+
+# https://ifthenpay.com/api/spg/payment/mbway/status?mbWayKey={mbWayKey}&requestId={requestId}
+# {
+#     "CreatedAt": "03-01-2024 15:15:06",
+#     "Message": "Success",
+#     "RequestId": "eR6mcnJzjFx7kOL1Ybdp",
+#     "Status": "000",
+#     "UpdateAt": "03-01-2024 15:15:16"
+# }
+# 000 - Transaction successfully completed (Payment confirmed).
+# 020 - Transaction rejected by the user.
+# 101 - Transaction expired (the user has 4 minutes to accept the payment in the MB WAY App before expiring)
+# 122 - Transaction declined to the user. 
+
+@login_IXIPC_required
+@bp.route('/IX_IPC/check_mbway_status/<language:language>', methods=['POST'])
+def check_mbway_status(language='pt'):
+    """Checks the status of an MBWay payment"""
+
+    request_id = json.loads(request.form['request_id'])
+    with get_session() as db_session:
+        payment = db_session.get(Payment, request_id)
+
+        mbWayKey = 'test'
+        if g.IXIPC_user.id == payment.user_id:
+            if payment.status_code != PaymentStatus.pending:
+                return json.dumps({'status': payment.status_code}), 200
+
+            url = f"https://ifthenpay.com/api/spg/payment/mbway/status?mbWayKey={app.config['MBWAY_KEY']}&requestId={payment.request_id}"
+
+            response = requests.get(url)
+            response_data = response.json()
+            payment.status_code = response_data['Status']
+
+            # TODO: answer: What if the payment is waiting??
+            if payment.status_code == '000':
+                payment.success()
+            elif payment.status_code == '020':
+                payment.canceled()            
+            elif payment.status_code == '101':
+                payment.expired()
+            elif payment.status_code == '122':
+                payment.failed()
+            else:
+                db_session.commit()
+                app.send_email(
+                    'Payment failed',
+                    f'Payment of user {g.IXIPC_user.id} failed for unknown reason. Error code {response_data["Status"]}, RequestId {response_data["RequestId"]}, Message {response_data["Message"]}.',
+                    [app.config['MAINTENANCE_EMAIL']]
+                )
+                return json.dumps({'error': 'Request failed for unknown reason'}), 400
+            
+            db_session.commit()
+            return json.dumps({'status': payment.status}), 200
+        else:
+            return json.dumps({'error': 'access unauthorized'}), 401
+
+# http://www.yoursite.com/callback.php?key=[ANTI_PHISHING_KEY]&orderId=[ORDER_ID]&amount=[AMOUNT]&requestId=[REQUEST_ID]&payment_datetime=[PAYMENT_DATETIME]
+@bp.route('/IX_IPC/payment_callback', methods=['GET'])
+def payment_callback():
+    """Callback that registers the result of an MBWay payment"""
+
+    if request.args['key'] == app.config['ANTI_PHISHING_KEY']:
+        with get_session() as db_session:
+            payment = db_session.execute(
+                select(Payment).where(Payment.request_id == request.args['requestId'])
+            ).first()
+
+            if payment:
+                payment.success()
+                payment.value = request.args['amount']
+
+                db_session.commit()
+
+    return '', 200
 
 
 def register(app) -> None:

@@ -1,8 +1,9 @@
-from sqlalchemy import Column, Boolean, ForeignKey, Integer, String, Text
+from sqlalchemy import Column, Boolean, ForeignKey, Integer, String, Text, Numeric
 from sqlalchemy_utc import UtcDateTime, utcnow
 
 from .db_IXIPC import Base
 from secrets import token_hex
+
 
 
 class User(Base):
@@ -24,6 +25,61 @@ class User(Base):
         self.last_name = last_name
         self.institution = institution
         self.student = student
+
+
+class PaymentMethod:
+    MBWay = 1
+    Card  = 2
+    Other = 3
+
+class PaymentStatus:
+    successful = 1
+    pending = 2
+    failed = 3
+    canceled = 4
+    expired = 5 
+
+import time
+class Payment(Base):
+    __tablename__ = 'payments'
+    id = Column(Integer, primary_key=True)
+    user_id = Column(ForeignKey('users.id'))
+
+    value = Column(Numeric(6, 2))
+    method = Column(Integer)
+    method_id = Column(String(20))
+    transaction_id = Column(String(15))
+    request_id = Column(String(30))
+    status_code = Column(String(5))
+
+    status = Column(Integer)
+
+    started = Column(UtcDateTime(), default=utcnow())
+    concluded = Column(UtcDateTime())
+
+    def __init__(self, user_id, method, method_id, value, status=PaymentStatus.pending):
+        self.user_id = user_id
+        self.method = method
+        self.method_id = method_id
+        self.value = value
+        self.transaction_id = f'{user_id:04}_{int(time.time())%10000:05}_{token_hex(nbytes=3)}'
+        self.status = status
+
+    def success(self):
+        self.status = PaymentStatus.successful
+        self.concluded = utcnow()
+
+    def failed(self):
+        self.status = PaymentStatus.failed
+        self.concluded = utcnow()
+
+    def canceled(self):
+        self.status = PaymentStatus.canceled
+        self.concluded = utcnow()
+
+    def expired(self):
+        self.status = PaymentStatus.expired
+        self.concluded = utcnow()
 
 
 class Author(Base):
