@@ -58,7 +58,8 @@ def IXIPC(language='pt'):
             form=FlaskForm(),
             text_column=True,
             abstracts=abstracts,
-            site_map=True
+            site_map=True,
+            payment_status=0
         )
 
 

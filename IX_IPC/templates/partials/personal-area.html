@@ -66,18 +66,18 @@
             <thead class="table-dark">
               <tr class="text-center">
                 <th class="invisible" scope="col"></th>
-                <th scope="col">Early bird (until 15/08/2024)</th>
-                <th scope="col">After 15/08/2024</th>
+                <th scope="col">{{ 'IXIPC-payment-earlybird'|l10n(lang) }}</th>
+                <th scope="col">{{ 'IXIPC-payment-late'|l10n(lang) }}</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <th scope="row">Normal</th>
+                <th scope="row">{{ 'IXIPC-payment-normal'|l10n(lang) }}</th>
                 <td class="text-center">80€</td>
                 <td class="text-center">100€</td>
               </tr>
               <tr>
-                <th scope="row">Student</th>
+                <th scope="row">{{ 'IXIPC-payment-student'|l10n(lang) }}</th>
                 <td class="text-center">35€</td>
                 <td class="text-center">50€</td>
               </tr>
@@ -86,6 +86,7 @@
         </div>
       </div>
       {# <h5>Métodos de pagamento</h5> #}
+      {% if payment_status == 0 %}
       <div class="row">
         <div class="col me-0 pe-0">
           <div class="list-group rounded-end-0">
@@ -98,12 +99,12 @@
                   </div>
                   <div class="col">
                     <div class="input-group">
-                      <label for="mbway-contact" class="input-group-text">Número</label>
+                      <label for="mbway-contact" class="input-group-text"><img src="{{ url_for('static', filename='img/phone.svg') }}" alt="phone" style="width: 20px;"></label>
                       <input type="tel" class="form-control" id="mbway-contact">
                     </div>
                   </div>
                   <div class="col-auto">
-                    <button type="submit" class="btn btn-primary" id="mbway-payment">Pagar</button>
+                    <button type="submit" class="btn btn-primary" id="mbway-payment">{{ 'IXIPC-payment-pay'|l10n(lang) }}</button>
                   </div>
                 </div>
               </form>
@@ -117,7 +118,7 @@
                   </div>
                   <div class="col"></div>
                   <div class="col-auto">
-                    <button type="submit" class="btn btn-primary" id="card-payment">Pagar</button>
+                    <button type="submit" class="btn btn-primary" id="card-payment">{{ 'IXIPC-payment-pay'|l10n(lang) }}</button>
                   </div>
                 </div>
               </form>
@@ -132,12 +133,30 @@
         <div class="col-2 ms-0 ps-0">
           <div class="card text-center w-100 h-100 pt-5 rounded-start-0 price">
             <h5 class="card-title mt-2">Total</h5>
-            <p class="card-text lead" id="final-price">50€</p>
+            <p class="card-text lead" id="final-price">100€</p>
           </div>
         </div>
       </div>
     </div>
   </div>
+  {% elif payment_status == 1 %}
+  <div class="row mb-5">
+    <div class="col">
+      <div class="card w-100 h-100 price p-2">
+        <p class="card-text">{{ 'IXIPC-payment-confirmed'|l10n(lang) }}</p>
+      </div>
+    </div>
+  </div>
+  {% elif payment_status == 2 %}
+  <div class="row mb-5">
+    <div class="col">
+      <div class="card w-100 h-100 price p-2">
+        <p class="card-text">{{ 'IXIPC-payment-pending'|l10n(lang) }}</p>
+      </div>
+    </div>
+  </div>
+
+  {% endif %}
 
   <!-- Abstracts -->
   <div class="container text-white mb-5">
@@ -228,7 +247,7 @@
 </div>
 
 {% include "scripts/utilities.html" -%}
-{% include "scripts/upload-form.html" -%}
+{# {% include "scripts/upload-form.html" -%} #}
 {% include "scripts/word-counter.html" -%}
 {% include "scripts/open-abstract.html" -%}
 <script src="{{ url_for('static', filename='js/Sortable.js') }}"></script>
@@ -277,10 +296,15 @@ const personalDataManager = () => {
     scheduleSave
   );
 
+  const priceElement = document.getElementById('final-price');
+  // TODO: update with the correct dates and prices
+  const prices = ((new Date('2024-08-16') > (new Date())))?[35, 80]:[50, 100];
   const updateStudent = () => {
     if(studentSwitchElement.checked) {
+      if(priceElement) priceElement.innerHTML = String(prices[0]) + '€';
       studentVolunteerElement.removeAttribute('hidden');
     } else {
+      if(priceElement) priceElement.innerHTML = String(prices[1]) + '€';
       studentVolunteerElement.setAttribute('hidden', '');
     }
   }
@@ -309,10 +333,10 @@ Promise.all([authors, institutions]).then((values) =>{
   abstractAuthors = abstractAuthorsManager(authors);
 });
 
-makeUploader(
+/*makeUploader(
   dropArea = document.getElementById('IXIPC-upload-payment-proof'),
   csrfToken = '{{ csrf_token() }}'
-);
+);*/
 
 const addAbstract = (event) => {
   event.preventDefault();
