@@ -5,7 +5,7 @@
   <!-- Personal data form -->
   <div class="container text-white mb-5">
     <form id="personal-data" action="">
-      {{ form.csrf_token }}
+      {{ registration_form.csrf_token }}
       <div class="rounded-4 card mb-3 abstract-new">
         <div class="card-body">
           <h5 class="card-title mb-0">
@@ -54,7 +54,7 @@
     <div class="rounded-4 card mb-3 abstract-new">
       <div class="card-body">
         <h5 class="card-title mb-0">
-          Inscrição {# {{ 'IXIPC-personal-data'|l10n(lang) }} #}
+          {{ 'IXIPC-registration'|l10n(lang) }}
         </h5>
       </div>
     </div>
@@ -86,77 +86,17 @@
         </div>
       </div>
       {# <h5>Métodos de pagamento</h5> #}
-      {% if payment_status == 0 %}
-      <div class="row">
-        <div class="col me-0 pe-0">
-          <div class="list-group rounded-end-0">
-            <div class="list-group-item">
-              <form class="form-inline" id="mbway-form">
-                <div class="row d-flex py-3">
-                  {{ form.csrf_token }}
-                  <div class="col-3">
-                    <img class="position-relative top-50 start-50 translate-middle" src="{{ url_for('static', filename='img/Logo_MBWay.svg') }}" alt="MBway logo" style="width:80px;">
-                  </div>
-                  <div class="col">
-                    <div class="input-group">
-                      <label for="mbway-contact" class="input-group-text"><img src="{{ url_for('static', filename='img/phone.svg') }}" alt="phone" style="width: 20px;"></label>
-                      <input type="tel" class="form-control" id="mbway-contact">
-                    </div>
-                  </div>
-                  <div class="col-auto">
-                    <button type="submit" class="btn btn-primary" id="mbway-payment">{{ 'IXIPC-payment-pay'|l10n(lang) }}</button>
-                  </div>
-                </div>
-              </form>
-            </div>
-            <div class="list-group-item">
-              <form class="form-inline" id="mbway-form">
-                <div class="row py-3">
-                  {{ form.csrf_token }}
-                  <div class="col-3">
-                    <img class="position-relative top-50 start-50 translate-middle" src="{{ url_for('static', filename='img/mastercard-visa.png') }}" alt="MBway logo" style="width:50px;">
-                  </div>
-                  <div class="col"></div>
-                  <div class="col-auto">
-                    <button type="submit" class="btn btn-primary" id="card-payment">{{ 'IXIPC-payment-pay'|l10n(lang) }}</button>
-                  </div>
-                </div>
-              </form>
-            {# <div class="row">
-                <div class="col d-flex justify-content-end">
-                  <div class="form-text p-0 m-0">(Vais ser redireccionado para uma página de pagamento)</div>
-                </div>
-              </div> #}
-            </div>
-          </div>
-        </div>
-        <div class="col-2 ms-0 ps-0">
-          <div class="card text-center w-100 h-100 pt-5 rounded-start-0 price">
-            <h5 class="card-title mt-2">Total</h5>
-            <p class="card-text lead" id="final-price">100€</p>
-          </div>
-        </div>
+      <div id="payment-methods">
+        {% if payment_status == 0 %}
+          {% include 'partials/payment-methods.html' %}
+        {% elif payment_status == 1 %}
+          {% include 'partials/payment-success.html' %}
+        {% elif payment_status == 2 %}
+          {% include 'partials/payment-pending.html' %}
+        {% endif %}
       </div>
     </div>
   </div>
-  {% elif payment_status == 1 %}
-  <div class="row mb-5">
-    <div class="col">
-      <div class="card w-100 h-100 price p-2">
-        <p class="card-text">{{ 'IXIPC-payment-confirmed'|l10n(lang) }}</p>
-      </div>
-    </div>
-  </div>
-  {% elif payment_status == 2 %}
-  <div class="row mb-5">
-    <div class="col">
-      <div class="card w-100 h-100 price p-2">
-        <p class="card-text">{{ 'IXIPC-payment-pending'|l10n(lang) }}</p>
-      </div>
-    </div>
-  </div>
-
-  {% endif %}
 
   <!-- Abstracts -->
   <div class="container text-white mb-5">
@@ -177,7 +117,7 @@
         {% endfor -%}
       </div>
       <form id="abstract-new" action="" class="mb-5">
-        {{ form.csrf_token }}
+        {{ registration_form.csrf_token }}
         <button type="button" class="btn btn-primary text-white" type="submit">
           <img src='data:image/svg+xml,<svg width="20px" height="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 12H15" stroke="%23fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 9L12 15" stroke="%23fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 12C3 4.5885 4.5885 3 12 3C19.4115 3 21 4.5885 21 12C21 19.4115 19.4115 21 12 21C4.5885 21 3 19.4115 3 12Z" stroke="%23fff" stroke-width="2"/></svg>' alt="" style="height: 25px;">
           <span class="text-white">{{ 'IXIPC-abstract-new-abstract'|l10n(lang) }}</span>
@@ -239,7 +179,7 @@
   <!-- Logout -->
   <div class="mb-5">
     <form action="{{ url_for('IX_IPC.logout', language=lang) }}" method="post">
-      {{ form.csrf_token }}
+      {{ registration_form.csrf_token }}
       <input type="hidden" id="user_id" name="user_id" value="{{ g.user.id }}"> 
       <button type="submit" class="btn btn-primary">{{ 'IXIPC-logout'|l10n(lang) }}</button>
     </form>  
@@ -264,11 +204,11 @@
   return true;
 };*/
 
-let studentSwitchElement = document.getElementById('student');
-let studentVolunteerElement = document.getElementById('student-volunteer');
-
 const personalDataManager = () => {
   let element = document.getElementById('personal-data');
+  let studentSwitchElement = document.getElementById('student');
+  let studentVolunteerElement = document.getElementById('student-volunteer');
+
   let saveFlag = false;
 
   const save = () => {

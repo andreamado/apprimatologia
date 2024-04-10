@@ -1,0 +1,93 @@
+<div class="row">
+  <div class="col me-0 pe-0">
+    <div class="list-group rounded-end-0">
+      <div class="list-group-item">
+        <form class="form-inline" id="mbway-form">
+          <div class="row d-flex py-3">
+            {{ registration_form.csrf_token }}
+            <div class="col-3">
+              <img class="position-relative top-50 start-50 translate-middle" src="{{ url_for('static', filename='img/Logo_MBWay.svg') }}" alt="MBway logo" style="width:80px;">
+            </div>
+            <div class="col">
+              <div class="input-group">
+                <label for="mbway-contact" class="input-group-text"><img src="{{ url_for('static', filename='img/phone.svg') }}" alt="phone" style="width: 20px;"></label>
+                <input type="tel" class="form-control" id="mbway-contact">
+              </div>
+            </div>
+            <div class="col-auto">
+              <button type="submit" action="" class="btn btn-primary" id="mbway-payment">{{ 'IXIPC-payment-pay'|l10n(lang) }}</button>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="list-group-item">
+        <form class="form-inline" id="mbway-form">
+          <div class="row py-3">
+            {{ registration_form.csrf_token }}
+            <div class="col-3">
+              <img class="position-relative top-50 start-50 translate-middle" src="{{ url_for('static', filename='img/mastercard-visa.png') }}" alt="MBway logo" style="width:50px;">
+            </div>
+            <div class="col"></div>
+            <div class="col-auto">
+              <button type="submit" action="" class="btn btn-primary" id="card-payment">{{ 'IXIPC-payment-pay'|l10n(lang) }}</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="col-2 ms-0 ps-0">
+    <div class="card text-center w-100 h-100 pt-5 rounded-start-0 price">
+      <h5 class="card-title mt-2">Total</h5>
+      <p class="card-text lead" id="final-price">100€</p>
+    </div>
+  </div>
+</div>
+<script defer>
+  let mbwayButton = document.getElementById('mbway-payment');
+  let mbwayContact = document.getElementById('mbway-contact');
+
+  mbwayButton.addEventListener('click', async (evt) => {
+    evt.preventDefault();
+
+    // TODO: validate phone number and display errors if not valid
+    let form = blankForm();
+    form.append('number', mbwayContact.value);
+
+    if(mbwayContact.value) {
+      let containerElement = document.getElementById('payment-methods');
+
+      fetch("{{ url_for('IX_IPC.payment_mbway', language=lang) }}", {
+        method: 'POST',
+        body: form
+      })
+      .then((response) => response.json())
+      .then((data) => {
+        let id = data['id'];
+        console.log(id);
+        if(id) {
+          containerElement.innerHTML = `{% include 'partials/payment-pending.html' %}`;
+          const verifyPaymentCallback = () => {
+            setTimeout(() => {
+              fetch("{{ url_for('IX_IPC.check_mbway_status', language=lang) }}")
+                .then((response) => response.json())
+                .then((data) => {
+                  if(data['status'] == 1) {
+                    containerElement.innerHTML = `{% include 'partials/payment-success.html' %}`;
+                  } else if(data['status'] == 3 || data['status'] == 4 || data['status'] == 5) {
+                    // TODO: improve messaging to user when payment fails
+                    containerElement.innerHTML = `{% include 'partials/payment-failed.html' %}`;
+                  } else {
+                    verifyPaymentCallback();
+                  }
+                })
+                .catch((e) => console.log(e))
+            }, 5000);
+          }
+          verifyPaymentCallback();
+        }
+      })
+      .catch((e) => console.log(e));
+    }
+  });
+</script>

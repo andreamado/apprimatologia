@@ -2,6 +2,7 @@
   <h2 class="mb-1">{{ 'IXIPC-personal-area'|l10n(lang) }}</h2>
   <p class="lead">{{ 'IXIPC-register-to-submit'|l10n(lang) }}</p>
 </div>
+<script src="https://www.google.com/recaptcha/api.js?hl={{lang}}" async defer></script>
 
 <div class="container mb-5">
   <!-- register form -->
@@ -10,12 +11,13 @@
       <div class="card rounded-4 mb-3 h-100">
         <div class="card-body">
           <h2 class="lh-1 mb-4">{{ 'IXIPC-register'|l10n(lang) }}</h2>
-          <div class="row mb-3">
-            <form action="{{ url_for('IX_IPC.register_user', language=lang) }}" method="post">
-              {{ form.csrf_token }}
+          <form action="{{ url_for('IX_IPC.register_user', language=lang) }}" method="post">
+            <div class="row mb-3">
+              {{ registration_form.csrf_token }}
               <div class="col-12 mb-3">
-                <label for="first-name" class="form-label">{{ 'IXIPC-register-first-name'|l10n(lang) }}</label>
-                <input type="text" class="form-control" id="first-name" name="first-name">
+                <label for="registration-form-name" class="form-label">{{ 'IXIPC-register-first-name'|l10n(lang) }}</label>
+                {{ registration_form.name(class='form-control') }}
+                {# <input type="text" class="form-control" id="first-name" name="first-name"> #}
               </div>
               {# <div class="col-12 mb-3">
                 <label for="last-name" class="form-label">{{ 'IXIPC-register-last-name'|l10n(lang) }}</label>
@@ -23,13 +25,22 @@
               </div> #}
               <div class="col-12 mb-3">
                 <label for="email" class="form-label">Email</label>
-                <input type="email" class="form-control" id="email" name="email">
+                {{ registration_form.email(class='form-control') }}
+                {# <input type="email" class="form-control" id="email" name="email"> #}
               </div>
               <div class="col-2">
-                <button type="submit" class="btn btn-primary">{{ 'IXIPC-register-submit'|l10n(lang) }}</button>
+                <button type="submit" id="register-submit" class="btn btn-primary">{{ 'IXIPC-register-submit'|l10n(lang) }}</button>
               </div>
-            </form>
-          </div>
+            </div>
+            {# <div class="row">
+              <div class="col">
+                {% for error in registration_form.recaptcha.errors %}
+                  {{ error }}
+                {% endfor %}
+                {{ registration_form.recaptcha }}
+              </div>
+            </div> #}
+          </form>
         </div>
       </div>
     </div>
@@ -38,24 +49,54 @@
       <div class="card rounded-4 mb-3 h-100">
         <div class="card-body">
           <h2 class="lh-1 mb-4">{{ 'IXIPC-login'|l10n(lang) }}</h2>
-          <div class="row mb-3">
-            <form action="{{ url_for('IX_IPC.login', language=lang) }}" method="post">
-              {{ form.csrf_token }}
+          <form action="{{ url_for('IX_IPC.login', language=lang) }}" method="post">
+            <div class="row mb-3">
+              {{ login_form.csrf_token }}
               <div class="col-12 mb-3">
-                <label for="email" class="form-label">Email</label>
-                <input type="email" class="form-control" id="email" name="email">
+                <label for="login-form-email" class="form-label">Email</label>
+                {{ login_form.email(class='form-control') }}
+                {# <input type="email" class="form-control" id="email" name="email"> #}
               </div>
               <div class="col-12 mb-3">
-                <label for="password" class="form-label">Password</label>
-                <input type="password" class="form-control" id="password" name="password">
+                <label for="login-form-password" class="form-label">Password</label>
+                {{ login_form.password(class='form-control') }}
+                {# <input type="password" class="form-control" id="password" name="password"> #}
               </div>
               <div class="col-2">
-                <button type="submit" class="btn btn-primary">{{ 'IXIPC-register-submit'|l10n(lang) }}</button>
+                <button type="submit" id="login-submit" class="btn btn-primary">{{ 'IXIPC-register-submit'|l10n(lang) }}</button>
               </div>
-            </form>
-          </div>
+            </div>
+            {# <div class="row">
+              <div class="col">
+                {% for error in login_form.recaptcha.errors %}
+                  {{ error }}
+                {% endfor %}
+                {{ login_form.recaptcha }}
+              </div>
+            </div> #}
+          </form>
         </div>
       </div>
     </div>
   </div>
+  <div class="row mt-4">
+    <div class="col">
+      {% for error in registration_form.recaptcha.errors %}
+        {{ error }}
+      {% endfor %}
+      {{ registration_form.recaptcha }}
+    </div>
+  </div>  
 </div>
+
+<script>
+  function validate(event) {
+    event.preventDefault();
+    grecaptcha.execute();
+  }
+
+  function onload() {
+    document.getElementById('login-submit').onclick = validate;
+    document.getElementById('register-submit').onclick = validate;
+  }
+</script>

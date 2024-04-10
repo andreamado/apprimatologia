@@ -45,6 +45,7 @@ IXIPC-program = Program
 IXIPC-invited-speakers = Invited speakers
 IXIPC-timeline = Timeline
 
+IXIPC-registration = Registration
 IXIPC-payment-description = IX Iberian Primatological Conference registration fee
 IXIPC-payment-normal = Normal
 IXIPC-payment-student = Student
@@ -53,6 +54,7 @@ IXIPC-payment-late = After 15/08/2024
 IXIPC-payment-pay = Pay
 IXIPC-payment-confirmed = Registration payment confirmed
 IXIPC-payment-pending = Awaiting payment confirmation
+IXIPC-payment-failed = Registration payment failed
 
 IXIPC-welcome-email-subject = Welcome to the IX Iberian Primatological Conference!
 IXIPC-welcome-email-body = 

@@ -4,7 +4,7 @@
   {% if reload -%}
   <input type="hidden" name="csrf_token" value="{{ csrf_token }}"/>
   {% else -%}
-  {{ form.csrf_token }}
+  {{ registration_form.csrf_token }}
   {% endif -%}
   <div class="rounded-4 card mb-3">
     <div class="card-body">

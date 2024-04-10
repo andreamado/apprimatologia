@@ -1,6 +1,9 @@
 from flask import flash, render_template, redirect, url_for, Blueprint, g, request, session
 from flask import current_app as app
 from flask_wtf import FlaskForm
+from flask_wtf.recaptcha import RecaptchaField
+from wtforms import EmailField, StringField, validators
+
 from sqlalchemy import select, delete
 
 import requests
@@ -35,6 +38,14 @@ def login_IXIPC_required(view):
 
     return wrapped_view
 
+class RegistrationForm(FlaskForm):
+    name = StringField('registration-form-name', [validators.DataRequired(), validators.Length(max=50)])
+    email = StringField('registration-form-email', [validators.DataRequired(), validators.Email()])
+    recaptcha = RecaptchaField()
+
+class LoginForm(FlaskForm):
+    email = StringField('login-form-email', [validators.DataRequired(), validators.Email()])
+    password = StringField('login-form-password', [validators.DataRequired()])
 
 @bp.route('/IX_IPC/<language:language>')
 @bp.route('/IX_IPC')
@@ -55,7 +66,8 @@ def IXIPC(language='pt'):
         return render_template(
             'IX_IPC.html',
             lang=language,
-            form=FlaskForm(),
+            registration_form=RegistrationForm(),
+            login_form=LoginForm(),
             text_column=True,
             abstracts=abstracts,
             site_map=True,
@@ -86,8 +98,10 @@ def register_user(language):
 
     g.links[2]['active'] = True
 
-    name = request.form['first-name'].strip()
-    email = request.form['email']
+    form = RegistrationForm()
+    
+    name = form.name.data.strip()
+    email = form.email.data
 
     if not email:
         flash('Email is required.', 'warning')
@@ -187,22 +201,24 @@ def login(language):
     the login is unsuccessful. 
     """
 
-    email = sanitize_email(request.form['email'])
-    password = request.form['password']
+    form = LoginForm()
+    if form.validate_on_submit():
+        email = sanitize_email(form.email.data)
+        password = form.password.data
 
-    with get_session() as db_session:
-        user = db_session.execute(
-            select(User).filter_by(email=email)
-        ).scalar_one()
+        with get_session() as db_session:
+            user = db_session.execute(
+                select(User).filter_by(email=email)
+            ).scalar_one()
 
-    if user and user.password == password:
-        session.clear()
-        session['IXIPC_user_id'] = user.id
-    else:
-        flash(
-            app.translate('IXIPC-login-wrong-email-or-password', language), 
-            'warning'
-        )
+        if user and user.password == password:
+            session.clear()
+            session['IXIPC_user_id'] = user.id
+        else:
+            flash(
+                app.translate('IXIPC-login-wrong-email-or-password', language), 
+                'warning'
+            )
     
     return redirect(url_for('IX_IPC.IXIPC', language=language))
 
@@ -811,33 +827,37 @@ def payment_mbway(language='pt'):
 
     # parse and validate the phone number
     try:
-        number = phonenumbers.parse(json.loads(request.form['number']), 'PT')
+        number = phonenumbers.parse(str(request.form['number']), 'PT')
         if phonenumbers.is_valid_number(number):
-            compact = phonenumbers.format_number(
-                number, 
-                phonenumbers.PhoneNumberFormat.E164
-            )
-            national_number = number.national_number
-            national_number[2:-2] = re.sub('\d', '*', national_number[2:-2])
-            masked = '+' + number.country_code + ' ' + national_number
+            # compact = phonenumbers.format_number(
+            #     number, 
+            #     phonenumbers.PhoneNumberFormat.E164
+            # )
+            # TODO: implement masking
+            national_number = str(number.national_number)
+            # national_number[2:-2] = re.sub('\d', '*', national_number[2:-2])
+            masked = '+' + str(number.country_code) + ' ' + national_number
         else:
             raise phonenumbers.NumberParseException
     except:
         return json.dumps({'error': 'Invalid phone number'}), 400
     
     with get_session() as db_session:
-        payment = Payment(g.IXIPC_user.id, PaymentMethod.MBWay, method_id=masked)
+        # TODO: update to the real values and take early bird into consideration
+        value = 35 if g.IXIPC_user.student else 80
+
+        payment = Payment(g.IXIPC_user.id, PaymentMethod.MBWay, masked, value)
         db_session.add(payment)
         db_session.commit()
 
         # Request to ifthenpay
         url = "https://ifthenpay.com/api/spg/payment/mbway"
-
-        request = {
+            
+        request_contents = {
             "mbWayKey": app.config['MBWAY_KEY'], #(string) mandatory (assigned by ifthenpay)
             "orderId": payment.transaction_id, #//(string) mandatory (15 chars max)
-            "amount": payment.value, #(string) mandatory (decimal separator ".")
-            "mobileNumber": str(number.country_code) + '#' + str(number.country_code), #(string) mandatory
+            "amount": str(payment.value), #(string) mandatory (decimal separator ".")
+            "mobileNumber": str(number.country_code) + '#' + str(number.national_number), #(string) mandatory
             "email": "", #(string) optional (100 chars max)
             "description": app.i18n.l10n[language].format_value('IXIPC-payment-description'), #(string) optional (100 chars max)
         }
@@ -849,7 +869,7 @@ def payment_mbway(language='pt'):
         return_content = None
         tries = 0
         while tries < 3:
-            response = requests.post(url, json=request, headers=headers)
+            response = requests.post(url, json=request_contents, headers=headers)
             response_data = response.json() 
             payment.status_code = response_data['Status']
             payment.request_id = response_data['RequestId']
@@ -894,11 +914,10 @@ def payment_mbway(language='pt'):
 def check_mbway_status(language='pt'):
     """Checks the status of an MBWay payment"""
 
-    request_id = json.loads(request.form['request_id'])
+    request_id = request.form['request_id']
     with get_session() as db_session:
         payment = db_session.get(Payment, request_id)
 
-        mbWayKey = 'test'
         if g.IXIPC_user.id == payment.user_id:
             if payment.status_code != PaymentStatus.pending:
                 return json.dumps({'status': payment.status_code}), 200
@@ -928,7 +947,9 @@ def check_mbway_status(language='pt'):
                 return json.dumps({'error': 'Request failed for unknown reason'}), 400
             
             db_session.commit()
-            return json.dumps({'status': payment.status}), 200
+            return json.dumps({
+                'status': payment.status
+            }), 200
         else:
             return json.dumps({'error': 'access unauthorized'}), 401
 
