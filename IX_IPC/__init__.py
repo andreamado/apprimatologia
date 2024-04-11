@@ -16,6 +16,7 @@ from .db_IXIPC import get_session
 from .models import User, Abstract, AbstractType, Author, AbstractAuthor, Institution, Affiliation, Payment, PaymentMethod, PaymentStatus
 
 import json, functools
+from hashlib import sha256
 
 bp = Blueprint('IX_IPC', __name__, template_folder='templates')
 
@@ -820,6 +821,18 @@ def save_institutions():
 # 122 - Transaction declined to the user.
 # 999 - Error on initializing the request. You can try again.
 
+
+def get_payment_value(user):
+    """Returns the value of the payment for current user"""
+    # TODO: update to the real values and take early bird into consideration
+    return 35 if user.student else 80
+
+HEADERS_JSON = {
+    "accept": "application/json",
+    "content-type": "application/json"
+}
+
+
 @login_IXIPC_required
 @bp.route('/IX_IPC/payment_mbway/<language:language>', methods=['POST'])
 def payment_mbway(language='pt'):
@@ -829,10 +842,6 @@ def payment_mbway(language='pt'):
     try:
         number = phonenumbers.parse(str(request.form['number']), 'PT')
         if phonenumbers.is_valid_number(number):
-            # compact = phonenumbers.format_number(
-            #     number, 
-            #     phonenumbers.PhoneNumberFormat.E164
-            # )
             # TODO: implement masking
             national_number = str(number.national_number)
             # national_number[2:-2] = re.sub('\d', '*', national_number[2:-2])
@@ -843,8 +852,7 @@ def payment_mbway(language='pt'):
         return json.dumps({'error': 'Invalid phone number'}), 400
     
     with get_session() as db_session:
-        # TODO: update to the real values and take early bird into consideration
-        value = 35 if g.IXIPC_user.student else 80
+        value = get_payment_value(g.IXIPC_user)
 
         payment = Payment(g.IXIPC_user.id, PaymentMethod.MBWay, masked, value)
         db_session.add(payment)
@@ -861,16 +869,22 @@ def payment_mbway(language='pt'):
             "email": "", #(string) optional (100 chars max)
             "description": app.i18n.l10n[language].format_value('IXIPC-payment-description'), #(string) optional (100 chars max)
         }
-        headers = {
-            "accept": "application/json",
-            "content-type": "application/json"
-        }
 
         return_content = None
         tries = 0
         while tries < 3:
-            response = requests.post(url, json=request_contents, headers=headers)
-            response_data = response.json() 
+            # TODO: activate again after the tests
+            # response = requests.post(url, json=request_contents, headers=HEADERS_JSON)
+            # response_data = response.json()
+
+            # Fake response data for the test phase
+            response_data = {
+                "Amount": str(payment.value),
+                "Message": "Pending",
+                "OrderId": payment.transaction_id,
+                "RequestId": "DxQI6XtpEPJS4BNfZVsY",
+                "Status": "000"
+            }
             payment.status_code = response_data['Status']
             payment.request_id = response_data['RequestId']
 
@@ -914,13 +928,15 @@ def payment_mbway(language='pt'):
 def check_mbway_status(language='pt'):
     """Checks the status of an MBWay payment"""
 
-    request_id = request.form['request_id']
     with get_session() as db_session:
-        payment = db_session.get(Payment, request_id)
+        payment = db_session.get(Payment, request.form['payment_id'])
 
         if g.IXIPC_user.id == payment.user_id:
-            if payment.status_code != PaymentStatus.pending:
-                return json.dumps({'status': payment.status_code}), 200
+            # return json.dumps({'status': payment.status}), 200
+
+            # TODO: solve after dealing with the issue of not knowing what happens if the payment is waiting
+            if payment.status != PaymentStatus.pending:
+                return json.dumps({'status': payment.status}), 200
 
             url = f"https://ifthenpay.com/api/spg/payment/mbway/status?mbWayKey={app.config['MBWAY_KEY']}&requestId={payment.request_id}"
 
@@ -953,6 +969,7 @@ def check_mbway_status(language='pt'):
         else:
             return json.dumps({'error': 'access unauthorized'}), 401
 
+
 # http://www.yoursite.com/callback.php?key=[ANTI_PHISHING_KEY]&orderId=[ORDER_ID]&amount=[AMOUNT]&requestId=[REQUEST_ID]&payment_datetime=[PAYMENT_DATETIME]
 @bp.route('/IX_IPC/payment_callback', methods=['GET'])
 def payment_callback():
@@ -971,6 +988,120 @@ def payment_callback():
                 db_session.commit()
 
     return '', 200
+
+
+@login_IXIPC_required
+@bp.route('/IX_IPC/start_creditcard_payment/<language:language>', methods=['POST'])
+def start_creditcard_payment(language='pt'):
+    """Starts a new credit card payment and returns a user url for the payment"""
+
+    url = f'https://ifthenpay.com/api/creditcard/init/{app.config["CCARD_KEY"]}'
+    value = get_payment_value(g.IXIPC_user)
+
+    with get_session() as db_session:
+        payment = Payment(g.IXIPC_user.id, PaymentMethod.Card, '', value)
+
+        db_session.add(payment)
+        db_session.commit()
+        
+        request_data = {
+            "orderId": payment.transaction_id,
+            "amount": str(value),
+            "successUrl": url_for('IXIPC.creditcard_payment_success', language=language),
+            "errorUrl": url_for('IXIPC.creditcard_payment_error', language=language),
+            "cancelUrl": url_for('IXIPC.creditcard_payment_canceled', language=language),
+            "language" : language
+        }
+
+        return_content = None
+        tries = 0
+        while tries < 3:
+            response = requests.post(url, json=request_data, headers=HEADERS_JSON)
+            response_data = response.json()
+
+            payment.status_code = response_data['Status']
+            payment.request_id = response_data['RequestId']
+
+            if payment.status_code == '0':
+                return_content = json.dumps({
+                    'id': payment.id, 
+                    'url': response_data['PaymentUrl']
+                }), 200
+                break
+            elif payment.status_code == '-1':
+                tries += 1
+                print(f'error obtaining payment url for user id {g.IXIPC_user.id}: {response_data["Message"]}')
+            else:
+                payment.failed()
+                return_content = json.dumps({'error': 'Unable to obtain payment link for unknown reason'}), 400
+                break
+                
+        if tries >= 3:
+            return_content = json.dumps({'error': 'Maximum payment tries exceeded. Try again later'}), 400
+            payment.failed()
+
+        db_session.commit()
+
+        return return_content
+
+
+def validate_payment(args):
+    """Validates a payment confirmation"""
+
+    message = str(args['id']) + str(args['amount']) + str(args['requestId'])
+    return sha256(message.encode()) == args['sk']
+
+
+@login_IXIPC_required
+@bp.route('/IX_IPC/creditcard_payment/<language:language>/success', methods=['GET'])
+def creditcard_payment_success(language='pt'):
+    """Registers the success of a payment and redirects the user to the main page"""
+
+    if validate_payment(request.args):
+        with get_session() as db_session:
+            payment = db_session.execute(
+                select(Payment).where(Payment.request_id == request.args['requestId'])
+            ).first()
+
+            payment.success()
+            db_session.commit()
+    else:
+        print(f'Unable to validate payment {request.args}')
+        flash('Could not validate credit card payment! Please contact the organizers')
+
+    return redirect(url_for('IX_IPC.IXIPC', language=language))
+
+
+@login_IXIPC_required
+@bp.route('/IX_IPC/creditcard_payment/<language:language>/canceled', methods=['GET'])
+def creditcard_payment_canceled(language='pt'):
+    """Registers that a payment was canceled and redirects the user to the main page"""
+
+    with get_session() as db_session:
+        payment = db_session.execute(
+            select(Payment).where(Payment.request_id == request.args['requestId'])
+        ).first()
+
+        payment.canceled()
+        db_session.commit()
+
+    return redirect(url_for('IX_IPC.IXIPC', language=language))
+
+
+@login_IXIPC_required
+@bp.route('/IX_IPC/creditcard_payment/<language:language>/error', methods=['GET'])
+def creditcard_payment_error(language='pt'):
+    """Registers that a payment failed and redirects the user to the main page"""
+
+    with get_session() as db_session:
+        payment = db_session.execute(
+            select(Payment).where(Payment.request_id == request.args['requestId'])
+        ).first()
+
+        payment.failed()
+        db_session.commit()
+
+    return redirect(url_for('IX_IPC.IXIPC', language=language))
 
 
 def register(app) -> None:

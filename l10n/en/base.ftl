@@ -54,7 +54,9 @@ IXIPC-payment-late = After 15/08/2024
 IXIPC-payment-pay = Pay
 IXIPC-payment-confirmed = Registration payment confirmed
 IXIPC-payment-pending = Awaiting payment confirmation
+IXIPC-payment-failed-please-approve = Please approve the payment in your MBWay app
 IXIPC-payment-failed = Registration payment failed
+IXIPC-payment-failed-reload = Please reload the page and try again
 
 IXIPC-welcome-email-subject = Welcome to the IX Iberian Primatological Conference!
 IXIPC-welcome-email-body = 

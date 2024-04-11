@@ -87,13 +87,23 @@
       </div>
       {# <h5>Métodos de pagamento</h5> #}
       <div id="payment-methods">
-        {% if payment_status == 0 %}
-          {% include 'partials/payment-methods.html' %}
-        {% elif payment_status == 1 %}
-          {% include 'partials/payment-success.html' %}
-        {% elif payment_status == 2 %}
-          {% include 'partials/payment-pending.html' %}
-        {% endif %}
+        <div class="row">
+          {% if payment_status == 0 %}
+            {% include 'partials/payment-methods.html' %}
+          {% elif payment_status == 1 %}
+            {% include 'partials/payment-success.html' %}
+          {% elif payment_status == 2 %}
+            {% include 'partials/payment-pending.html' %}
+          {% endif %}
+          <div class="col-2 ms-0 ps-0">
+            <div class="card text-center w-100 h-100 rounded-start-0 price d-flex">
+              <div class="flex-fill"></div>
+              <h5 class="card-title mt-2 mb-1">Total</h5>
+              <p class="card-text lead" id="final-price">100€</p>
+              <div class="flex-fill"></div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -236,10 +246,11 @@ const personalDataManager = () => {
     scheduleSave
   );
 
-  const priceElement = document.getElementById('final-price');
-  // TODO: update with the correct dates and prices
-  const prices = ((new Date('2024-08-16') > (new Date())))?[35, 80]:[50, 100];
   const updateStudent = () => {
+    const priceElement = document.getElementById('final-price');
+    // TODO: update with the correct dates and prices
+    const prices = ((new Date('2024-08-16') > (new Date())))?[35, 80]:[50, 100];
+  
     if(studentSwitchElement.checked) {
       if(priceElement) priceElement.innerHTML = String(prices[0]) + '€';
       studentVolunteerElement.removeAttribute('hidden');
@@ -310,4 +321,84 @@ document.getElementById('abstract-new').addEventListener(
   'click',
   addAbstract
 );
+</script>
+<script defer>
+  const verifyPayment = (id, containerElement) => {
+    setTimeout(() => {
+      let form = blankForm();
+      form.append('payment_id', id);
+
+      fetch("{{ url_for('IX_IPC.check_mbway_status', language=lang) }}", {
+        method: 'POST',
+        body: form
+      })
+      .then((response) => response.json())
+      .then((data) => {
+        if(data['status'] == 1) {
+          containerElement.innerHTML = `{% include 'partials/payment-success.html' %}`;
+        } else if(data['status'] == 3 || data['status'] == 4 || data['status'] == 5) {
+          // TODO: improve messaging to user when payment fails
+          containerElement.innerHTML = `{% include 'partials/payment-failed.html' %}`;
+        } else {
+          verifyPayment(id, containerElement);
+        }
+      })
+      .catch((e) => console.log(e))
+    }, 5000);
+  }
+
+  // MBWay payment
+  (function() {
+    let mbwayButton = document.getElementById('mbway-payment');
+    let mbwayContact = document.getElementById('mbway-contact');
+
+    mbwayButton.addEventListener('click', async (evt) => {
+      evt.preventDefault();
+
+      let containerElement = document.getElementById('payment-methods').firstElementChild.firstElementChild;
+
+      if(mbwayContact.value) {
+        // TODO: validate phone number and display errors if not valid
+        let form = blankForm();
+        form.append('number', mbwayContact.value);
+        
+        fetch("{{ url_for('IX_IPC.payment_mbway', language=lang) }}", {
+          method: 'POST',
+          body: form
+        })
+        .then((response) => response.json())
+        .then((data) => {
+          let id = data['id'];
+          if(id) {
+            containerElement.innerHTML = `{% include 'partials/payment-pending.html' %}`;
+            verifyPayment(id, containerElement);
+          }
+        })
+        .catch((e) => console.log(e));
+      }
+    });
+  })();
+
+  // Credit card payment
+  (function() {
+    let creditCardButton = document.getElementById('card-payment');
+
+    creditCardButton.addEventListener('click', async (evt) => {
+      evt.preventDefault();
+
+      fetch("{{ url_for('IX_IPC.start_creditcard_payment', language=lang) }}", {
+        method: 'POST',
+        body: blankForm()
+      })
+      .then((response) => response.json())
+      .then((data) => {
+        let id = data['id'];
+        if(id) {
+          // Redirects the user to the payment page
+          window.location.href = data['url'];
+        }
+      })
+      .catch((e) => console.log(e));
+    });
+  })();  
 </script>
