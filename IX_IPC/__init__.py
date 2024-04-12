@@ -17,6 +17,8 @@ from .models import User, Abstract, AbstractType, Author, AbstractAuthor, Instit
 
 import json, functools
 from hashlib import sha256
+import hmac
+from secrets import token_hex
 
 bp = Blueprint('IX_IPC', __name__, template_folder='templates')
 
@@ -59,11 +61,17 @@ def IXIPC(language='pt'):
 
     with get_session() as db_session:
         abstracts = []
+        payment_status = 0
         if g.IXIPC_user:
             abstracts = db_session.execute(
                 select(Abstract).filter_by(owner=g.IXIPC_user.id)
             ).scalars()
 
+            if(g.IXIPC_user.paid_registration):
+                payment_status = 1
+            elif (g.IXIPC_user.payment_id):
+                payment_status = 2
+            
         return render_template(
             'IX_IPC.html',
             lang=language,
@@ -72,7 +80,7 @@ def IXIPC(language='pt'):
             text_column=True,
             abstracts=abstracts,
             site_map=True,
-            payment_status=0
+            payment_status=payment_status
         )
 
 
@@ -113,7 +121,8 @@ def register_user(language):
         if email:
             with get_session() as db_session:
                 try:
-                    user = User(name, email)
+                    password = token_hex(16)
+                    user = User(name, email, password=password)
                     db_session.add(user)
                     db_session.commit()
                     session['IXIPC_user_id'] = user.id
@@ -141,7 +150,7 @@ def register_user(language):
                                 language, {
                                 'email': email,
                                 'name': name,
-                                'password': user.password
+                                'password': password
                             }),
                             [email]
                         )
@@ -172,6 +181,10 @@ def recover_credentials(language, email):
     if email:
         with get_session() as db_session:
             user = db_session.execute(select(User).filter_by(email=email)).scalar_one()
+            password = token_hex(16)
+            user.update_password(password)
+            db_session.commit()
+
             app.send_email(
                 app.translate('IXIPC-recover-credentials-email-subject', language),
                 app.translate(
@@ -179,7 +192,7 @@ def recover_credentials(language, email):
                     language, {
                     'email': email,
                     'name': user.name,
-                    'password': user.password
+                    'password': password
                 }),
                 [email]
             )
@@ -205,14 +218,13 @@ def login(language):
     form = LoginForm()
     if form.validate_on_submit():
         email = sanitize_email(form.email.data)
-        password = form.password.data
 
         with get_session() as db_session:
             user = db_session.execute(
                 select(User).filter_by(email=email)
             ).scalar_one()
 
-        if user and user.password == password:
+        if user and user.check_password(form.password.data):
             session.clear()
             session['IXIPC_user_id'] = user.id
         else:
@@ -890,21 +902,24 @@ def payment_mbway(language='pt'):
 
             if payment.status_code == '000':
                 return_content = json.dumps({'id': payment.id}), 200
+
+                user = db_session.get(User, payment.user_id)
+                user.payment_id = payment.id
                 break
             elif payment.status_code in {'100', '999'}:
                 tries += 1 
             elif payment.status_code == '122':
-                payment.failed()
+                payment.failed(db_session)
                 return_content = json.dumps({'error': 'Phone number declined by the payment processor'}), 400
                 break
             else:
-                payment.failed()
+                payment.failed(db_session)
                 return_content = json.dumps({'error': 'Payment failed for unknown reason'}), 400
                 break
                 
         if tries >= 3:
             return_content = json.dumps({'error': 'Maximum payment tries exceeded. Try again later'}), 400
-            payment.failed()
+            payment.failed(db_session)
 
         db_session.commit()
 
@@ -946,13 +961,13 @@ def check_mbway_status(language='pt'):
 
             # TODO: answer: What if the payment is waiting??
             if payment.status_code == '000':
-                payment.success()
+                payment.success(db_session)
             elif payment.status_code == '020':
-                payment.canceled()            
+                payment.canceled(db_session)
             elif payment.status_code == '101':
-                payment.expired()
+                payment.expired(db_session)
             elif payment.status_code == '122':
-                payment.failed()
+                payment.failed(db_session)
             else:
                 db_session.commit()
                 app.send_email(
@@ -983,7 +998,7 @@ def payment_callback():
                 ).scalar_one()
 
                 if payment:
-                    payment.success()
+                    payment.success(db_session)
                     payment.value = request.args['amount']
 
                     db_session.commit()
@@ -1006,7 +1021,10 @@ def start_creditcard_payment(language):
 
         db_session.add(payment)
         db_session.commit()
-        
+
+        user = db_session.get(User, g.IXIPC_user.id)
+        user.payment_id = payment.id
+
         request_data = {
             "orderId": payment.transaction_id,
             "amount": str(value),
@@ -1035,13 +1053,13 @@ def start_creditcard_payment(language):
                 tries += 1
                 print(f'error obtaining payment url for user id {g.IXIPC_user.id}: {response_data["Message"]}')
             else:
-                payment.failed()
+                payment.failed(db_session)
                 return_content = json.dumps({'error': 'Unable to obtain payment link for unknown reason'}), 400
                 break
                 
         if tries >= 3:
             return_content = json.dumps({'error': 'Maximum payment tries exceeded. Try again later'}), 400
-            payment.failed()
+            payment.failed(db_session)
 
         db_session.commit()
 
@@ -1052,7 +1070,12 @@ def validate_payment(args):
     """Validates a payment confirmation"""
 
     message = str(args['id']) + str(args['amount']) + str(args['requestId'])
-    return sha256(message.encode()) == args['sk']
+    hash = hmac.new(
+        bytes(app.config['CCARD_KEY'], 'UTF-8'),
+        message.encode(),
+        sha256
+    ).hexdigest()
+    return hash == args['sk']
 
 
 # Test cards:
@@ -1078,7 +1101,7 @@ def creditcard_payment_success(language):
                     select(Payment).where(Payment.request_id == request.args['requestId'])
                 ).scalar_one()
 
-                payment.success()
+                payment.success(db_session)
                 db_session.commit()
         else:
             print(f'Unable to validate payment {request.args}')
@@ -1102,7 +1125,7 @@ def creditcard_payment_canceled(language):
 
             print(type(payment))
 
-            payment.canceled()
+            payment.canceled(db_session)
             db_session.commit()
     except:
         print(f'error: could not find payment {request.args["requestId"]} in the database')
@@ -1121,7 +1144,7 @@ def creditcard_payment_error(language):
                 select(Payment).where(Payment.request_id == request.args['requestId'])
             ).scalar_one()
 
-            payment.failed()
+            payment.failed(db_session)
             db_session.commit()
     except:
         print(f'error: could not find payment {request.args["requestId"]} in the database')

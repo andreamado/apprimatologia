@@ -3,41 +3,49 @@ from sqlalchemy_utc import UtcDateTime, utcnow
 
 from .db_IXIPC import Base
 from secrets import token_hex
-
-
-
-class User(Base):
-    __tablename__ = 'users'
-    id = Column(Integer, primary_key=True)
-    email = Column(String(200), unique=True)
-    password = Column(String(32))
-    name = Column(String(200))
-    first_name = Column(String(200))
-    last_name = Column(String(200))
-    institution = Column(String(200))
-    student = Column(Boolean)
-
-    def __init__(self, name, email, password=None, first_name=None, last_name=None, institution=None, student=False):
-        self.name = name
-        self.email = email
-        self.password = password if password else token_hex(16)
-        self.first_name = first_name
-        self.last_name = last_name
-        self.institution = institution
-        self.student = student
-
-
-class PaymentMethod:
-    MBWay = 1
-    Card  = 2
-    Other = 3
+from hashlib import sha256
 
 class PaymentStatus:
     successful = 1
     pending = 2
     failed = 3
     canceled = 4
-    expired = 5 
+    expired = 5
+
+class User(Base):
+    __tablename__ = 'users'
+    id = Column(Integer, primary_key=True)
+    email = Column(String(200), unique=True)
+    password = Column(String(64))
+    name = Column(String(200))
+    first_name = Column(String(200))
+    last_name = Column(String(200))
+    institution = Column(String(200))
+    student = Column(Boolean)
+    paid_registration = Column(Boolean)
+    payment_id = Column(ForeignKey('payments.id'))
+
+    def __init__(self, name, email, password=None, first_name=None, last_name=None, institution=None, student=False, paid_registration=False):
+        self.name = name
+        self.email = email
+        self.password = sha256(password.encode()).hexdigest() if password else sha256(token_hex(16).encode()).hexdigest()
+        self.first_name = first_name
+        self.last_name = last_name
+        self.institution = institution
+        self.student = student
+        self.paid_registration = paid_registration
+
+    def update_password(self, password) -> None:
+        self.password = sha256(password.encode()).hexdigest()
+    
+    def check_password(self, password) -> bool:
+        return self.password == sha256(password.encode()).hexdigest()
+
+class PaymentMethod:
+    MBWay = 1
+    Card  = 2
+    Other = 3
+
 
 import time
 class Payment(Base):
@@ -65,21 +73,38 @@ class Payment(Base):
         self.transaction_id = f'{user_id:04}_{int(time.time())%10000:05}_{token_hex(nbytes=3)}'
         self.status = status
 
-    def success(self):
+    def success(self, db_session):
         self.status = PaymentStatus.successful
         self.concluded = utcnow()
 
-    def failed(self):
+        user = db_session.get(User, self.user_id)
+        user.payment_id = self.id
+        user.paid_registration = True
+
+    def failed(self, db_session):
         self.status = PaymentStatus.failed
         self.concluded = utcnow()
 
-    def canceled(self):
+        user = db_session.get(User, self.user_id)
+        user.payment_id = None
+        user.paid_registration = False
+
+    def canceled(self, db_session):
         self.status = PaymentStatus.canceled
         self.concluded = utcnow()
 
-    def expired(self):
+        user = db_session.get(User, self.user_id)
+        user.payment_id = None
+        user.paid_registration = False
+
+    def expired(self, db_session):
         self.status = PaymentStatus.expired
         self.concluded = utcnow()
+
+        user = db_session.get(User, self.user_id)
+        user.payment_id = None
+        user.paid_registration = False
+
 
     def __repr__(self):
         return f'<Payment user={self.user_id!r} method={self.method!r} ({self.value}€) status={self.status}>'
