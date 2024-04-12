@@ -976,23 +976,26 @@ def payment_callback():
     """Callback that registers the result of an MBWay payment"""
 
     if request.args['key'] == app.config['ANTI_PHISHING_KEY']:
-        with get_session() as db_session:
-            payment = db_session.execute(
-                select(Payment).where(Payment.request_id == request.args['requestId'])
-            ).first()
+        try:
+            with get_session() as db_session:
+                payment = db_session.execute(
+                    select(Payment).where(Payment.request_id == request.args['requestId'])
+                ).scalar_one()
 
-            if payment:
-                payment.success()
-                payment.value = request.args['amount']
+                if payment:
+                    payment.success()
+                    payment.value = request.args['amount']
 
-                db_session.commit()
+                    db_session.commit()
+        except:
+            print(f'error: could not find payment {request.args["requestId"]} in the database')
 
     return '', 200
 
 
 @login_IXIPC_required
-@bp.route('/IX_IPC/start_creditcard_payment/<language:language>', methods=['POST'])
-def start_creditcard_payment(language='pt'):
+@bp.route('/IX_IPC/creditcard_payment/<language:language>/start', methods=['POST'])
+def start_creditcard_payment(language):
     """Starts a new credit card payment and returns a user url for the payment"""
 
     url = f'https://ifthenpay.com/api/creditcard/init/{app.config["CCARD_KEY"]}'
@@ -1007,9 +1010,9 @@ def start_creditcard_payment(language='pt'):
         request_data = {
             "orderId": payment.transaction_id,
             "amount": str(value),
-            "successUrl": url_for('IXIPC.creditcard_payment_success', language=language),
-            "errorUrl": url_for('IXIPC.creditcard_payment_error', language=language),
-            "cancelUrl": url_for('IXIPC.creditcard_payment_canceled', language=language),
+            "successUrl": url_for('IX_IPC.creditcard_payment_success', language=language, _external=True),
+            "errorUrl": url_for('IX_IPC.creditcard_payment_error', language=language, _external=True),
+            "cancelUrl": url_for('IX_IPC.creditcard_payment_canceled', language=language, _external=True),
             "language" : language
         }
 
@@ -1052,54 +1055,76 @@ def validate_payment(args):
     return sha256(message.encode()) == args['sk']
 
 
+# Test cards:
+# Pagamento com sucesso:
+# 4012 0010 3714 1112
+# CVC: 212
+# Validade: 12/27
+
+# Falha no pagamento:
+# 4761 7390 0101 0135
+# CVC: 608
+# Validade: 12/22
+
 @login_IXIPC_required
 @bp.route('/IX_IPC/creditcard_payment/<language:language>/success', methods=['GET'])
-def creditcard_payment_success(language='pt'):
+def creditcard_payment_success(language):
     """Registers the success of a payment and redirects the user to the main page"""
 
-    if validate_payment(request.args):
-        with get_session() as db_session:
-            payment = db_session.execute(
-                select(Payment).where(Payment.request_id == request.args['requestId'])
-            ).first()
+    try:
+        if validate_payment(request.args):
+            with get_session() as db_session:
+                payment = db_session.execute(
+                    select(Payment).where(Payment.request_id == request.args['requestId'])
+                ).scalar_one()
 
-            payment.success()
-            db_session.commit()
-    else:
-        print(f'Unable to validate payment {request.args}')
-        flash('Could not validate credit card payment! Please contact the organizers')
+                payment.success()
+                db_session.commit()
+        else:
+            print(f'Unable to validate payment {request.args}')
+            flash('Could not validate credit card payment! Please contact the organizers')
+    except:
+        print(f'error: could not find payment {request.args["requestId"]} in the database')
 
     return redirect(url_for('IX_IPC.IXIPC', language=language))
 
 
 @login_IXIPC_required
 @bp.route('/IX_IPC/creditcard_payment/<language:language>/canceled', methods=['GET'])
-def creditcard_payment_canceled(language='pt'):
+def creditcard_payment_canceled(language):
     """Registers that a payment was canceled and redirects the user to the main page"""
 
-    with get_session() as db_session:
-        payment = db_session.execute(
-            select(Payment).where(Payment.request_id == request.args['requestId'])
-        ).first()
+    try:
+        with get_session() as db_session:
+            payment = db_session.execute(
+                select(Payment).where(Payment.request_id == request.args['requestId'])
+            ).scalar_one()
 
-        payment.canceled()
-        db_session.commit()
+            print(type(payment))
+
+            payment.canceled()
+            db_session.commit()
+    except:
+        print(f'error: could not find payment {request.args["requestId"]} in the database')
 
     return redirect(url_for('IX_IPC.IXIPC', language=language))
 
 
 @login_IXIPC_required
 @bp.route('/IX_IPC/creditcard_payment/<language:language>/error', methods=['GET'])
-def creditcard_payment_error(language='pt'):
+def creditcard_payment_error(language):
     """Registers that a payment failed and redirects the user to the main page"""
 
-    with get_session() as db_session:
-        payment = db_session.execute(
-            select(Payment).where(Payment.request_id == request.args['requestId'])
-        ).first()
+    try:
+        with get_session() as db_session:
+            payment = db_session.execute(
+                select(Payment).where(Payment.request_id == request.args['requestId'])
+            ).scalar_one()
 
-        payment.failed()
-        db_session.commit()
+            payment.failed()
+            db_session.commit()
+    except:
+        print(f'error: could not find payment {request.args["requestId"]} in the database')
 
     return redirect(url_for('IX_IPC.IXIPC', language=language))
 

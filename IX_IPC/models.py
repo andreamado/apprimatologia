@@ -81,6 +81,9 @@ class Payment(Base):
         self.status = PaymentStatus.expired
         self.concluded = utcnow()
 
+    def __repr__(self):
+        return f'<Payment user={self.user_id!r} method={self.method!r} ({self.value}€) status={self.status}>'
+
 
 class Author(Base):
     __tablename__ = 'authors'
