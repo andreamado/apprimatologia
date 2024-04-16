@@ -47,6 +47,7 @@ IXIPC-timeline = Timeline
 
 IXIPC-registration = Registration
 IXIPC-payment-description = IX Iberian Primatological Conference registration fee
+IXIPC-payment-methods-available = Payment methods available
 IXIPC-payment-normal = Normal
 IXIPC-payment-student = Student
 IXIPC-payment-earlybird = Early bird (until 15/08/2024)
