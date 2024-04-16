@@ -85,18 +85,18 @@
           </table>
         </div>
       </div>
-      {% if payment_status == 0 %}
+      {% if payment_status == 0 -%}
         <h5>{{ 'IXIPC-payment-methods-available'|l10n(lang) }}</h5>
-      {% endif %}
+      {% endif -%}
       <div id="payment-methods" class="mb-3">
         <div class="row">
-          {% if payment_status == 0 %}
-            {% include 'partials/payment-methods.html' %}
-          {% elif payment_status == 1 %}
-            {% include 'partials/payment-success.html' %}
-          {% elif payment_status == 2 %}
-            {% include 'partials/payment-pending.html' %}
-          {% endif %}
+          {% if payment_status == 0 -%}
+            {% include 'partials/payment-methods.html' -%}
+          {% elif payment_status == 1 -%}
+            {% include 'partials/payment-success.html' -%}
+          {% elif payment_status == 2 -%}
+            {% include 'partials/payment-pending.html' -%}
+          {% endif -%}
           <div class="col-2 ms-0 ps-0">
             <div class="card text-center w-100 h-100 rounded-start-0 price d-flex">
               <div class="flex-fill"></div>
@@ -107,13 +107,14 @@
           </div>
         </div>
       </div>
+      {% if payment_status == 0 -%}
       <div class="row">
         <div class="col-auto">
           <button type="submit" class="btn btn-primary" id="button-payment">{{ 'IXIPC-payment-pay'|l10n(lang) }}</button>
         </div>
         <div class="col" id="payment-notification"></div>
       </div>
-      
+      {% endif -%}
     </div>
   </div>
 
@@ -184,16 +185,6 @@
       <span class="text-white">{{ 'IXIPC-abstract-new-institution'|l10n(lang) }}</span>
     </button>
   </div>
-
-  <!-- Payment proof -->
-  <!--<div class="mb-5">
-    <h4 class="mb-0">{{'IXIPC-upload-payment-proof'|l10n(lang)}}</h4>
-    <img src="" alt="" id="upload-result" class="upload-result">
-    {% with upload_area={'id': 'IXIPC-upload-payment-proof'} -%}
-      {% include "partials/upload-form.html" -%}
-    {% endwith -%}
-    <p id="upload-result-text" class="lead upload-result-text">&nbsp;</p>
-  </div>-->
 
   <!-- Logout -->
   <div class="mb-5">
@@ -293,11 +284,6 @@ Promise.all([authors, institutions]).then((values) =>{
   abstractAuthors = abstractAuthorsManager(authors);
 });
 
-/*makeUploader(
-  dropArea = document.getElementById('IXIPC-upload-payment-proof'),
-  csrfToken = '{{ csrf_token() }}'
-);*/
-
 const addAbstract = (event) => {
   event.preventDefault();
   let id = null;
@@ -331,136 +317,5 @@ document.getElementById('abstract-new').addEventListener(
   addAbstract
 );
 </script>
-<script defer>
-  const verifyPayment = (id, containerElement) => {
-    setTimeout(() => {
-      let form = blankForm();
-      form.append('payment_id', id);
 
-      fetch("{{ url_for('IX_IPC.check_mbway_status', language=lang) }}", {
-        method: 'POST',
-        body: form
-      })
-      .then((response) => response.json())
-      .then((data) => {
-        if(data['status'] == 1) {
-          containerElement.innerHTML = `{% include 'partials/payment-success.html' %}`;
-        } else if(data['status'] == 3 || data['status'] == 4 || data['status'] == 5) {
-          // TODO: improve messaging to user when payment fails
-          containerElement.innerHTML = `{% include 'partials/payment-failed.html' %}`;
-        } else {
-          verifyPayment(id, containerElement);
-        }
-      })
-      .catch((e) => console.log(e))
-    }, 5000);
-  }
-
-  // Manage payments
-  (function() {
-    let buttonPayment = document.getElementById('button-payment');
-    let mbwayArea = document.getElementById('mbway-area');
-    let mbwayContact = document.getElementById('mbway-contact');
-    let ccardArea = document.getElementById('ccard-area');
-    let containerElement = document.getElementById('payment-methods').firstElementChild.firstElementChild;
-    let notificationArea = document.getElementById('payment-notification');
-
-    buttonPayment.addEventListener('click', async (evt) => {
-      evt.preventDefault();
-
-      if(mbwayArea.getAttribute('active')) {
-        // MBWay payment
-        if(mbwayContact.value) {
-          let form = blankForm();
-          form.append('number', mbwayContact.value);
-          
-          fetch("{{ url_for('IX_IPC.payment_mbway', language=lang) }}", {
-            method: 'POST',
-            body: form
-          })
-          .then((response) => response.json())
-          .then((data) => {
-            let id = data['id'];
-            if(id) {
-              containerElement.innerHTML = `{% include 'partials/payment-pending.html' %}`;
-              verifyPayment(id, containerElement);
-            }
-          })
-          .catch((e) => console.log(e));
-        } else {
-          notificationArea.innerHTML = 'Please fill the phone number field with a valid phone number';
-        }
-      } else {
-        // CCard payment
-        fetch("{{ url_for('IX_IPC.start_creditcard_payment', language=lang) }}", {
-          method: 'POST',
-          body: blankForm()
-        })
-        .then((response) => response.json())
-        .then((data) => {
-          let id = data['id'];
-          if(id) {
-            // Redirects the user to the payment page
-            window.location.href = data['url'];
-          }
-        })
-        .catch((e) => console.log(e));
-      }
-    })
-  })();
-
-  /* // MBWay payment
-  (function() {
-    let mbwayButton = document.getElementById('mbway-payment');
-    let mbwayContact = document.getElementById('mbway-contact');
-
-    mbwayButton.addEventListener('click', async (evt) => {
-      evt.preventDefault();
-
-      let containerElement = document.getElementById('payment-methods').firstElementChild.firstElementChild;
-
-      if(mbwayContact.value) {
-        // TODO: validate phone number and display errors if not valid
-        let form = blankForm();
-        form.append('number', mbwayContact.value);
-        
-        fetch("{{ url_for('IX_IPC.payment_mbway', language=lang) }}", {
-          method: 'POST',
-          body: form
-        })
-        .then((response) => response.json())
-        .then((data) => {
-          let id = data['id'];
-          if(id) {
-            containerElement.innerHTML = `{% include 'partials/payment-pending.html' %}`;
-            verifyPayment(id, containerElement);
-          }
-        })
-        .catch((e) => console.log(e));
-      }
-    });
-  })(); */
-
-  /*// Credit card payment
-  (function() {
-    let creditCardButton = document.getElementById('card-payment');
-
-    creditCardButton.addEventListener('click', async (evt) => {
-      evt.preventDefault();
-
-      fetch("{{ url_for('IX_IPC.start_creditcard_payment', language=lang) }}", {
-        method: 'POST',
-        body: blankForm()
-      })
-      .then((response) => response.json())
-      .then((data) => {
-        let id = data['id'];
-        if(id) {
-          // Redirects the user to the payment page
-          window.location.href = data['url'];
-        }
-      })
-      .catch((e) => console.log(e));
-    });
-  })();*/
-</script>
+{% include 'scripts/payment-logic.html' %}

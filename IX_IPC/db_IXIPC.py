@@ -2,13 +2,20 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker, declarative_base, Session
 import click
 
-import sqlite3
+import sqlite3, os
+
+if os.path.isdir('apprimatologia'):
+    database_path = os.path.join('instance', 'IXIPC.db')
+else:
+    database_path = 'IXIPC.db'
+
+print(database_path)
 
 # makes sure IXIPC database file exists
-conn = sqlite3.connect('IXIPC.db')
+conn = sqlite3.connect(database_path)
 conn.close()
 
-engine = create_engine('sqlite:///IXIPC.db')
+engine = create_engine('sqlite:///' + database_path)
 
 def get_session() -> Session:
     """Returns an IX IPC database session"""

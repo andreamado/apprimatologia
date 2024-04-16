@@ -1,0 +1,80 @@
+{% if payment_status == 0 -%}
+<script defer>
+  const verifyPayment = (id, containerElement) => {
+    setTimeout(() => {
+      let form = blankForm();
+      form.append('payment_id', id);
+
+      fetch("{{ url_for('IX_IPC.check_mbway_status', language=lang) }}", {
+        method: 'POST',
+        body: form
+      })
+      .then((response) => response.json())
+      .then((data) => {
+        if(data['status'] == 1) {
+          containerElement.innerHTML = `{% include 'partials/payment-success.html' %}`;
+        } else if(data['status'] == 3 || data['status'] == 4 || data['status'] == 5) {
+          // TODO: improve messaging to user when payment fails
+          containerElement.innerHTML = `{% include 'partials/payment-failed.html' %}`;
+        } else {
+          verifyPayment(id, containerElement);
+        }
+      })
+      .catch((e) => console.log(e))
+    }, 5000);
+  }
+
+  // Manage payments
+  (function() {
+    let buttonPayment = document.getElementById('button-payment');
+    let mbwayArea = document.getElementById('mbway-area');
+    let mbwayContact = document.getElementById('mbway-contact');
+    let ccardArea = document.getElementById('ccard-area');
+    let containerElement = document.getElementById('payment-methods').firstElementChild.firstElementChild;
+    let notificationArea = document.getElementById('payment-notification');
+
+    buttonPayment.addEventListener('click', async (evt) => {
+      evt.preventDefault();
+
+      if(mbwayArea.classList.contains('active')) {
+        // MBWay payment
+        if(mbwayContact.value) {
+          let form = blankForm();
+          form.append('number', mbwayContact.value);
+          
+          fetch("{{ url_for('IX_IPC.payment_mbway', language=lang) }}", {
+            method: 'POST',
+            body: form
+          })
+          .then((response) => response.json())
+          .then((data) => {
+            let id = data['id'];
+            if(id) {
+              containerElement.innerHTML = `{% include 'partials/payment-pending.html' %}`;
+              verifyPayment(id, containerElement);
+            }
+          })
+          .catch((e) => console.log(e));
+        } else {
+          notificationArea.innerHTML = 'Please fill the phone number field with a valid phone number';
+        }
+      } else {
+        // CCard payment
+        fetch("{{ url_for('IX_IPC.start_creditcard_payment', language=lang) }}", {
+          method: 'POST',
+          body: blankForm()
+        })
+        .then((response) => response.json())
+        .then((data) => {
+          let id = data['id'];
+          if(id) {
+            // Redirects the user to the payment page
+            window.location.href = data['url'];
+          }
+        })
+        .catch((e) => console.log(e));
+      }
+    })
+  })();
+</script>
+{% endif -%}

@@ -2,13 +2,17 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker, declarative_base, Session
 import click
 
+from flask import url_for
+from flask import current_app as app
+
 import os, sqlite3
 
-database_path = ''
 if os.path.isdir('apprimatologia'):
-    database_path = os.path.join('apprimatologia', 'apprimatologia.db')
+    database_path = os.path.join('instance', 'apprimatologia.db')
 else:
     database_path = 'apprimatologia.db'
+
+print(database_path)
 
 conn = sqlite3.connect(database_path)
 conn.close()
@@ -28,6 +32,7 @@ Base.query = _db_session.query_property()
 def get_session() -> Session:
     return Session(bind=engine)
 
+
 @click.command('init-db')
 def init_db_command() -> None:
     """Clear the existing data and create new tables."""
@@ -38,7 +43,7 @@ def init_db_command() -> None:
     with get_session() as db_session:
         image_file = models.UploadedFile(
             original_name='pexels-egor-kamelev-802208_small.jpg',
-            file_path='static/img/pexels-egor-kamelev-802208_small.jpg'
+            file_path=os.path.join(app.root_path, 'static', 'img', 'pexels-egor-kamelev-802208_small.jpg')
         )
         db_session.add(image_file)
 

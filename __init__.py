@@ -18,7 +18,11 @@ ALLOWED_EXTENSIONS = {'pdf', 'png', 'jpg', 'jpeg', 'gif'}
 def create_app(test_config=None):
     """Creates and configures the app"""
 
-    app = Flask(__name__, instance_relative_config=True)
+    app = Flask(
+        __name__, 
+        instance_relative_config=True, 
+        # static_folder=os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static'),
+    )
 
     config = dotenv_values(os.path.join(app.root_path, '.env'))
 
@@ -32,6 +36,7 @@ def create_app(test_config=None):
         MAIL_SERVER = 'smtp.gmail.com',
         MAIL_PORT = 587, # SSL: 465
         MAIL_USE_TLS = True,
+        # SERVER_NAME = config['SERVER_NAME'],
         # MAIL_USE_SSL = True,
         # MAIL_DEBUG = default app.debug,
         MAIL_USERNAME = config['MAIL_USERNAME'],
@@ -40,7 +45,7 @@ def create_app(test_config=None):
         # MAIL_MAX_EMAILS = default None,
         # MAIL_SUPPRESS_SEND = default app.testing,
         # MAIL_ASCII_ATTACHMENTS = default False
-        UPLOAD_FOLDER = 'uploaded_files',
+        UPLOAD_FOLDER = os.path.join(app.root_path, 'uploaded_files'),
         MBWAY_KEY = config['MBWAY_KEY'],
         CCARD_KEY = config['CCARD_KEY'],
         ANTI_PHISHING_KEY = config['ANTI_PHISHING_KEY'],
@@ -229,6 +234,10 @@ def create_app(test_config=None):
 
     return app
 
-if __name__ == '__main__':
-    import waitress
-    waitress.serve(create_app, port=5000, url_scheme='https')
+# if __name__ == '__main__':
+#     import waitress
+#     waitress.serve(
+#         create_app, 
+#         port=5000, 
+#         url_scheme='https'
+#     )

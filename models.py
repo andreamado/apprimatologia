@@ -3,6 +3,7 @@ from sqlalchemy_utc import UtcDateTime, utcnow
 from sqlalchemy.sql import func
 from .db import Base
 
+from flask import current_app as app
 from werkzeug.utils import secure_filename
 
 import os, shutil, uuid
@@ -40,7 +41,7 @@ class UploadedFile(Base):
         self.deleted = False
 
         if file_path:
-            shutil.copy(file_path, os.path.join('uploaded_files', str(self.id)))
+            shutil.copy(file_path, os.path.join(app.root_path, 'uploaded_files', str(self.id)))
 
     def __repr__(self):
         return f'<File {self.original_name} ({self.id})>'

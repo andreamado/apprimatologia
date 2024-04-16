@@ -1004,6 +1004,7 @@ def payment_callback():
                     db_session.commit()
         except:
             print(f'error: could not find payment {request.args["requestId"]} in the database')
+            return '', 500
 
     return '', 200
 
@@ -1013,57 +1014,61 @@ def payment_callback():
 def start_creditcard_payment(language):
     """Starts a new credit card payment and returns a user url for the payment"""
 
-    url = f'https://ifthenpay.com/api/creditcard/init/{app.config["CCARD_KEY"]}'
-    value = get_payment_value(g.IXIPC_user)
+    if g.IXIPC_user.paid_registration:
+        return json.dumps({'error': 'User has already paid'}), 403
 
-    with get_session() as db_session:
-        payment = Payment(g.IXIPC_user.id, PaymentMethod.Card, '', value)
+    else:
+        url = f'https://ifthenpay.com/api/creditcard/init/{app.config["CCARD_KEY"]}'
+        value = get_payment_value(g.IXIPC_user)
 
-        db_session.add(payment)
-        db_session.commit()
+        with get_session() as db_session:
+            payment = Payment(g.IXIPC_user.id, PaymentMethod.Card, '', value)
 
-        user = db_session.get(User, g.IXIPC_user.id)
-        user.payment_id = payment.id
+            db_session.add(payment)
+            db_session.commit()
 
-        request_data = {
-            "orderId": payment.transaction_id,
-            "amount": str(value),
-            "successUrl": url_for('IX_IPC.creditcard_payment_success', language=language, _external=True),
-            "errorUrl": url_for('IX_IPC.creditcard_payment_error', language=language, _external=True),
-            "cancelUrl": url_for('IX_IPC.creditcard_payment_canceled', language=language, _external=True),
-            "language" : language
-        }
+            user = db_session.get(User, g.IXIPC_user.id)
+            user.payment_id = payment.id
 
-        return_content = None
-        tries = 0
-        while tries < 3:
-            response = requests.post(url, json=request_data, headers=HEADERS_JSON)
-            response_data = response.json()
+            request_data = {
+                "orderId": payment.transaction_id,
+                "amount": str(value),
+                "successUrl": url_for('IX_IPC.creditcard_payment_success', language=language, _external=True),
+                "errorUrl": url_for('IX_IPC.creditcard_payment_error', language=language, _external=True),
+                "cancelUrl": url_for('IX_IPC.creditcard_payment_canceled', language=language, _external=True),
+                "language" : language
+            }
 
-            payment.status_code = response_data['Status']
-            payment.request_id = response_data['RequestId']
+            return_content = None
+            tries = 0
+            while tries < 3:
+                response = requests.post(url, json=request_data, headers=HEADERS_JSON)
+                response_data = response.json()
 
-            if payment.status_code == '0':
-                return_content = json.dumps({
-                    'id': payment.id, 
-                    'url': response_data['PaymentUrl']
-                }), 200
-                break
-            elif payment.status_code == '-1':
-                tries += 1
-                print(f'error obtaining payment url for user id {g.IXIPC_user.id}: {response_data["Message"]}')
-            else:
+                payment.status_code = response_data['Status']
+                payment.request_id = response_data['RequestId']
+
+                if payment.status_code == '0':
+                    return_content = json.dumps({
+                        'id': payment.id, 
+                        'url': response_data['PaymentUrl']
+                    }), 200
+                    break
+                elif payment.status_code == '-1':
+                    tries += 1
+                    print(f'error obtaining payment url for user id {g.IXIPC_user.id}: {response_data["Message"]}')
+                else:
+                    payment.failed(db_session)
+                    return_content = json.dumps({'error': 'Unable to obtain payment link for unknown reason'}), 400
+                    break
+                    
+            if tries >= 3:
+                return_content = json.dumps({'error': 'Maximum payment tries exceeded. Try again later'}), 400
                 payment.failed(db_session)
-                return_content = json.dumps({'error': 'Unable to obtain payment link for unknown reason'}), 400
-                break
-                
-        if tries >= 3:
-            return_content = json.dumps({'error': 'Maximum payment tries exceeded. Try again later'}), 400
-            payment.failed(db_session)
 
-        db_session.commit()
+            db_session.commit()
 
-        return return_content
+            return return_content
 
 
 def validate_payment(args):
