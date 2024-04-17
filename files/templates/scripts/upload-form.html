@@ -49,7 +49,7 @@
         removeForm.append('id', previousFile.id);
         removeForm.append('csrf_token', csrfToken);
 
-        fetch("{{ url_for('remove_file') }}", {
+        fetch("{{ url_for('file.remove') }}", {
           method: 'POST',
           body: removeForm
         })
@@ -60,7 +60,7 @@
       uploadForm.append('file', file);
       uploadForm.append('csrf_token', csrfToken);
 
-      fetch("{{ url_for('upload_file') }}", {
+      fetch("{{ url_for('file.upload') }}", {
         method: 'POST',
         body: uploadForm
       })

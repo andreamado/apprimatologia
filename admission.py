@@ -10,7 +10,7 @@ from .db import get_session
 from .models import Member
 
 
-def register_admission(app):
+def register(app):
     """Register the admission form with the app"""
 
     class RegistrationForm(FlaskForm):

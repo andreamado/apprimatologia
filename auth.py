@@ -108,3 +108,7 @@ def login_required(view):
         return view(**kwargs)
 
     return wrapped_view
+
+
+def register(app):
+    app.register_blueprint(bp)

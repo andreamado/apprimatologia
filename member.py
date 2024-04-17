@@ -32,3 +32,6 @@ def show_member(id: int):
         lang='pt'
     )
 
+
+def register(app):
+    app.register_blueprint(bp)
