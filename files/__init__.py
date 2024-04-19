@@ -79,6 +79,10 @@ def remove():
     folder.
     """
 
+    # Temporarily disable file removal until proper checks are in place
+    # TODO: implement proper checks
+    return '', 401
+
     if 'id' in request.form:
         id = request.form['id']
     else:

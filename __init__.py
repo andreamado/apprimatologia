@@ -10,13 +10,14 @@ from .i18n import I18N
 from .db import init_db_command
 from . import auth
 
+from werkzeug.middleware.proxy_fix import ProxyFix
+
 def create_app(test_config=None):
     """Creates and configures the app"""
 
     app = Flask(
         __name__, 
         instance_relative_config=True, 
-        # static_folder=os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static'),
     )
 
     config = dotenv_values(os.path.join(app.root_path, '.env'))
@@ -139,6 +140,9 @@ def create_app(test_config=None):
     app.jinja_env.filters['word_counter'] = word_counter_generator()
     app.jinja_env.filters['keyword_counter'] = word_counter_generator(';')
 
+    app.wsgi_app = ProxyFix(
+        app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1
+    )
     return app
 
 # if __name__ == '__main__':
