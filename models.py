@@ -1,11 +1,9 @@
-from sqlalchemy import Column, Boolean, ForeignKey, Integer, String, Text, Uuid
+from sqlalchemy import Column, Boolean, ForeignKey, Integer, String, Text
 from sqlalchemy_utc import UtcDateTime, utcnow
 from sqlalchemy.sql import func
 from .db import Base
 
 from flask import current_app as app
-
-import os, shutil, uuid
 
 class User(Base):
     __tablename__ = 'users'
@@ -111,3 +109,39 @@ class Member(Base):
 
     def __repr__(self):
         return f'<Member {self.given_name!r} {self.family_name!r})>'
+
+
+class Profile(Base):
+    __tablename__ = 'profiles'
+
+    id = Column(Integer, primary_key=True)
+    user_id = Column(ForeignKey("users.id"))
+
+    name = Column(String(120))
+
+    description_pt = Column(Text)
+    description_en = Column(Text)
+
+    direction = Column(Boolean)
+    position_pt = Column(Text)
+    position_en = Column(Text)
+
+    website = Column(Text)
+    orcid = Column(String(20))
+
+    photo = Column(ForeignKey("uploaded_files.id"))
+
+    created = Column(UtcDateTime(), default=utcnow())
+    modified = Column(UtcDateTime(), onupdate=utcnow())
+
+    def __init__(self, user_id=None, name=None, description_pt=None, description_en=None, direction=False, position_pt=None, position_en=None, photo=None, website=None, orcid=None):
+        self.user_id = user_id
+        self.name = name
+        self.description_pt = description_pt
+        self.description_en = description_en
+        self.direction = direction
+        self.position_pt = position_pt
+        self.position_en = position_en
+        self.photo = photo
+        self.website = website
+        self.orcid = orcid

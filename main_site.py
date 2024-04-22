@@ -1,6 +1,8 @@
 from flask import Blueprint, g, render_template
-from .models import Image
+from .models import Image, Profile
 from .db import get_session
+
+from sqlalchemy import select
 
 import markdown
 
@@ -79,10 +81,19 @@ def membros(language='pt'):
     """Members page"""
 
     g.links[4]['active'] = True
-    return render_template(
-        'membros.html', 
-        lang=language
-    )
+
+    with get_session() as db_session:
+        direction = db_session.execute(
+            select(Profile)
+              .where(Profile.direction == True)
+              .order_by(Profile.name)
+        ).scalars()
+
+        return render_template(
+            'membros.html',
+            direction=direction,
+            lang=language
+        )
 
 
 def register(app) -> None:

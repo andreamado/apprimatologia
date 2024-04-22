@@ -2,7 +2,7 @@ from flask import Blueprint, render_template
 
 from .db import get_session
 from .auth import login_required
-from .models import Member
+from .models import Member, Profile
 
 from sqlalchemy import select
 
@@ -31,6 +31,24 @@ def show_member(id: int):
         member=member[0],
         lang='pt'
     )
+
+
+@bp.route('/<language:language>/<int:id>')
+# @login_required
+def profile(id: int, language):
+    with get_session() as db_session:
+        member = db_session.execute(select(Profile).where(Profile.id == id)).scalar_one()
+
+        # TODO: display a member not found page if member is not found
+
+        description = member.description_pt if language == 'pt' else member.description_en
+
+        return render_template(
+            'members/profile.html',
+            member=member,
+            description=description,
+            lang=language
+        )
 
 
 def register(app):

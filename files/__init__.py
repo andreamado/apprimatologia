@@ -61,6 +61,7 @@ def upload():
             'name': f'{file.original_name}'
         }), 200
 
+
 @bp.route("/file/get/<uuid:id>")
 # TODO: find a more performant method
 # https://tedboy.github.io/flask/generated/flask.send_from_directory.html

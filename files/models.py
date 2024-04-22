@@ -1,6 +1,8 @@
 from sqlalchemy import Column, Uuid, ForeignKey, String, Text, Boolean
 from werkzeug.utils import secure_filename
 
+from flask import current_app as app
+
 import os, shutil, uuid
 
 from ..db import Base

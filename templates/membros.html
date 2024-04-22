@@ -6,60 +6,17 @@
       <h1 class="lh-1 mb-4 text-white">{{ 'members-title' | l10n(lang) }}</h1>
       <br>
       <div class="row row-cols-1 row-cols-md-3 g-4">
-        <div class="col">
+        {% for member in direction %}
+        <a class="col member-card" href="{{url_for('associado.profile', language=lang, id=member.id)}}">
           <div class="card h-100">
-            <img class="card-img-top" src="{{ url_for('static', filename='img/1200px-Colobus_angolensis_3X2.jpg') }}" alt="Card image cap">
+            <img class="card-img-top" src="{{url_for('file.get', id=member.photo)}}" alt="{{member.name}} photo">
             <div class="card-body">
-              <h5 class="card-title">Filipa Borges</h5>
-              <p class="card-text">Esta pessoa estuda cocós de diversos primatas.</p>
+              <h5 class="card-title">{{member.name}}</h5>
             </div>
-            <div class="card-footer"><small class="text-muted">Membro desde 2017</small></div>
+            <div class="card-footer"><small class="text-muted">{{member.position_pt}}</small></div>
           </div>
-        </div>
-        
-        <div class="col">
-          <div class="card h-100">
-            <img class="card-img-top" src="{{ url_for('static', filename='img/Chimpanzees_eat_nuts.jpg') }}" alt="Card image cap">
-            <div class="card-body">
-              <h5 class="card-title">Tânia Minhós</h5>
-              <p class="card-text">E esta pessoa estuda genomas de chimpanzés e afins.</p>
-            </div>
-            <div class="card-footer"><small class="text-muted">Membro desde 2015</small></div>
-          </div>
-        </div>
-        
-        <div class="col">
-          <div class="card h-100">
-            <img class="card-img-top" src="{{ url_for('static', filename='img/man-person-black-and-white-photography-old-portrait-35917-pxhere.com.jpg') }}" alt="Card image cap">
-            <div class="card-body">
-              <h5 class="card-title">Zé Chimp</h5>
-              <p class="card-text">Este primata estuda homo sapiens.</p>
-            </div>
-            <div class="card-footer"><small class="text-muted">Membro desde 2004</small></div>
-          </div>
-        </div>
-
-        <div class="col">
-          <div class="card h-100">
-            <img class="card-img-top" src="{{ url_for('static', filename='img/Chimpanzees_eat_nuts.jpg') }}" alt="Card image cap">
-            <div class="card-body">
-              <h5 class="card-title">Tânia Minhós</h5>
-              <p class="card-text">E esta pessoa estuda genomas de chimpanzés e afins.</p>
-            </div>
-            <div class="card-footer"><small class="text-muted">Membro desde 2015</small></div>
-          </div>
-        </div>
-        
-        <div class="col">
-          <div class="card h-100">
-            <img class="card-img-top" src="{{ url_for('static', filename='img/man-person-black-and-white-photography-old-portrait-35917-pxhere.com.jpg') }}" alt="Card image cap">
-            <div class="card-body">
-              <h5 class="card-title">Zé Chimp</h5>
-              <p class="card-text">Este primata estuda homo sapiens.</p>
-            </div>
-            <div class="card-footer"><small class="text-muted">Membro desde 2004</small></div>
-          </div>
-        </div>
+        </a>
+        {% endfor %}
       </div>
     </div>
   </div>
