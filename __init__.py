@@ -1,4 +1,4 @@
-import os, threading, json
+import os, threading, json, re
 from copy import deepcopy
 from dotenv import dotenv_values
 
@@ -93,12 +93,35 @@ def create_app(test_config=None):
     with open(os.path.join(app.root_path, 'links.json'), encoding='utf8') as f:
         links = json.load(f)
 
+    pattern_en = re.compile(r"/en/|/en$")
+    pattern_pt = re.compile(r"/pt/|/pt$")
     @app.before_request
     def add_links():
         """Adds the links the request context"""
 
         g.links = deepcopy(links)
-    
+
+        url = request.url
+
+        match_pt = pattern_pt.search(url)
+        match_en = pattern_en.search(url)
+
+        g.current_lang = 'en' if match_en else 'pt'
+        if g.current_lang == 'pt':
+            g.url_pt = url
+            if not match_pt:
+                g.url_en = url + '/en'
+            else:
+                g.url_en = pattern_pt.sub(r'/en/', url, count=1)
+
+            if g.url_en[-1] == '/':
+                g.url_en = g.url_en[:-1]
+        else:
+            g.url_en = url
+            g.url_pt = pattern_en.sub(r'/pt/', url, count=1)
+
+            if g.url_pt[-1] == '/':
+                g.url_pt = g.url_pt[:-1]
 
     @app.errorhandler(404)
     def not_found(e):

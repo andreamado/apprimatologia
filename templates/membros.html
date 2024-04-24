@@ -1,19 +1,16 @@
 {% extends "base.html" -%}
 
 {% block main -%}
-  <div class="container">
-    <div class="row me-5">
-      <h1 class="lh-1 mb-4 text-white">{{ 'members-title' | l10n(lang) }}</h1>
-      <br>
-      <div class="row row-cols-1 row-cols-md-3 g-4">
+  <div class="container text-white mb-3">
+    <div class="row">
+      <h1 class="lh-1 mb-0">{{ 'members-title' | l10n(lang) }}</h1>
+      <div class="row row-cols-1 row-cols-md-3 g-5">
         {% for member in direction %}
-        <a class="col member-card" href="{{url_for('associado.profile', language=lang, id=member.id)}}">
-          <div class="card h-100">
-            <img class="card-img-top" src="{{url_for('file.get', id=member.photo)}}" alt="{{member.name}} photo">
-            <div class="card-body">
-              <h5 class="card-title">{{member.name}}</h5>
-            </div>
-            <div class="card-footer"><small class="text-muted">{{member.position_pt}}</small></div>
+        <a class="col member-card text-white mb-2" href="{{url_for('associado.profile', language=lang, id=member.id)}}">
+          <div class="h-100">
+            <img class="rounded-circle w-100 mb-3" src="{{url_for('file.get', id=member.photo)}}" alt="{{member.name}} photo">
+            <h5 class="ps-2 card-title">{{member.name}}</h5>
+            <p class="ps-2 direction-position"><small>{{member.position_pt}}</small></p>
           </div>
         </a>
         {% endfor %}

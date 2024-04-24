@@ -50,13 +50,14 @@ def init_db_command() -> None:
         db_session.add(photo)
 
         profile = models.Profile(
-            name='Catarina Casanova', 
+            name='Catarina Casanova',
             description_pt='Prof. Catarina Casanova got her PhD from the University of Cambridge (UK) under the supervision of Prof. Phyllis Lee in Biological Anthropology (and got her undergrad and master anthropology diplomas from the University of Lisbon). Currently she is associate professor (tenure track) at the University of Lisbon (School of Social and Political Sciences/ISCSP). Her research areas are both in Cultural and Biological Anthropology. In Cultural Anthropology she works in multi-species anthropology/environmental anthropology. Her work in Biological anthropology is mainly focus on Primatology (chimpanzees and other primates of Guinea Bissau, mona monkeys from São Tomé & Príncipe and other nonhuman primates - in captivity enclosures and in Brazil - studying social behaviour, conservation, local communities and their relationship with nonhuman primate communities (conflicts, local knowledge, amongst other topics) and evolution. C. Casanova supervised and/or co-supervised 8 PhD thesis (concluded mostly with FCT funding) and she is currently supervising or co-supervising 2 PhD students (both with FCT funding). She already supervised (and/or co-supervised) more than 40 MSc dissertations (concluded) and is currently supervising (and/or co-supervising) 2 MSc students. She is currently supervising her 8th post-doc researcher. C. Casanova is a full researcher at CIAS (Centro de Investigação em Antropologia e Saúde), University of Coimbra and she is a collaborator of CAPP (ISCSP). She published 4 books and co-edited 1 book. She has more than 60 publications (most of them with peer review systems; research articles and book chapters).', 
             description_en='Prof. Catarina Casanova got her PhD from the University of Cambridge (UK) under the supervision of Prof. Phyllis Lee in Biological Anthropology (and got her undergrad and master anthropology diplomas from the University of Lisbon). Currently she is associate professor (tenure track) at the University of Lisbon (School of Social and Political Sciences/ISCSP). Her research areas are both in Cultural and Biological Anthropology. In Cultural Anthropology she works in multi-species anthropology/environmental anthropology. Her work in Biological anthropology is mainly focus on Primatology (chimpanzees and other primates of Guinea Bissau, mona monkeys from São Tomé & Príncipe and other nonhuman primates - in captivity enclosures and in Brazil - studying social behaviour, conservation, local communities and their relationship with nonhuman primate communities (conflicts, local knowledge, amongst other topics) and evolution. C. Casanova supervised and/or co-supervised 8 PhD thesis (concluded mostly with FCT funding) and she is currently supervising or co-supervising 2 PhD students (both with FCT funding). She already supervised (and/or co-supervised) more than 40 MSc dissertations (concluded) and is currently supervising (and/or co-supervising) 2 MSc students. She is currently supervising her 8th post-doc researcher. C. Casanova is a full researcher at CIAS (Centro de Investigação em Antropologia e Saúde), University of Coimbra and she is a collaborator of CAPP (ISCSP). She published 4 books and co-edited 1 book. She has more than 60 publications (most of them with peer review systems; research articles and book chapters).',
             direction=True,
             position_pt='Vice-Presidente',
             position_en='Vice-President',
-            photo=photo.id
+            photo=photo.id,
+            orcid='0000-0003-2123-0262'
         )
         db_session.add(profile)
 
@@ -96,7 +97,8 @@ def init_db_command() -> None:
             position_pt='Presidente da Mesa da Assembleia',
             position_en='Presidente da Mesa da Assembleia',
             photo=photo.id,
-            website='https://www.cienciavitae.pt/portal/A71C-1675-4ECC'
+            website='https://www.cienciavitae.pt/portal/A71C-1675-4ECC',
+            orcid='0000-0001-6747-9827'
         )
         db_session.add(profile)
 
@@ -115,7 +117,8 @@ def init_db_command() -> None:
             direction=True,
             position_pt='',
             position_en='',
-            photo=photo.id
+            photo=photo.id,
+            orcid='0000-0002-2766-0135'
         )
         db_session.add(profile)
 
