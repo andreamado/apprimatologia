@@ -1,0 +1,40 @@
+{% extends "base.html" -%}
+
+{% block main -%}
+<div class="main-content-dark smaller-column text-white">
+  <h2 class="lh-1 mb-4">Participantes</h2>
+  <button type="button" id="pdf-report-button" class="btn btn-primary mb-4">Download de lista em PDF</button>
+  <button type="button" id="csv-summary-button" class="btn btn-primary mb-4">Download de resumo em CSV (Excel)</button>
+  {% for participant in participants -%}
+    <h4 class="mb-3">{{ participant.first_name }} {{ participant.last_name }} {{'(estudante)' if participant.student}}</h4>
+    <p class="mb-2">Email: {{ participant.email }}</p>
+    <p class="mb-2">Instituição: {{ participant.institution }}</p>
+    {% if participant.paid_registration -%}
+    <p class="mb-2">Pagou {{ participant.payment.value }}€ a {{ participant.payment.concluded.strftime('%d/%m/%Y') }} (via {{'MBWay' if participant.payment.method == 1 else 'Cartão de crédito' }})</p>
+    {% endif -%}
+    <h5 class="mt-4">Resumos submetidos:</h5>
+    <div class="ms-4 mb-3">
+    {% for abstract in participant.submitted_abstracts %}
+      {# TODO: link to abstract details #}
+      <p class="mb-0">Tipo: {{'apresentação oral' if abstract.abstract_type == 2 else 'poster'}}</p>
+      <p class="mb-0">Título: {{abstract.title}}</p>
+      <p class="mb-2">Palavras-chave: {{abstract.keywords}}</p>
+    {% else %}
+      <p class="mb-0">Sem resumos submetidos</p>
+    {% endfor %}
+    </div>
+    <p class="mb-5"></p>
+  {% endfor -%}
+</div>
+
+<script>
+  document.getElementById('pdf-report-button').addEventListener('click', (evt) => {
+    evt.preventDefault();
+    window.open("{{ url_for('IX_IPC.participants_pdf_report') }}");
+  });
+  document.getElementById('csv-summary-button').addEventListener('click', (evt) => {
+    evt.preventDefault();
+    window.open("{{ url_for('IX_IPC.participants_csv_summary') }}");
+  });
+</script>
+{% endblock -%}

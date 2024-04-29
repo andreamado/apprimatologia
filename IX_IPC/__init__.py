@@ -1,4 +1,4 @@
-from flask import flash, render_template, redirect, url_for, Blueprint, g, request, session
+from flask import flash, render_template, redirect, url_for, Blueprint, g, request, session, send_file
 from flask import current_app as app
 from flask_wtf import FlaskForm
 from flask_wtf.recaptcha import RecaptchaField
@@ -6,11 +6,10 @@ from wtforms import EmailField, StringField, validators
 
 from sqlalchemy import select, delete
 
-import requests
+import requests, datetime
 
 from email_validator import validate_email, EmailNotValidError
 import phonenumbers
-import re
 
 from .db_IXIPC import get_session
 from .models import User, Abstract, AbstractType, Author, AbstractAuthor, Institution, Affiliation, Payment, PaymentMethod, PaymentStatus
@@ -19,6 +18,13 @@ import json, functools
 from hashlib import sha256
 import hmac
 from secrets import token_hex
+
+import csv
+from io import BytesIO, StringIO
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.units import cm
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, PageBreak, KeepTogether
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 
 bp = Blueprint('IX_IPC', __name__, template_folder='templates')
 
@@ -1155,6 +1161,204 @@ def creditcard_payment_error(language):
         print(f'error: could not find payment {request.args["requestId"]} in the database')
 
     return redirect(url_for('IX_IPC.IXIPC', language=language))
+
+@bp.route('/IX_IPC/management/participants_csv_summary')
+def participants_csv_summary():    
+    with StringIO() as buffer:
+        writer = csv.writer(buffer, delimiter=';')
+
+        fields = ['first_name', 'last_name', 'email', 'institution', 'student', 'paid', 'submitted_abstract']
+        writer.writerow(fields)
+
+        with get_session() as db_session:
+            participants = db_session.execute(
+                select(User)
+                  .order_by(User.first_name, User.last_name)
+            ).scalars()
+
+            for participant in participants:
+                abstracts = db_session.execute(
+                    select(Abstract)
+                      .where(Abstract.owner == participant.id)
+                ).scalars().all()
+
+                writer.writerow([
+                    participant.first_name, 
+                    participant.last_name,
+                    participant.email,
+                    participant.institution,
+                    1 if participant.student else 0,
+                    1 if participant.paid_registration else 0,
+                    len(abstracts)
+                ])
+
+            buffer.seek(0)
+            return send_file(
+                BytesIO(buffer.getvalue().encode('utf-8-sig')),
+                as_attachment=True,
+                download_name='participants_summary.csv',
+                mimetype='text/csv'
+            )
+
+@bp.route('/IX_IPC/management/participants_pdf_report')
+def participants_pdf_report():    
+    buffer = BytesIO()
+
+    doc = SimpleDocTemplate(buffer, pagesize=A4, showBoundary=0, title='Participants list')
+
+    w, h = A4
+    mx = 3*cm
+    mt = doc._topMargin
+    styles = getSampleStyleSheet()
+    name_style = ParagraphStyle('Name', parent=styles['Normal'], fontName='Helvetica-Bold', fontSize=16)
+    bold_style = ParagraphStyle('Bold', parent=styles['Normal'], fontName='Helvetica-Bold')
+
+    def first_page(canvas, doc):
+        canvas.saveState()
+        canvas.setFont('Helvetica', 24)
+        canvas.drawString(mx, mt - 5*cm, "IXIPC participants list")
+        canvas.setFont("Helvetica", 14)
+        canvas.drawString(mx, mt - 6*cm, f'(generated {datetime.datetime.utcnow().strftime("%d/%m/%Y, %H:%M")})')    
+
+        canvas.setFont('Helvetica', 10)
+        canvas.drawRightString(doc._rightMargin, 1.8*cm, f"{doc.page}")
+
+        canvas.restoreState()
+
+    def later_pages(canvas, doc):
+        canvas.saveState()
+        canvas.setFont('Helvetica', 10)
+        canvas.drawRightString(doc._rightMargin, 1.8*cm, f"{doc.page}")
+        canvas.restoreState()
+    
+    with get_session() as db_session:
+        participants = db_session.execute(
+            select(User)
+              .where(User.paid_registration == True)
+              .order_by(User.first_name, User.last_name)
+        ).scalars()
+
+        story = [Spacer(1, 8*cm)]#[PageBreak()]
+        style = styles["Normal"]
+
+        for participant in participants:
+            participant_description = [
+                Paragraph(f'{participant.first_name} {participant.last_name} {"(student)" if participant.student == True else ""}', name_style),
+                Spacer(1, 0.5*cm),
+                Paragraph(f'email: {participant.email}', style),
+                Spacer(1, 0.2*cm),
+                Paragraph(f'Institution: {participant.institution}', style),
+                Spacer(1, 0.2*cm),
+            ]
+
+            if participant.paid_registration and participant.payment_id:
+                payment = db_session.get(Payment, participant.payment_id)
+                method = PaymentMethod.to_str(payment.method)
+                participant_description.append(Paragraph(
+                    f'Paid: {payment.value}€ on {payment.concluded.strftime("%d/%m/%Y")} (via {method})',
+                    style)
+                )
+            else:
+                participant_description.append(Paragraph('No payment registered', style))
+            participant_description.append(Spacer(1, 0.4*cm))
+
+            submitted_abstracts = db_session.execute(
+                select(Abstract)
+                  .where(Abstract.owner == participant.id)
+                  .where(Abstract.submitted == True)
+            ).scalars().all()
+
+            if submitted_abstracts:
+                participant_description.append(
+                    Paragraph('Submitted abstracts:', bold_style)
+                )
+                participant_description.append(Spacer(1, 0.2*cm))
+
+                for i, abstract in enumerate(submitted_abstracts):
+                    participant_description.append(
+                        Paragraph(
+                            f'{i+1}. ' 
+                            + AbstractType.to_string(abstract.abstract_type) 
+                            + ' — ' + abstract.title, 
+                        style)
+                    )
+
+                    authors = db_session.execute(
+                        select(AbstractAuthor)
+                          .where(AbstractAuthor.abstract_id == abstract.id)
+                          .order_by(AbstractAuthor.order)
+                    ).scalars().all()
+
+                    authors_list = ''
+                    for author in authors:
+                        author_details = db_session.get(Author, author.author_id)
+                        if author.presenter:
+                            authors_list += f'<u>{author_details.first_name} {author_details.last_name}</u>, '
+                        else:
+                            authors_list += f'{author_details.first_name} {author_details.last_name}, '
+
+                    participant_description.append(Spacer(1, 0.2*cm))
+                    participant_description.append(
+                        Paragraph(f'Authors: ' + authors_list[:-2], style)
+                    )
+
+                    participant_description.append(Spacer(1, 0.2*cm))
+                    participant_description.append(
+                        Paragraph(f'Keywords: ' + abstract.keywords, style)
+                    )
+                    participant_description.append(Spacer(1, 0.4*cm))
+            else:
+                participant_description.append(
+                    Paragraph('The participant did not submit any abstracts', 
+                    style)
+                )
+            participant_description.append(Spacer(1, 0.2*cm))
+
+            story.append(KeepTogether(participant_description))
+            story.append(Spacer(1, 1*cm))
+
+        doc.build(story, onFirstPage=first_page, onLaterPages=later_pages)
+
+    buffer.seek(0)
+    return send_file(
+        buffer,
+        as_attachment=True,
+        download_name='participants_list.pdf',
+        mimetype='application/pdf'
+    )
+
+@bp.route('/IX_IPC/management/participants')
+@bp.route('/IX_IPC/management/participants/<language:language>')
+def participants_list(language='pt'):
+    """Gets a list of participants"""
+
+    # TODO: include option to limit to paid registrations
+    with get_session() as db_session:
+        participants = db_session.execute(
+            select(User)
+              .where(User.paid_registration == True)
+              .order_by(User.first_name, User.last_name)
+        ).scalars()
+
+        parts = []
+        for participant in participants:
+            if participant.paid_registration and participant.payment_id:
+                participant.payment = db_session.get(Payment, participant.payment_id)
+
+            participant.submitted_abstracts = db_session.execute(
+                select(Abstract)
+                  .where(Abstract.owner == participant.id)
+                  .where(Abstract.submitted == True)
+            ).scalars().all()
+
+            parts.append(participant)
+
+        return render_template(
+            'management/participant_list.html',
+            lang=language,
+            text_column=True,
+            participants=parts
+        )
 
 
 def register(app) -> None:

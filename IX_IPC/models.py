@@ -40,11 +40,23 @@ class User(Base):
     
     def check_password(self, password) -> bool:
         return self.password == sha256(password.encode()).hexdigest()
+    
+    def __repr__(self):
+        return f'<User {self.first_name} {self.last_name} - {self.institution} ({"paid" if self.paid_registration == True else "not paid"})>'
 
 class PaymentMethod:
     MBWay = 1
     Card  = 2
     Other = 3
+
+    def to_str(method):
+        if method == PaymentMethod.MBWay:
+            return 'MBWay'
+        elif method == PaymentMethod.Card:
+            return 'Credit Card'
+        else:
+            return 'Unknown payment method'
+            
 
 
 import time
@@ -171,6 +183,17 @@ class AbstractType:
     POSTER = 1
     PRESENTATION = 2
     BOTH = 3
+
+    def to_string(tp):
+        if tp == AbstractType.POSTER:
+            return 'Poster'
+        elif tp == AbstractType.PRESENTATION:
+            return 'Oral presentation'
+        elif tp == AbstractType.BOTH:
+            return 'Both'
+        else:
+            return 'Unknown'
+
 
 
 class Abstract(Base):
