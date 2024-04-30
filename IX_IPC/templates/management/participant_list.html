@@ -9,7 +9,7 @@
   <button type="button" id="pdf-report-button" class="btn btn-primary mb-4">PDF list download</button>
   <button type="button" id="csv-summary-button" class="btn btn-primary mb-4">CSV summary download (Excel)</button>
   {% for participant in participants -%}
-    <h4 class="mb-3">{{ participant.first_name }} {{ participant.last_name }} {{'(estudante)' if participant.student}}</h4>
+    <h4 class="mb-3"><a class="white-link" href="{{ url_for('IX_IPC.participant_details', language=lang, id=participant.id) }}">{{ participant.first_name }} {{ participant.last_name }}</a> {{'(estudante)' if participant.student}}</h4>
     <p class="mb-2">Email: {{ participant.email }}</p>
     <p class="mb-2">Institution: {{ participant.institution }}</p>
     {% if participant.paid_registration -%}
