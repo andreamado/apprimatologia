@@ -39,6 +39,9 @@ def login_IXIPC_required(view):
     @functools.wraps(view)
     def wrapped_view(**kwargs):
         if g.IXIPC_user is None:
+            if 'language' not in kwargs:
+                kwargs['language'] = 'pt'
+            
             return redirect(
                 url_for('IX_IPC.IXIPC', language=kwargs['language'])
             )
@@ -57,8 +60,11 @@ def login_IXIPC_management_required(view):
     @functools.wraps(view)
     def wrapped_view(**kwargs):
         if not g.IXIPC_manager:
+            if 'language' not in kwargs:
+                kwargs['language'] = 'pt'
+            
             return redirect(
-                url_for('IX_IPC.management_login', language=kwargs['language'])
+                url_for('IX_IPC.management', language=kwargs['language'])
             )
 
         return view(**kwargs)
@@ -265,8 +271,8 @@ def login(language):
     return redirect(url_for('IX_IPC.IXIPC', language=language))
 
 
-@login_IXIPC_required
 @bp.route('/IX_IPC/logout/<language:language>', methods=['POST'])
+@login_IXIPC_required
 def logout(language):
     """Logs a user out
     
@@ -295,14 +301,14 @@ def load_logged_in_IXIPC_user() -> None:
             g.IXIPC_user = None
 
     # Check if the user is a manager
-    if session.get('IXIPC_manager') is None:
+    if not session.get('IXIPC_manager'):
         g.IXIPC_manager = False
     else:
         g.IXIPC_manager = True
 
 
-@login_IXIPC_required
 @bp.route('/IX_IPC/save_personal_data', methods=['POST'])
+@login_IXIPC_required
 def save_personal_data():
     """Saves current user's data to the database"""
 
@@ -318,8 +324,8 @@ def save_personal_data():
         return json.dumps({}), 200
 
 
-@login_IXIPC_required
 @bp.route('/IX_IPC/create_abstract/<language:language>', methods=['POST'])
+@login_IXIPC_required
 def create_new_abstract(language='pt'):
     """Creates and returns a new abstract"""
 
@@ -327,8 +333,8 @@ def create_new_abstract(language='pt'):
     return load_closed_abstract(id, language), 200
 
 
-@login_IXIPC_required
 @bp.route('/IX_IPC/closed_abstract/<language:language>', methods=['POST'])
+@login_IXIPC_required
 def closed_abstract(language='pt'):
     """Returns the closed form of an existing abstract"""
 
@@ -365,8 +371,8 @@ def load_closed_abstract(abstract: int|Abstract, language) -> str:
         )})
 
 
-@login_IXIPC_required
 @bp.route('/IX_IPC/delete_abstract', methods=['POST'])
+@login_IXIPC_required
 def delete_abstract():
     """Deletes an existing abstract
     
@@ -445,8 +451,8 @@ def save_abstract_local(form, g) -> str:
         return json.dumps({'id': abstract.id})
 
 
-@login_IXIPC_required
 @bp.route('/IX_IPC/load_abstract/<language:language>/', methods=['POST'])
+@login_IXIPC_required
 def load_abstract(language, id=None, csrf_token = None):
     """Loads an abstract in the open form
     
@@ -493,16 +499,16 @@ def load_abstract(language, id=None, csrf_token = None):
             return json.dumps({'error': 'access unauthorized'}), 401
 
 
-@login_IXIPC_required
 @bp.route('/IX_IPC/save_abstract', methods=['POST'])
+@login_IXIPC_required
 def save_abstract():
     """Saves an abstract"""
 
     return save_abstract_local(request.form, g), 200
 
 
-@login_IXIPC_required
 @bp.route('/IXIPC/new_author', methods=['POST'])
+@login_IXIPC_required
 def new_author():
     """Creates a new author"""
 
@@ -514,8 +520,8 @@ def new_author():
         return json.dumps({'id': author.id}), 200
 
 
-@login_IXIPC_required
 @bp.route('/IX_IPC/load_authors', methods=['POST'])
+@login_IXIPC_required
 def load_authors():
     """Loads authors available to current user"""
 
@@ -537,8 +543,8 @@ def load_authors():
         return json.dumps({'authors': authors_list}), 200
 
 
-@login_IXIPC_required
 @bp.route('/IX_IPC/save_authors', methods=['POST'])
+@login_IXIPC_required
 def save_authors():
     """Saves a list of authors
     
@@ -561,8 +567,8 @@ def save_authors():
     return json.dumps({}), 200
 
 
-@login_IXIPC_required
 @bp.route('/IX_IPC/save_affiliations', methods=['POST'])
+@login_IXIPC_required
 def save_affiliations():
     """Saves authors' affiliations
     
@@ -619,8 +625,8 @@ def get_affiliations(author_id: int) -> list[object]|None:
             return None
 
 
-@login_IXIPC_required
 @bp.route('/IX_IPC/load_affiliations', methods=['POST'])
+@login_IXIPC_required
 def load_affiliations():
     """Loads authors' affiliations
     
@@ -631,8 +637,8 @@ def load_affiliations():
     return json.dumps({'affiliations': get_affiliations(author_id)}), 200
 
 
-@login_IXIPC_required
 @bp.route('/IX_IPC/save_abstract_authors', methods=['POST'])
+@login_IXIPC_required
 def save_abstract_authors():
     """Saves the abstract authors
     
@@ -697,8 +703,8 @@ def get_abstract_authors_list(abstract_id: int) -> list[object]|None:
             return None
 
 
-@login_IXIPC_required
 @bp.route('/IX_IPC/load_abstract_authors', methods=['POST'])
+@login_IXIPC_required
 def load_abstract_authors():
     """Loads abstract authors
     
@@ -709,8 +715,8 @@ def load_abstract_authors():
     return json.dumps({'authors': get_abstract_authors_list(abstract_id)}), 200
 
 
-@login_IXIPC_required
 @bp.route('/IX_IPC/submit_abstract/<language:language>', methods=['POST'])
+@login_IXIPC_required
 def submit_abstract(language):
     """Submits an abstract
     
@@ -732,8 +738,8 @@ def submit_abstract(language):
         return output, 500
 
 
-@login_IXIPC_required
 @bp.route('/IXIPC/new_institution', methods=['POST'])
+@login_IXIPC_required
 def new_institution():
     """Creates a new institution"""
 
@@ -745,8 +751,8 @@ def new_institution():
         return json.dumps({'id': institution.id}), 200
 
 
-@login_IXIPC_required
 @bp.route('/IX_IPC/load_institution', methods=['POST'])
+@login_IXIPC_required
 def load_institution():
     """Loads an institution"""
 
@@ -765,8 +771,8 @@ def load_institution():
             return json.dumps({'error': 'access unauthorized'}), 401
 
 
-@login_IXIPC_required
 @bp.route('/IX_IPC/load_institutions', methods=['POST'])
+@login_IXIPC_required
 def load_institutions():
     """Loads institutions available to current user"""
 
@@ -789,8 +795,8 @@ def load_institutions():
 
         return json.dumps({'institutions': institutions_list}), 200
 
-@login_IXIPC_required
 @bp.route('/IX_IPC/load_all_affiliations', methods=['POST'])
+@login_IXIPC_required
 def load_all_affiliations():
     """Loads all affiliations of the current user's authors"""
 
@@ -817,8 +823,8 @@ def load_all_affiliations():
         return json.dumps({'affiliations': affiliations_list}), 200
 
 
-@login_IXIPC_required
 @bp.route('/IX_IPC/save_institutions', methods=['POST'])
+@login_IXIPC_required
 def save_institutions():
     """Saves a list of institutions
     
@@ -880,8 +886,8 @@ HEADERS_JSON = {
 }
 
 
-@login_IXIPC_required
 @bp.route('/IX_IPC/payment_mbway/<language:language>', methods=['POST'])
+@login_IXIPC_required
 def payment_mbway(language='pt'):
     """Starts an MBWay payment"""
 
@@ -973,8 +979,8 @@ def payment_mbway(language='pt'):
 # 101 - Transaction expired (the user has 4 minutes to accept the payment in the MB WAY App before expiring)
 # 122 - Transaction declined to the user. 
 
-@login_IXIPC_required
 @bp.route('/IX_IPC/check_mbway_status/<language:language>', methods=['POST'])
+@login_IXIPC_required
 def check_mbway_status(language='pt'):
     """Checks the status of an MBWay payment"""
 
@@ -1044,8 +1050,8 @@ def payment_callback():
     return '', 200
 
 
-@login_IXIPC_required
 @bp.route('/IX_IPC/creditcard_payment/<language:language>/start', methods=['POST'])
+@login_IXIPC_required
 def start_creditcard_payment(language):
     """Starts a new credit card payment and returns a user url for the payment"""
 
@@ -1129,8 +1135,8 @@ def validate_payment(args):
 # CVC: 608
 # Validade: 12/22
 
-@login_IXIPC_required
 @bp.route('/IX_IPC/creditcard_payment/<language:language>/success', methods=['GET'])
+@login_IXIPC_required
 def creditcard_payment_success(language):
     """Registers the success of a payment and redirects the user to the main page"""
 
@@ -1152,8 +1158,8 @@ def creditcard_payment_success(language):
     return redirect(url_for('IX_IPC.IXIPC', language=language))
 
 
-@login_IXIPC_required
 @bp.route('/IX_IPC/creditcard_payment/<language:language>/canceled', methods=['GET'])
+@login_IXIPC_required
 def creditcard_payment_canceled(language):
     """Registers that a payment was canceled and redirects the user to the main page"""
 
@@ -1173,8 +1179,8 @@ def creditcard_payment_canceled(language):
     return redirect(url_for('IX_IPC.IXIPC', language=language))
 
 
-@login_IXIPC_required
 @bp.route('/IX_IPC/creditcard_payment/<language:language>/error', methods=['GET'])
+@login_IXIPC_required
 def creditcard_payment_error(language):
     """Registers that a payment failed and redirects the user to the main page"""
 
@@ -1214,9 +1220,9 @@ def management_login(language='pt'):
     return redirect(url_for('IX_IPC.management', language=language))
 
 
-@login_IXIPC_management_required
 @bp.route('/IX_IPC/management/logout')
 @bp.route('/IX_IPC/management/logout/<language:language>')
+@login_IXIPC_management_required
 def management_logout(language='pt'):
     """Logs a manager out
     
@@ -1250,8 +1256,8 @@ def management(language='pt'):
         )
 
 
-@login_IXIPC_management_required
 @bp.route('/IX_IPC/management/participants_csv_summary')
+@login_IXIPC_management_required
 def participants_csv_summary():    
     with StringIO() as buffer:
         writer = csv.writer(buffer, delimiter=';')
@@ -1290,8 +1296,8 @@ def participants_csv_summary():
             )
 
 
-@login_IXIPC_management_required
 @bp.route('/IX_IPC/management/participants_pdf_report')
+@login_IXIPC_management_required
 def participants_pdf_report():    
     buffer = BytesIO()
 
@@ -1419,9 +1425,9 @@ def participants_pdf_report():
     )
 
 
-@login_IXIPC_management_required
 @bp.route('/IX_IPC/management/participants')
 @bp.route('/IX_IPC/management/participants/<language:language>')
+@login_IXIPC_management_required
 def participants_list(language='pt'):
     """Gets a list of participants"""
 
@@ -1454,9 +1460,9 @@ def participants_list(language='pt'):
         )
 
 
-@login_IXIPC_management_required
 @bp.route('/IX_IPC/management/abstract_details/<int:id>')
 @bp.route('/IX_IPC/management/abstract_details/<int:id>/<language:language>')
+@login_IXIPC_management_required
 def abstract_details(id, language='pt'):
     with get_session() as db_session:
         abstract = db_session.get(Abstract, id)

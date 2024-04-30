@@ -11,18 +11,18 @@
         <h3>{{'Oral presentation' if abstract.abstract_type == 2 else 'Poster'}}</h3>
       </div>
     </div>
-    <div class="row">
+    <div class="row mb-3">
       <div class="col">
         <h4>{{ abstract.title }}</h4>
       </div>
     </div>
-    <div class="row">
+    <div class="row mb-3">
       <div class="col">
         <h5 class="mb-0">Abstract:</h5>
         <p class="ms-3">{{ abstract.abstract }}</p>
       </div>
     </div>
-    <div class="row">
+    <div class="row mb-3">
       <div class="col">
         <h5>Authors:</h5>
         {% for a in abstract.authors -%}
@@ -35,6 +35,12 @@
           {% endfor -%}
           </div>
         {% endfor -%}
+      </div>
+    </div>
+    <div class="row mb-3">
+      <div class="col">
+        <h5>Keywords:</h5>
+        <p class="ms-3">{{abstract.keywords}}</p>
       </div>
     </div>
   </div>
