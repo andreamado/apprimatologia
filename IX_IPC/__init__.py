@@ -1298,7 +1298,7 @@ def participants_csv_summary():
 
 @bp.route('/IX_IPC/management/participants_pdf_report')
 @login_IXIPC_management_required
-def participants_pdf_report():    
+def participants_pdf_report():
     buffer = BytesIO()
 
     doc = SimpleDocTemplate(buffer, pagesize=A4, showBoundary=0, title='Participants list')
@@ -1460,6 +1460,116 @@ def participants_list(language='pt'):
         )
 
 
+@bp.route('/IX_IPC/management/abstracts')
+@bp.route('/IX_IPC/management/abstracts/<language:language>')
+@login_IXIPC_management_required
+def abstracts_list(language='pt'):
+    """Shows a list of submitted abstracts"""
+
+    with get_session() as db_session:
+        abstracts = db_session.execute(
+            select(Abstract)
+              .where(Abstract.submitted == True)
+        ).scalars().all()
+
+        for abstract in abstracts:
+            abstract.submitted_by = db_session.get(User, abstract.owner)
+
+        return render_template(
+            'management/abstracts_list.html',
+            lang=language,
+            text_column=True,
+            abstracts=abstracts
+        )
+
+
+@bp.route('/IX_IPC/management/participant/<int:id>')
+@bp.route('/IX_IPC/management/participant/<int:id>/<language:language>')
+@login_IXIPC_management_required
+def participant_details(id, language='pt'):
+    with get_session() as db_session:
+        participant = db_session.get(User, id)
+
+        participant.submitted_abstracts = db_session.execute(
+            select(Abstract)
+              .where(Abstract.owner == participant.id)
+              .where(Abstract.submitted == True)
+        ).scalars().all()
+
+        if participant.paid_registration and participant.payment_id:
+            participant.payment = db_session.get(Payment, participant.payment_id)
+
+        return render_template(
+            'management/participant_details.html',
+            lang=language,
+            text_column=True,
+            participant=participant
+        )
+
+
+@bp.route('/IX_IPC/management/abstracts_pdf_report')
+@login_IXIPC_management_required
+def abstracts_pdf_report():
+    pass
+
+
+@bp.route('/IX_IPC/management/abstracts_csv_summary')
+@login_IXIPC_management_required
+def abstracts_csv_summary():    
+    with StringIO() as buffer:
+        writer = csv.writer(buffer, delimiter=';')
+
+        fields = ['type', 'title', 'abstract', 'keywords', 'submitted_by', 'submitted_by_email', 'presenter', 'presenter_email']
+        writer.writerow(fields)
+
+        with get_session() as db_session:
+            abstracts = db_session.execute(
+                select(Abstract)
+                  .where(Abstract.submitted == True)
+                  .order_by(Abstract.id)
+            ).scalars()
+
+            for abstract in abstracts:
+                user = db_session.get(User, abstract.owner)
+
+                presenter_info = db_session.execute(
+                    select(AbstractAuthor)
+                      .where(AbstractAuthor.abstract_id == abstract.id)
+                      .where(AbstractAuthor.presenter == True)
+                ).scalars().all()
+
+                class Object(object):
+                    pass
+                
+                presenter = Object()
+                if len(presenter_info):
+                    presenter = db_session.get(Author, presenter_info[0].author_id)
+                else:
+                    presenter.first_name = 'unknown'
+                    presenter.last_name = ''
+                    presenter.email = ''
+
+                writer.writerow([
+                    abstract.abstract_type, 
+                    abstract.title,
+                    abstract.abstract,
+                    f'\"{abstract.keywords}\"',
+                    f'{user.first_name} {user.last_name}',
+                    user.email,
+                    f'{presenter.first_name} {presenter.last_name}',
+                    presenter.email,
+                ])
+
+            buffer.seek(0)
+            return send_file(
+                BytesIO(buffer.getvalue().encode('utf-8-sig')),
+                as_attachment=True,
+                download_name='abstracts_summary.csv',
+                mimetype='text/csv'
+            )
+
+
+
 @bp.route('/IX_IPC/management/abstract_details/<int:id>')
 @bp.route('/IX_IPC/management/abstract_details/<int:id>/<language:language>')
 @login_IXIPC_management_required
@@ -1472,6 +1582,8 @@ def abstract_details(id, language='pt'):
               .where(AbstractAuthor.abstract_id == abstract.id)
               .order_by(AbstractAuthor.order)
         ).scalars().all()
+
+        abstract.user = db_session.get(User, abstract.owner)
 
         for author in abstract.authors:
             author.author = db_session.get(Author, author.author_id)
