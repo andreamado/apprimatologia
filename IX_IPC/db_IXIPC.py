@@ -1,15 +1,13 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker, declarative_base, Session
-import click
 
+import click
 import sqlite3, os
 
 if os.path.isdir('apprimatologia'):
     database_path = os.path.join('instance', 'IXIPC.db')
 else:
     database_path = 'IXIPC.db'
-
-print(database_path)
 
 # makes sure IXIPC database file exists
 conn = sqlite3.connect(database_path)
@@ -33,13 +31,9 @@ db_session = scoped_session(
 Base = declarative_base()
 Base.query = db_session.query_property()
 
-@click.command('init-IXIPC-db')
-def init_IXIPC_db_command():
-    """Clears the existing data and create new tables."""
+from . import models
 
-    from . import models
-    Base.metadata.create_all(bind=engine)
-
+def fill_database():
     with get_session() as db_session:
         # Zé Ninguém
         user1 = models.User(name='Zé Ninguém', email='jose.ninguem@nowhere.com', first_name='José', last_name='Ninguém', password='123456', institution='IGC', student=True)
@@ -105,4 +99,19 @@ def init_IXIPC_db_command():
         user3.payment_id = payment.id
         db_session.commit()
 
-        click.echo('Initialized the IX IPC database.')
+@click.command('init-IXIPC-db')
+def init_IXIPC_db_command():
+    """Clears the existing data and create new tables."""
+
+    Base.metadata.create_all(bind=engine)
+
+    click.echo('Initialized the IX IPC database.')
+
+
+@click.command('fill-IXIPC-db')
+def fill_IXIPC_db_command():
+    """Fills IX IPC database with some dummy data."""
+
+    fill_database()
+
+    click.echo('IX IPC database filled with dummy data.')
