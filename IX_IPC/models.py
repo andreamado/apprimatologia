@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Boolean, ForeignKey, Integer, String, Text, Numeric
+from sqlalchemy import Column, Boolean, ForeignKey, Integer, String, Text, Numeric, select
 from sqlalchemy_utc import UtcDateTime, utcnow
 
 from .db_IXIPC import Base
@@ -177,6 +177,18 @@ class Affiliation(Base):
         self.author_id = author_id
         self.institution_id = institution_id
         self.order = order
+
+    def get_list(db_session, author_id):
+        affiliations = db_session.execute(
+            select(Affiliation)
+              .where(Affiliation.author_id == author_id)
+              .order_by(Affiliation.order)
+        ).scalars().all()
+
+        for affiliation in affiliations:
+            affiliation.institution = db_session.get(Institution, affiliation.institution_id)
+
+        return affiliations
 
 
 class AbstractType:

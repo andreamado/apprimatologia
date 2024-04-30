@@ -1,0 +1,20 @@
+{% extends "base.html" -%}
+
+{% block main -%}
+<div class="container text-white">
+  <div class="row mb-3">
+    <div class="col">
+      <h2>IX IPC management area</h2>
+    </div>
+  </div>
+  <div class="row mb-3">
+    <div class="col">
+      <form action="{{ url_for('IX_IPC.management_login') }}" method="post">
+        {{ form.csrf_token }}
+        <label class="form-label text-white" for="password">Password</label>
+        {{ form.password(class='form-control') }}
+      </form>      
+    </div>
+  </div>
+</div>
+{% endblock -%}

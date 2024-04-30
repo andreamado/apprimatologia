@@ -47,6 +47,25 @@ def login_IXIPC_required(view):
 
     return wrapped_view
 
+def login_IXIPC_management_required(view):
+    """Guarantees a manager is logged in
+     
+    Decorator that guarantees a manager is logged in, redirecting to the main 
+    page if they are not.
+    """
+
+    @functools.wraps(view)
+    def wrapped_view(**kwargs):
+        if not g.IXIPC_manager:
+            return redirect(
+                url_for('IX_IPC.management_login', language=kwargs['language'])
+            )
+
+        return view(**kwargs)
+
+    return wrapped_view
+
+
 class RegistrationForm(FlaskForm):
     name = StringField('registration-form-name', [validators.DataRequired(), validators.Length(max=50)])
     email = StringField('registration-form-email', [validators.DataRequired(), validators.Email()])
@@ -55,6 +74,10 @@ class RegistrationForm(FlaskForm):
 class LoginForm(FlaskForm):
     email = StringField('login-form-email', [validators.DataRequired(), validators.Email()])
     password = StringField('login-form-password', [validators.DataRequired()])
+
+class ManagementLoginForm(FlaskForm):
+    password = StringField('login-form-password', [validators.DataRequired()])
+
 
 @bp.route('/IX_IPC/<language:language>')
 @bp.route('/IX_IPC')
@@ -270,6 +293,12 @@ def load_logged_in_IXIPC_user() -> None:
                 g.IXIPC_user = db_session.get(User, user_IXIPC_id)
         except:
             g.IXIPC_user = None
+
+    # Check if the user is a manager
+    if session.get('IXIPC_manager') is None:
+        g.IXIPC_manager = False
+    else:
+        g.IXIPC_manager = True
 
 
 @login_IXIPC_required
@@ -1162,6 +1191,66 @@ def creditcard_payment_error(language):
 
     return redirect(url_for('IX_IPC.IXIPC', language=language))
 
+
+@bp.route('/IX_IPC/management/login', methods=['POST'])
+@bp.route('/IX_IPC/management/login/<language:language>', methods=['POST'])
+def management_login(language='pt'):
+    """Logs a manager in
+    
+    Logs a manager in and redirects to the main page. Displays a warning in case
+    the login is unsuccessful. 
+    """
+
+    form = ManagementLoginForm()
+    if form.validate_on_submit():
+        if form.password.data == app.config['IXIPC_MANAGER_PASSWORD']:
+            session['IXIPC_manager'] = True
+        else:
+            flash(
+                app.translate('IXIPC-login-wrong-email-or-password', language), 
+                'warning'
+            )
+    
+    return redirect(url_for('IX_IPC.management', language=language))
+
+
+@login_IXIPC_management_required
+@bp.route('/IX_IPC/management/logout')
+@bp.route('/IX_IPC/management/logout/<language:language>')
+def management_logout(language='pt'):
+    """Logs a manager out
+    
+    Logs a manager out and redirects to the main page
+    """
+
+    session['IXIPC_manager'] = None
+    return redirect(url_for('IX_IPC.management', language=language))
+
+
+@bp.route('/IX_IPC/management')
+@bp.route('/IX_IPC/management/<language:language>')
+def management(language='pt'):
+    """
+    """
+
+    # TODO: add recaptcha
+    if g.IXIPC_manager:
+        return render_template(
+            'management/management.html',
+            lang=language,
+            text_column=True
+        )
+    else:
+        form = ManagementLoginForm()
+        return render_template(
+            'management/login.html',
+            form=form,
+            lang=language,
+            text_column=True
+        )
+
+
+@login_IXIPC_management_required
 @bp.route('/IX_IPC/management/participants_csv_summary')
 def participants_csv_summary():    
     with StringIO() as buffer:
@@ -1200,6 +1289,8 @@ def participants_csv_summary():
                 mimetype='text/csv'
             )
 
+
+@login_IXIPC_management_required
 @bp.route('/IX_IPC/management/participants_pdf_report')
 def participants_pdf_report():    
     buffer = BytesIO()
@@ -1327,6 +1418,8 @@ def participants_pdf_report():
         mimetype='application/pdf'
     )
 
+
+@login_IXIPC_management_required
 @bp.route('/IX_IPC/management/participants')
 @bp.route('/IX_IPC/management/participants/<language:language>')
 def participants_list(language='pt'):
@@ -1358,6 +1451,34 @@ def participants_list(language='pt'):
             lang=language,
             text_column=True,
             participants=parts
+        )
+
+
+@login_IXIPC_management_required
+@bp.route('/IX_IPC/management/abstract_details/<int:id>')
+@bp.route('/IX_IPC/management/abstract_details/<int:id>/<language:language>')
+def abstract_details(id, language='pt'):
+    with get_session() as db_session:
+        abstract = db_session.get(Abstract, id)
+
+        abstract.authors = db_session.execute(
+            select(AbstractAuthor)
+              .where(AbstractAuthor.abstract_id == abstract.id)
+              .order_by(AbstractAuthor.order)
+        ).scalars().all()
+
+        for author in abstract.authors:
+            author.author = db_session.get(Author, author.author_id)
+            author.affiliations = Affiliation.get_list(db_session, author.author_id)
+
+            for a in author.affiliations:
+                print(a)
+
+        return render_template(
+            'management/abstract_details.html',
+            abstract=abstract,
+            lang=language,
+            text_column=True
         )
 
 
