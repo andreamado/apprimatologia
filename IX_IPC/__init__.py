@@ -1510,7 +1510,115 @@ def participant_details(id, language='pt'):
 @bp.route('/IX_IPC/management/abstracts_pdf_report')
 @login_IXIPC_management_required
 def abstracts_pdf_report():
-    pass
+    buffer = BytesIO()
+
+    doc = SimpleDocTemplate(buffer, pagesize=A4, showBoundary=0, title='Abstracts list')
+
+    w, h = A4
+    mx = 3*cm
+    mt = doc._topMargin
+    styles = getSampleStyleSheet()
+    name_style = ParagraphStyle('Name', parent=styles['Normal'], fontName='Helvetica-Bold', fontSize=16)
+    bold_style = ParagraphStyle('Bold', parent=styles['Normal'], fontName='Helvetica-Bold')
+
+    def first_page(canvas, doc):
+        canvas.saveState()
+        canvas.setFont('Helvetica', 24)
+        canvas.drawString(mx, mt - 5*cm, "IXIPC abstracts list")
+        canvas.setFont("Helvetica", 14)
+        canvas.drawString(mx, mt - 6*cm, f'(generated {datetime.datetime.utcnow().strftime("%d/%m/%Y, %H:%M")})')    
+
+        canvas.setFont('Helvetica', 10)
+        canvas.drawRightString(doc._rightMargin, 1.8*cm, f"{doc.page}")
+
+        canvas.restoreState()
+
+    def later_pages(canvas, doc):
+        canvas.saveState()
+        canvas.setFont('Helvetica', 10)
+        canvas.drawRightString(doc._rightMargin, 1.8*cm, f"{doc.page}")
+        canvas.restoreState()
+    
+    with get_session() as db_session:
+        abstracts = db_session.execute(
+            select(Abstract)
+              .where(Abstract.submitted == True)
+              .order_by(Abstract.id)
+        ).scalars()
+
+        story = [Spacer(1, 8*cm)] #[PageBreak()]
+        style = styles["Normal"]
+
+        for i, abstract in enumerate(abstracts):
+            abstract_description = [
+                Paragraph(f'{i+1}. {AbstractType.to_string(abstract.abstract_type)} — {abstract.title}', name_style),
+                Spacer(1, 0.5*cm),
+                Paragraph(f'Abstract: {abstract.abstract}', style),
+                Spacer(1, 0.2*cm),
+                Paragraph(f'Authors:', style),
+                Spacer(1, 0.2*cm)
+            ]
+
+            authors = db_session.execute(
+                select(AbstractAuthor)
+                  .where(AbstractAuthor.abstract_id == abstract.id)
+                  .order_by(AbstractAuthor.order)
+            ).scalars().all()
+
+            for j, author in enumerate(authors):
+                author.details = db_session.get(Author, author.author_id)
+                author.affiliations = Affiliation.get_list(db_session, author.author_id)
+
+                author_str = f'{j+1}. '
+                if author.presenter:
+                    author_str += f'<u>{author.details.first_name} {author.details.last_name}</u>'
+                else:
+                    author_str += f'{author.details.first_name} {author.details.last_name}'
+
+                abstract_description.append(Paragraph(author_str, style))
+                abstract_description.append(Spacer(1, 0.05*cm))
+
+                for af in author.affiliations:
+                    abstract_description.append(Paragraph(
+                        f'   { af.institution.name } — { af.institution.country } ({ af.institution.address })',
+                        style
+                    ))
+                    abstract_description.append(Spacer(1, 0.05*cm))
+                abstract_description.append(Spacer(1, 0.2*cm))
+                    
+            abstract_description.append(Spacer(1, 0.4*cm))
+            abstract_description.append(
+                Paragraph(f'Keywords: ' + abstract.keywords, style)
+            )
+            abstract_description.append(Spacer(1, 0.4*cm))
+
+            owner = db_session.get(User, abstract.owner)
+            abstract_description.append(
+                Paragraph(f'Submitted by {owner.first_name} {owner.last_name} ({owner.email})')
+            )
+            abstract_description.append(Spacer(1, 0.2*cm))
+
+            try:
+                abstract_description.append(
+                    Paragraph(f'Submitted on {abstract.submitted_on.strftime("%d/%m/%Y")}')
+                )
+                abstract_description.append(Spacer(1, 0.2*cm))
+            except:
+                pass
+            
+            story.append(KeepTogether(abstract_description))
+            story.append(Spacer(1, 1*cm))
+            
+        doc.build(story, onFirstPage=first_page, onLaterPages=later_pages)
+
+    buffer.seek(0)
+    return send_file(
+        buffer,
+        as_attachment=True,
+        download_name='abstracts_list.pdf',
+        mimetype='application/pdf'
+    )
+
 
 
 @bp.route('/IX_IPC/management/abstracts_csv_summary')
