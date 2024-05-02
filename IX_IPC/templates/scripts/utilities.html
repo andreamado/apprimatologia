@@ -11,4 +11,14 @@
 
   const saveTimeout = 1000;
   const warningTimeout = 3000;
+
+  const makeBackLink = (elementId, defaultLink) => {
+    document.getElementById(elementId).addEventListener('click', (evt) => {
+      if(document.referrer) {
+        location.href = document.referrer;
+      } else {
+        location.href = defaultLink;
+      }
+    });
+  }
 </script>

@@ -6,21 +6,160 @@
     <img style="width:25px" class="mb-3" src='data:image/svg+xml,<%3Fxml version="1.0" encoding="iso-8859-1"%3F><svg fill="%23fff" height="800px" width="800px" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 384.97 384.97" xml:space="preserve"><g><g id="Arrow_Left_Circle"><path d="M192.485,0C86.185,0,0,86.185,0,192.485C0,298.797,86.185,384.97,192.485,384.97c106.312,0,192.485-86.173,192.485-192.485C384.97,86.185,298.797,0,192.485,0z M192.485,360.909c-93.018,0-168.424-75.406-168.424-168.424S99.467,24.061,192.485,24.061s168.424,75.406,168.424,168.424S285.503,360.909,192.485,360.909z"/><path d="M300.758,180.226H113.169l62.558-63.46c4.692-4.74,4.692-12.439,0-17.179c-4.704-4.74-12.319-4.74-17.011,0l-82.997,84.2c-2.25,2.25-3.537,5.414-3.537,8.59c0,3.164,1.299,6.328,3.525,8.59l82.997,84.2c4.704,4.752,12.319,4.74,17.011,0c4.704-4.752,4.704-12.439,0-17.191l-62.558-63.46h187.601c6.641,0,12.03-5.438,12.03-12.151C312.788,185.664,307.398,180.226,300.758,180.226z"/></g></g></svg>' alt="back">
   </a>
   <h2 class="lh-1 mb-4">Abstracts</h2>
+  <div class="mb-4">
+    <h4>Filters</h4>
+    <form action="" name="filtersForm">
+      <div class="row-flex mb-2">
+        <div class="col">
+          <input type="radio" class="btn-check" name="filters" id="filters-all" autocomplete="off" value="all">
+          <label class="btn btn-outline-success" for="filters-all">All abstracts</label>
+
+          <input type="radio" class="btn-check" name="filters" id="filters-submitted" autocomplete="off" value="submitted" checked>
+          <label class="btn btn-outline-success" for="filters-submitted">Submitted abstracts</label>  
+        </div>
+      </div>
+      <div class="row g-2">
+        <div class="col">
+          <input type="radio" class="btn-check" name="filters" id="filters-undecided" autocomplete="off" value="undecided">
+          <label class="btn btn-outline-success" for="filters-undecided">Undecided abstracts only</label>  
+        </div>
+        <div class="col">
+          <input type="radio" class="btn-check" name="filters" id="filters-accepted" autocomplete="off" value="accepted">
+          <label class="btn btn-outline-success" for="filters-accepted">Accepted abstracts only</label>  
+        </div>
+        <div class="col">
+          <input type="radio" class="btn-check" name="filters" id="filters-rejected" autocomplete="off" value="rejected">
+          <label class="btn btn-outline-success" for="filters-rejected">Rejected abstracts only</label>  
+        </div>
+        <div class="col"></div>
+      </div>
+    </form>
+</div>
+  
+  <h4>Downloads</h4>
   <button type="button" id="pdf-report-button" class="btn btn-primary mb-4">PDF list download</button>
   <button type="button" id="csv-summary-button" class="btn btn-primary mb-4">CSV summary download (Excel)</button>
-  {% for abstract in abstracts -%}
-    <div class="submitted-abstract rounded-3 ps-4 my-2 py-2">
-      <a data-abstract-id="{{ abstract.id }}" class="submitted-abstract" href="{{ url_for('IX_IPC.abstract_details', language=lang, id=abstract.id) }}">
-        <p class="mb-0">Type: {{'oral presentation' if abstract.abstract_type == 2 else 'poster'}}</p>
-        <p class="mb-0">Title: {{abstract.title}}</p>
-        <p class="mb-0">Keywords: {{abstract.keywords}}</p>
-        <p class="mb-0">Submitted by: {{abstract.submitted_by.first_name}} {{abstract.submitted_by.last_name}} ({{abstract.submitted_by.email}})</p>
-      </a>
-    </div>
-  {% endfor -%}
+
+  <h4>List</h4>
+  <div id="abstracts-list"></div>
 </div>
 
-<script>
+{% include "scripts/utilities.html" -%}
+<script defer>
+  (function () {
+    let abstractListElement = document.getElementById('abstracts-list');
+    let abstractsList = [];
+
+    const addAbstract = (abstract) => {
+      let abstractElement = document.createElement('div');
+      abstractElement.classList.add('submitted-abstract', 'rounded-3', 'ps-4', 'my-2', 'py-2');
+
+      let info = document.createElement('div');
+      let submittedBadge = document.createElement('span');
+      submittedBadge.classList.add('badge', 'rounded-pill')
+      if(abstract.submitted) {
+        submittedBadge.classList.add('text-bg-primary')
+        submittedBadge.innerText = 'Submitted'
+      } else {
+        submittedBadge.classList.add('text-bg-warning')
+        submittedBadge.innerText = 'Not submitted'
+      }
+      info.appendChild(submittedBadge)
+
+      let approvedBadge = document.createElement('span');
+      approvedBadge.classList.add('badge', 'rounded-pill', 'ms-2')
+      if(abstract.acceptance_status == 1) {
+        approvedBadge.classList.add('text-bg-primary')
+        approvedBadge.innerText = 'Accepted'
+      } else if(abstract.acceptance_status == 0) {
+        approvedBadge.classList.add('text-bg-warning')
+        approvedBadge.innerText = 'Undecided'
+      } else {
+        approvedBadge.classList.add('text-bg-danger')
+        approvedBadge.innerText = 'Rejected'
+      }
+      info.appendChild(approvedBadge)
+
+      abstractElement.appendChild(info)
+
+      let link = document.createElement('a');
+      link.dataset.abstractId = abstract.id;
+      link.classList.add('submitted-abstract');
+      link.setAttribute('href', abstract.href);
+
+      let p1 = document.createElement('p');
+      p1.classList.add('mb-0');
+      p1.innerText = 'Type: ' + abstract.type;
+      link.appendChild(p1);
+
+      let p2 = document.createElement('p');
+      p2.classList.add('mb-0');
+      p2.innerText = 'Title: ' + abstract.title;
+      link.appendChild(p2);
+
+      let p3 = document.createElement('p');
+      p3.classList.add('mb-0');
+      p3.innerText = 'Keywords: ' + abstract.keywords;
+      link.appendChild(p3);
+
+      let p4 = document.createElement('p');
+      p4.classList.add('mb-0');
+      p4.innerText = 'Created by: ' + abstract.created_by;
+      link.appendChild(p4);
+
+      abstractElement.appendChild(link);
+      abstractListElement.appendChild(abstractElement);
+    }
+
+    const updateAbstracts = (filter) => {
+      let selectedAbstracts = [];
+      if(filter == 'all') {
+        selectedAbstracts = abstractsList;
+      } else if(filter == 'submitted') {
+        selectedAbstracts = abstractsList.filter((abstract) => abstract.submitted);
+      } else if(filter == 'undecided') {
+        selectedAbstracts = abstractsList.filter((abstract) => abstract.submitted && abstract.acceptance_status === 0);
+      } else if(filter == 'accepted') {
+        selectedAbstracts = abstractsList.filter((abstract) => abstract.submitted && abstract.acceptance_status === 1);
+      } else {
+        selectedAbstracts = abstractsList.filter((abstract) => abstract.submitted && abstract.acceptance_status === 2);
+      }
+
+      // Removes all previous abstracts
+      while (abstractListElement.firstChild) {
+        abstractListElement.removeChild(abstractListElement.lastChild);
+      }
+
+      for(let abstract of selectedAbstracts) {
+        addAbstract(abstract);
+      }
+
+      if(selectedAbstracts.length === 0) {
+        let p = document.createElement('p');
+        p.innerText = 'There are no abstracts for current filter option';
+        abstractListElement.appendChild(p);
+      }
+    }
+
+    fetch("{{ url_for('IX_IPC.load_abstracts_list') }}", {
+      method: 'POST',
+      body: blankForm()
+    })
+    .then((response) => response.json())
+    .then((data) => {
+      abstractsList = data.abstracts;
+      updateAbstracts('submitted');
+    })
+    .catch((e) => console.log(e));
+
+    const filtersRadio = document.filtersForm.filters;
+    for (let i = 0; i < filtersRadio.length; i++) {
+        filtersRadio[i].addEventListener('change', function() {
+            updateAbstracts(this.value);
+        });
+    }
+  })();
+  
   document.getElementById('pdf-report-button').addEventListener('click', (evt) => {
     evt.preventDefault();
     window.open("{{ url_for('IX_IPC.abstracts_pdf_report') }}");

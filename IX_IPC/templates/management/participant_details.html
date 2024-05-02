@@ -82,9 +82,8 @@
     </div> #}
   </div>
 </div>
-<script>
-  document.getElementById('back-link').addEventListener('click', (evt) => {
-    history.back();
-  });
+{% include "scripts/utilities.html" -%}
+<script defer>
+  makeBackLink('back-link', "{{ url_for('IX_IPC.management') }}");
 </script>
 {% endblock -%}

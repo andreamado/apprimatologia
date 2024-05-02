@@ -11,11 +11,32 @@
         <h3>{{'Oral presentation' if abstract.abstract_type == 2 else 'Poster'}}</h3>
       </div>
     </div>
-    <div class="row mb-3">
+    <div class="row">
       <div class="col">
         <h4>{{ abstract.title }}</h4>
       </div>
     </div>
+    <div class="row mb-3">
+      {% if abstract.submitted -%}
+      <div class="col"><span class="badge rounded-pill text-bg-primary">Submitted</span></div>
+      {% else -%}
+      <div class="col"><span class="badge rounded-pill text-bg-warning">Not submitted</span></div>
+      {% endif -%}
+    </div>
+    {% if abstract.submitted -%}
+    <div class="row mb-3">
+      <div class="col">
+        <form action="" name="acceptanceStatus">
+          <input type="radio" class="btn-check" name="filters" id="filters-accepted" autocomplete="off" value="1"{{" checked" if abstract.acceptance_status == 1}}>
+          <label class="btn btn-outline-success" for="filters-accepted">Accepted</label>  
+          <input type="radio" class="btn-check" name="filters" id="filters-undecided" autocomplete="off" value="0"{{" checked" if abstract.acceptance_status == 0}}>
+          <label class="btn btn-outline-warning" for="filters-undecided">Undecided</label>  
+          <input type="radio" class="btn-check" name="filters" id="filters-rejected" autocomplete="off" value="2"{{" checked" if abstract.acceptance_status == 2}}>
+          <label class="btn btn-outline-danger" for="filters-rejected">Rejected</label>    
+        </form>
+      </div>
+    </div>
+    {% endif -%}
     <div class="row mb-3">
       <div class="col">
         <h5 class="mb-0">Abstract:</h5>
@@ -45,7 +66,7 @@
     </div>
     <div class="row mb-3">
       <div class="col">
-        <h5>Submitted by:</h5>
+        <h5>Created by:</h5>
         <div class="submitted-abstract rounded-3 ps-4 my-2 py-2">
           <a class="submitted-abstract" href="{{ url_for('IX_IPC.participant_details', language=lang, id=abstract.owner) }}">
             <p class="mb-0">{{abstract.user.first_name}} {{abstract.user.last_name}} ({{abstract.user.email}})</p>
@@ -55,9 +76,28 @@
     </div>
   </div>
 </div>
-<script>
-  document.getElementById('back-link').addEventListener('click', (evt) => {
-    history.back();
-  });
+{% if abstract.submitted -%}
+<script defer>
+  const acceptanceStatus = document.acceptanceStatus.filters;
+  for (let i = 0; i < acceptanceStatus.length; i++) {
+      acceptanceStatus[i].addEventListener('change', function() {
+        if(this.value == 0) {
+          fetch("{{ url_for('IX_IPC.update_abstract_acceptance_status', id=abstract.id, new_status=0) }}")
+            .catch((e) => console.log(e));
+        } else if(this.value == 1) {
+          fetch("{{ url_for('IX_IPC.update_abstract_acceptance_status', id=abstract.id, new_status=1) }}")
+            .catch((e) => console.log(e));
+        } else {
+          fetch("{{ url_for('IX_IPC.update_abstract_acceptance_status', id=abstract.id, new_status=2) }}")
+            .catch((e) => console.log(e));
+        }
+      });
+  }
+</script>
+{% endif -%}
+
+{% include "scripts/utilities.html" -%}
+<script defer>
+  makeBackLink('back-link', "{{ url_for('IX_IPC.management') }}");
 </script>
 {% endblock -%}

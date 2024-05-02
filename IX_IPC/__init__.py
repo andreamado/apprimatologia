@@ -1464,23 +1464,45 @@ def participants_list(language='pt'):
 @bp.route('/IX_IPC/management/abstracts/<language:language>')
 @login_IXIPC_management_required
 def abstracts_list(language='pt'):
-    """Shows a list of submitted abstracts"""
+    """Shows the list of abstracts"""
 
     with get_session() as db_session:
-        abstracts = db_session.execute(
-            select(Abstract)
-              .where(Abstract.submitted == True)
-        ).scalars().all()
-
-        for abstract in abstracts:
-            abstract.submitted_by = db_session.get(User, abstract.owner)
-
         return render_template(
             'management/abstracts_list.html',
             lang=language,
             text_column=True,
-            abstracts=abstracts
         )
+
+
+@bp.route('/IX_IPC/management/load_abstracts_list', methods=['POST'])
+@login_IXIPC_management_required
+def load_abstracts_list():
+    """Loads the list of abstracts"""
+
+    with get_session() as db_session:
+        abstracts_list = db_session.execute(
+            select(Abstract)
+        ).scalars().all()
+
+        abstracts = []
+        for abstract in abstracts_list:
+            created_by = db_session.get(User, abstract.owner)
+            abstract = {
+                'id': abstract.id,
+                'href': url_for('IX_IPC.abstract_details', id=abstract.id),
+                'type': AbstractType.to_string(abstract.abstract_type),
+                'title': abstract.title,
+                'abstract': abstract.abstract,
+                'keywords': abstract.keywords,
+                'submitted': abstract.submitted, 
+                'acceptance_status': abstract.acceptance_status,
+                'created_by': f'{created_by.first_name} {created_by.last_name} ({created_by.email})'
+            }
+            abstracts.append(abstract)
+
+        return json.dumps({
+            'abstracts': abstracts
+        }), 200
 
 
 @bp.route('/IX_IPC/management/participant/<int:id>')
@@ -1506,6 +1528,26 @@ def participant_details(id, language='pt'):
             participant=participant
         )
 
+
+@bp.route('/IX_IPC/management/update_abstract_acceptance_status/<int:id>/<int:new_status>')
+@login_IXIPC_management_required
+def update_abstract_acceptance_status(id, new_status):
+    with get_session() as db_session:
+        try:
+            abstract = db_session.get(Abstract, id)
+            if new_status == 0:
+                abstract.undecide()
+            elif new_status == 1:
+                abstract.accept()
+            else:
+                abstract.reject()
+
+            db_session.commit()
+            return json.dumps(''), 200
+        except:
+            return json.dumps({
+                'error': f'Failed to update abstract {id}.'
+            }), 500
 
 @bp.route('/IX_IPC/management/abstracts_pdf_report')
 @login_IXIPC_management_required
@@ -1556,7 +1598,7 @@ def abstracts_pdf_report():
                 Paragraph(f'Abstract: {abstract.abstract}', style),
                 Spacer(1, 0.2*cm),
                 Paragraph(f'Authors:', style),
-                Spacer(1, 0.2*cm)
+                Spacer(1, 0.05*cm)
             ]
 
             authors = db_session.execute(
@@ -1675,7 +1717,6 @@ def abstracts_csv_summary():
                 download_name='abstracts_summary.csv',
                 mimetype='text/csv'
             )
-
 
 
 @bp.route('/IX_IPC/management/abstract_details/<int:id>')

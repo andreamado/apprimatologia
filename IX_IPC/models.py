@@ -219,20 +219,32 @@ class Abstract(Base):
     submitted = Column(Boolean)
     submitted_on = Column(UtcDateTime())
 
+    acceptance_status = Column(Integer)
+
     created = Column(UtcDateTime(), default=utcnow())
     modified = Column(UtcDateTime(), onupdate=utcnow())
 
-    def __init__(self, owner, title=None, abstract=None, abstract_type=None, keywords='', submitted=False):
+    def __init__(self, owner, title=None, abstract=None, abstract_type=None, keywords='', submitted=False, acceptance_status=0):
         self.title = title
         self.abstract = abstract
         self.abstract_type = abstract_type
         self.keywords = keywords
         self.owner = owner
         self.submitted = submitted
+        self.acceptance_status = acceptance_status
 
     def submit(self):
         self.submitted = True
         self.submitted_on = utcnow()
+
+    def accept(self):
+        self.acceptance_status = 1
+    
+    def reject(self):
+        self.acceptance_status = 2
+      
+    def undecide(self):
+        self.acceptance_status = 0
 
 
 class AbstractAuthor(Base):
