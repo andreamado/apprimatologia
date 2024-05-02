@@ -115,3 +115,23 @@ def fill_IXIPC_db_command():
     fill_database()
 
     click.echo('IX IPC database filled with dummy data.')
+
+
+@click.command('IXIPC-organizer')
+@click.argument('id')
+@click.option('--add/--remove', default=False)
+def set_IXIPC_organizer(id, set):
+    """Adds/removes a user from organizers"""
+
+    with get_session() as db_session:
+        user = db_session.get(models.User, id)
+        if set:
+            user.organizer = True
+            click.echo(f'User {user.name} (id {user.id}) added to organizers')
+        else:
+            user.organizer = False
+            click.echo(f'User {user.name} (id {user.id}) removed from organizers')
+
+        db_session.commit()
+
+        

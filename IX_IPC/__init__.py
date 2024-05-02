@@ -262,6 +262,8 @@ def login(language):
         if user and user.check_password(form.password.data):
             session.clear()
             session['IXIPC_user_id'] = user.id
+            if user.organizer:
+                session['IXIPC_manager'] = True
         else:
             flash(
                 app.translate('IXIPC-login-wrong-email-or-password', language), 
@@ -1765,6 +1767,7 @@ def register(app) -> None:
 
     app.jinja_env.filters['abstract_type'] = abstract_type_filter
 
-    from .db_IXIPC import init_IXIPC_db_command, fill_IXIPC_db_command
+    from .db_IXIPC import init_IXIPC_db_command, fill_IXIPC_db_command, set_IXIPC_organizer
     app.cli.add_command(init_IXIPC_db_command)
     app.cli.add_command(fill_IXIPC_db_command)
+    app.cli.add_command(set_IXIPC_organizer)
