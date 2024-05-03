@@ -47,43 +47,104 @@
       </div>
     </div>
 
-    {# <div class="row mb-3">
-      <div class="col">
-        <h5 class="mb-0">Abstract:</h5>
-        <p class="ms-3">{{ abstract.abstract }}</p>
-      </div>
-    </div>
+    {# TODO: implement accordion for the contents of the email #}
     <div class="row mb-3">
       <div class="col">
-        <h5>Authors:</h5>
-        {% for a in abstract.authors -%}
-          <div class="ms-3 mb-3">
-            <p class="mb-0"><span class="{{ 'presenter' if a.presenter }}">{{a.author.first_name}} {{a.author.last_name}}</span> ({{a.author.email}})</p>
-            {% for af in a.affiliations -%}
-            <p class="mt-0 mb-0">
-              {{ af.institution.name }} — {{ af.institution.country }} ({{ af.institution.address }})
-            </p>  
-          {% endfor -%}
-          </div>
-        {% endfor -%}
+        <h5 class="mt-2" id="emails-title">Loading emails 
+          <span class="spinner-border spinner-border-sm" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </span>
+        </h5>
+        
+        <div class="accordion accordion-flush mb-3" id="emailBox"></div>    
       </div>
     </div>
-    <div class="row mb-3">
-      <div class="col">
-        <h5>Keywords:</h5>
-        <p class="ms-3">{{abstract.keywords}}</p>
-      </div>
-    </div>
-    <div class="row mb-3">
-      <div class="col">
-        <h5>Submitted by:</h5>
-        <p class="ms-3">{{abstract.user.first_name}} {{abstract.user.last_name}} ({{abstract.user.email}})</p>
-      </div>
-    </div> #}
   </div>
 </div>
 {% include "scripts/utilities.html" -%}
 <script defer>
   makeBackLink('back-link', "{{ url_for('IX_IPC.management') }}");
+
+  const emailLoader = () => {
+    let emailsElement = document.getElementById('emailBox');
+
+    let form = blankForm();
+    form.append('user_id', '{{participant.id}}');
+
+    const emailChild = (email, i) => {
+      let base = document.createElement('div');
+      base.classList.add('accordion-item');
+
+      let h2 = document.createElement('h2');
+      h2.classList.add('accordion-header');
+
+      let button = document.createElement('button');
+      button.classList.add('accordion-button', 'collapsed');
+      button.innerText = `${email.type} on ${email.date} — ${email.subject}`;
+      button.setAttribute('type', 'button');
+      button.dataset.bsToggle = 'collapse';
+      button.dataset.bsTarget = `#collapse-${i}`;
+      button.setAttribute('aria-expanded', 'false');
+      button.setAttribute('aria-controls', `collapse-${i}`);
+      h2.appendChild(button);
+
+      base.appendChild(h2);
+
+      let content = document.createElement('div');
+      content.id = `collapse-${i}`;
+      content.classList.add('accordion-collapse', 'collapse');
+      content.dataset.bsParent = "#emailBox";
+
+      let body = document.createElement('div');
+      body.classList.add('accordion-body');
+
+      let message = document.createElement('p');
+      message.classList.add('mb-3', 'mt-0');
+      message.innerText = `Message:\n${email.message}`;
+      body.appendChild(message);
+
+      if(email.attachments.length) {
+        let attachments = document.createElement('div');
+
+        let attachmentsTitle = document.createElement('h6');
+        attachmentsTitle.classList.add('mt-2', 'mb-1');
+        attachmentsTitle.innerText = 'Attachments:'
+        attachments.appendChild(attachmentsTitle);
+
+        for(let attachment of email.attachments) {
+          let att = document.createElement('p');
+          att.classList.add('mb-0', 'mt-0', 'ms-2');
+          att.innerText = attachment;
+          attachments.appendChild(att);
+        }
+        body.appendChild(attachments);
+      }
+
+      content.appendChild(body);
+      base.appendChild(content);
+
+      return base;
+    }
+
+    fetch("{{ url_for('IX_IPC.fetch_participant_emails') }}", {
+      method: 'POST',
+      body: form
+    })
+    .then((response) => response.json())
+    .then((data) => {
+      for(let i in data.emails) {
+        emailsElement.appendChild(emailChild(data.emails[i], i));
+      }
+      if(data.emails.length) {
+        let sentEmails = data.emails.filter((email) => email.type == 'Sent').length;
+        let receivedEmails = data.emails.filter((email) => email.type == 'Received').length;
+        document.getElementById('emails-title').innerText = `Emails exchanged with user (${receivedEmails} received, ${sentEmails} sent)`;
+      } else {
+        document.getElementById('emails-title').innerText = 'No emails exchanged with user';
+      }
+    })
+    .catch((e) => console.log(e));
+  };
+  emailLoader();
 </script>
 {% endblock -%}

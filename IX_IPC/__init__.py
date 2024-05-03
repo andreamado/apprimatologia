@@ -1536,6 +1536,37 @@ def participant_details(id, language='pt'):
         )
 
 
+@bp.route('/IX_IPC/management/fetch_participant_emails', methods=['POST'])
+@login_IXIPC_management_required
+def fetch_participant_emails():
+    """Fetches the emails list of participant"""
+
+    with get_session() as db_session:
+        user = db_session.get(User, request.form['user_id'])
+
+        emails = []
+
+        print(user.email)
+        user.email = 'andreamado1@gmail.com'
+            
+        email_list = app.fetch_user_emails(user.email)
+        for type_ in ['received', 'sent']:
+            for email in email_list[type_]:
+                emails.append({
+                    'date': email.date.strftime("%d/%m/%Y (%H:%M:%S)"),
+                    'timestamp': str(email.date),
+                    'subject': email.subject,
+                    'message': email.text,
+                    'type': type_.capitalize(),
+                    'attachments': [f'{file.filename} ({int(file.size * 0.0009765625)} KB)' for file in email.attachments]
+                })
+        emails.sort(key=lambda email: email['timestamp'], reverse=True)
+
+        return json.dumps({
+            'emails': emails
+        }), 200
+
+
 @bp.route('/IX_IPC/management/update_abstract_acceptance_status/<int:id>/<int:new_status>')
 @login_IXIPC_management_required
 def update_abstract_acceptance_status(id, new_status):

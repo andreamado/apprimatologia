@@ -8,3 +8,4 @@ Flask-Mail==0.9.1
 python-dotenv==1.0.1
 phonenumbers==8.13.34
 reportlab==4.2.0
+imap_tools==1.6.0

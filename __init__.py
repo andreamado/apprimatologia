@@ -1,9 +1,8 @@
-import os, threading, json, re
+import os, json, re
 from copy import deepcopy
 from dotenv import dotenv_values
 
 from flask import Flask, render_template, g, request
-from flask_mail import Mail, Message
 from flask_wtf.csrf import CSRFProtect
 
 from .i18n import I18N
@@ -38,6 +37,7 @@ def create_app(test_config=None):
         MAIL_USERNAME = config['MAIL_USERNAME'],
         MAIL_PASSWORD = config['MAIL_PASSWORD'],
         MAIL_DEFAULT_SENDER = config['MAIL_USERNAME'],
+        IMAP_URL = 'imap.gmail.com',
         # MAIL_MAX_EMAILS = default None,
         # MAIL_SUPPRESS_SEND = default app.testing,
         # MAIL_ASCII_ATTACHMENTS = default False
@@ -56,20 +56,8 @@ def create_app(test_config=None):
     csrf = CSRFProtect()
     csrf.init_app(app)
 
-    # register the email methods
-    app.mail = Mail(app)
-
-    def send_email(subject: str, body: str, recipients: list[str]) -> None:
-        def _send_email():
-            with app.app_context():
-                msg = Message(subject, recipients=recipients, body=body)
-                app.mail.send(msg)
-                # TODO: log the emails
-                print(f'Email sent to {recipients}.')
-        t1 = threading.Thread(target=_send_email, name="email")
-        t1.start()
-    
-    app.send_email = send_email
+    from . import email
+    email.register(app)
 
     # @app.teardown_appcontext
     # def shutdown_session(exception=None):
