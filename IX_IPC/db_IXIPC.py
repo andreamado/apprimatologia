@@ -34,6 +34,8 @@ Base.query = db_session.query_property()
 from . import models
 
 def fill_database():
+    # first_names = []
+
     with get_session() as db_session:
         # Zé Ninguém
         user1 = models.User(name='Zé Ninguém', email='jose.ninguem@nowhere.com', first_name='José', last_name='Ninguém', password='123456', institution='IGC', student=True)
@@ -57,7 +59,6 @@ def fill_database():
 
         abstract = models.Abstract(owner=user1.id, title='Makes no sense at all', abstract='Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.', abstract_type=models.AbstractType.POSTER, keywords='primate; big primate; small primate')
         db_session.add(abstract)
-
 
         author1 = models.Author(user1.id, first_name='José', last_name='Ninguém', email='jose.ninguem@nowhere.com', country='Portugal')
         author2 = models.Author(user1.id, first_name='Gertrudes', last_name='Silva', email='gs@nowhere.com', country='Australia')
@@ -118,14 +119,14 @@ def fill_IXIPC_db_command():
 
 
 @click.command('IXIPC-organizer')
-@click.argument('id')
-@click.option('--add/--remove', default=False)
-def set_IXIPC_organizer(id, set):
-    """Adds/removes a user from organizers"""
+@click.argument('user_id')
+@click.option('--add/--remove')
+def set_IXIPC_organizer(user_id, add):
+    """Adds/removes a user from organizers list"""
 
     with get_session() as db_session:
-        user = db_session.get(models.User, id)
-        if set:
+        user = db_session.get(models.User, user_id)
+        if add:
             user.organizer = True
             click.echo(f'User {user.name} (id {user.id}) added to organizers')
         else:

@@ -97,15 +97,19 @@ def IXIPC(language='pt'):
     with get_session() as db_session:
         abstracts = []
         payment_status = 0
+        organizer = False
         if g.IXIPC_user:
             abstracts = db_session.execute(
                 select(Abstract).filter_by(owner=g.IXIPC_user.id)
             ).scalars()
 
-            if(g.IXIPC_user.paid_registration):
+            if g.IXIPC_user.paid_registration:
                 payment_status = 1
-            elif (g.IXIPC_user.payment_id):
+            elif g.IXIPC_user.payment_id:
                 payment_status = 2
+
+            if g.IXIPC_user.organizer:
+                organizer = True
             
         return render_template(
             'IX_IPC.html',
@@ -115,7 +119,8 @@ def IXIPC(language='pt'):
             text_column=True,
             abstracts=abstracts,
             site_map=True,
-            payment_status=payment_status
+            payment_status=payment_status,
+            organizer=organizer
         )
 
 
