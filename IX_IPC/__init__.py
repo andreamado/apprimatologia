@@ -1236,8 +1236,23 @@ def management_logout(language='pt'):
     Logs a manager out and redirects to the main page
     """
 
-    session['IXIPC_manager'] = None
+    session.clear()
     return redirect(url_for('IX_IPC.management', language=language))
+
+
+@bp.route('/IX_IPC/management/email/send', methods=['POST'])
+@bp.route('/IX_IPC/management/email/send/<language:language>', methods=['POST'])
+@login_IXIPC_management_required
+def send_email(language='pt'):
+    """Sends an email"""
+
+    address = request.form['address']
+    subject = request.form['subject']
+    message = request.form['message']
+
+    app.send_email(subject, message, [address])
+
+    return json.dumps(''), 200
 
 
 @bp.route('/IX_IPC/management')
@@ -1544,11 +1559,7 @@ def fetch_participant_emails():
     with get_session() as db_session:
         user = db_session.get(User, request.form['user_id'])
 
-        emails = []
-
-        print(user.email)
-        user.email = 'andreamado1@gmail.com'
-            
+        emails = []            
         email_list = app.fetch_user_emails(user.email)
         for type_ in ['received', 'sent']:
             for email in email_list[type_]:

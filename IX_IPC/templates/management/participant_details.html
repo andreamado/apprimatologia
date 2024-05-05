@@ -47,7 +47,10 @@
       </div>
     </div>
 
-    {# TODO: implement accordion for the contents of the email #}
+    <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#send-email-modal">
+      Send email
+    </button>
+
     <div class="row mb-3">
       <div class="col">
         <h5 class="mt-2" id="emails-title">Loading emails 
@@ -55,10 +58,34 @@
             <span class="visually-hidden">Loading...</span>
           </span>
         </h5>
-        
         <div class="accordion accordion-flush mb-3" id="emailBox"></div>    
       </div>
     </div>
+
+    <div class="modal fade" id="send-email-modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="sendEmailLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content text-black">
+          <div class="modal-header border-0">
+            <h1 class="modal-title fs-5 mb-0" id="sendEmailLabel">Send email</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label for="new-subject" class="form-label">Subject</label>
+              <input type="text" class="form-control" id="new-subject">
+            </div>
+            <div>
+              <label for="new-message" class="form-label">Message</label>
+              <textarea class="form-control" id="new-message" rows="10"></textarea>
+            </div>
+          </div>
+          <div class="modal-footer border-0 mt-0">
+            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-primary" id="send-email" data-bs-dismiss="modal">Send</button>
+          </div>
+        </div>
+      </div>
+    </div>  
   </div>
 </div>
 {% include "scripts/utilities.html" -%}
@@ -80,7 +107,7 @@
 
       let button = document.createElement('button');
       button.classList.add('accordion-button', 'collapsed');
-      button.innerText = `${email.type} on ${email.date} — ${email.subject}`;
+      button.innerHTML = `<div><p class='m-0'><strong>${email.type}</strong> on ${email.date}</p><p class='m-0'>${email.subject}</p></div>`;
       button.setAttribute('type', 'button');
       button.dataset.bsToggle = 'collapse';
       button.dataset.bsTarget = `#collapse-${i}`;
@@ -98,17 +125,28 @@
       let body = document.createElement('div');
       body.classList.add('accordion-body');
 
+      let messageTitle = document.createElement('p');
+      messageTitle.classList.add('mb-0', 'mt-0');
+      
+      let boldTitle = document.createElement('strong');
+      boldTitle.innerText = 'Message:';
+      messageTitle.appendChild(boldTitle);
+      body.appendChild(messageTitle);
+
       let message = document.createElement('p');
       message.classList.add('mb-3', 'mt-0');
-      message.innerText = `Message:\n${email.message}`;
+      message.innerText = `${email.message}`;
       body.appendChild(message);
 
       if(email.attachments.length) {
         let attachments = document.createElement('div');
 
-        let attachmentsTitle = document.createElement('h6');
+        let attachmentsTitle = document.createElement('p');
         attachmentsTitle.classList.add('mt-2', 'mb-1');
-        attachmentsTitle.innerText = 'Attachments:'
+
+        let boldTitleAttachments = document.createElement('strong');
+        boldTitleAttachments.innerText = 'Attachments:';
+        attachmentsTitle.appendChild(boldTitleAttachments);
         attachments.appendChild(attachmentsTitle);
 
         for(let attachment of email.attachments) {
@@ -143,8 +181,29 @@
         document.getElementById('emails-title').innerText = 'No emails exchanged with user';
       }
     })
-    .catch((e) => console.log(e));
+    .catch((e) => {
+      console.log(e);
+      document.getElementById('emails-title').innerText = 'Failed to load user emails';
+    });
   };
   emailLoader();
+
+  document.getElementById('send-email').addEventListener('click', () => {
+    let form = blankForm();
+    form.append('address', '{{participant.email}}');
+    form.append('subject', document.getElementById('new-subject').value);
+    form.append('message', document.getElementById('new-message').value);
+
+    fetch("{{ url_for('IX_IPC.send_email') }}", {
+      method: 'POST',
+      body: form
+    })
+    .catch((e) => {
+      console.log(e);
+      document.getElementById('emails-title').innerText = 'Failed to load user emails';
+    });
+
+
+  });
 </script>
 {% endblock -%}
