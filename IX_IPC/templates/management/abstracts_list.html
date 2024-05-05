@@ -56,29 +56,29 @@
 
       let info = document.createElement('div');
       let submittedBadge = document.createElement('span');
-      submittedBadge.classList.add('badge', 'rounded-pill')
+      submittedBadge.classList.add('badge', 'rounded-pill');
       if(abstract.submitted) {
-        submittedBadge.classList.add('text-bg-primary')
-        submittedBadge.innerText = 'Submitted'
+        submittedBadge.classList.add('text-bg-primary');
+        submittedBadge.innerText = 'Submitted';
       } else {
-        submittedBadge.classList.add('text-bg-warning')
-        submittedBadge.innerText = 'Not submitted'
+        submittedBadge.classList.add('text-bg-warning');
+        submittedBadge.innerText = 'Not submitted';
       }
-      info.appendChild(submittedBadge)
+      info.appendChild(submittedBadge);
 
       let approvedBadge = document.createElement('span');
-      approvedBadge.classList.add('badge', 'rounded-pill', 'ms-2')
+      approvedBadge.classList.add('badge', 'rounded-pill', 'ms-2');
       if(abstract.acceptance_status == 1) {
-        approvedBadge.classList.add('text-bg-primary')
-        approvedBadge.innerText = 'Accepted'
+        approvedBadge.classList.add('text-bg-primary');
+        approvedBadge.innerText = 'Accepted';
       } else if(abstract.acceptance_status == 0) {
-        approvedBadge.classList.add('text-bg-warning')
-        approvedBadge.innerText = 'Undecided'
+        approvedBadge.classList.add('text-bg-warning');
+        approvedBadge.innerText = 'Undecided';
       } else {
-        approvedBadge.classList.add('text-bg-danger')
-        approvedBadge.innerText = 'Rejected'
+        approvedBadge.classList.add('text-bg-danger');
+        approvedBadge.innerText = 'Rejected';
       }
-      info.appendChild(approvedBadge)
+      info.appendChild(approvedBadge);
 
       abstractElement.appendChild(info)
 

@@ -19,6 +19,17 @@
     <div class="mb-3">
     {% for abstract in participant.submitted_abstracts %}
       <div class="submitted-abstract rounded-3 ps-4 my-2 py-2">
+        <div>
+          <span class="badge rounded-pill text-bg-primary">Submitted</span>
+          {% if abstract.acceptance_status == 0 -%}
+          <span class="badge rounded-pill text-bg-warning">Undecided</span>
+          {% elif abstract.acceptance_status == 1 -%}
+          <span class="badge rounded-pill text-bg-primary">Accepted</span>
+          {% else -%}
+          <span class="badge rounded-pill text-bg-danger">Rejected</span>
+          {% endif -%}
+          <span class="badge rounded-pill"></span>
+        </div>
         <a data-abstract-id="{{ abstract.id }}" class="submitted-abstract" href="{{ url_for('IX_IPC.abstract_details', language=lang, id=abstract.id) }}">
           <p class="mb-0">Type: {{'oral presentation' if abstract.abstract_type == 2 else 'poster'}}</p>
           <p class="mb-0">Title: {{abstract.title}}</p>
