@@ -15,8 +15,10 @@ def register(app):
     def send_email(subject: str, body: str, recipients: list[str]) -> None:
         def _send_email():
             with app.app_context():
-                msg = Message(subject, recipients=recipients, body=body)
-                app.mail.send(msg)
+                for recipient in recipients:
+                    msg = Message(subject, recipients=[recipient], body=body)
+                    app.mail.send(msg)
+                
                 # TODO: log the emails
                 print(f'Email sent to {recipients}.')
         t1 = threading.Thread(target=_send_email, name="email")

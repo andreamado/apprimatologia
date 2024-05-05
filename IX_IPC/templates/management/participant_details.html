@@ -87,7 +87,16 @@
             </div>
             <div>
               <label for="new-message" class="form-label">Message</label>
-              <textarea class="form-control" id="new-message" rows="10"></textarea>
+              <textarea class="form-control" id="new-message" rows="10" aria-describedby="messageHelp"></textarea>
+              <div id="messageHelp" class="form-text">
+                A few placeholders can be included in the text to be replaced in the final email with the correct participant information. This allows the organizers to write emails that get automatically personalized to each participant. The available options are
+                <ul>
+                  <li>{name}</li>
+                  <li>{first_name}</li>
+                  <li>{last_name}</li>
+                  <li>{email}</li>
+                </ul>
+              </div>
             </div>
           </div>
           <div class="modal-footer border-0 mt-0">
@@ -96,7 +105,7 @@
           </div>
         </div>
       </div>
-    </div>  
+    </div>
   </div>
 </div>
 {% include "scripts/utilities.html" -%}
@@ -105,9 +114,6 @@
 
   const emailLoader = () => {
     let emailsElement = document.getElementById('emailBox');
-
-    let form = blankForm();
-    form.append('user_id', '{{participant.id}}');
 
     const emailChild = (email, i) => {
       let base = document.createElement('div');
@@ -175,6 +181,9 @@
       return base;
     }
 
+    let form = blankForm();
+    form.append('user_id', '{{participant.id}}');
+
     fetch("{{ url_for('IX_IPC.fetch_participant_emails') }}", {
       method: 'POST',
       body: form
@@ -201,7 +210,7 @@
 
   document.getElementById('send-email').addEventListener('click', () => {
     let form = blankForm();
-    form.append('address', '{{participant.email}}');
+    form.append('user', '{{participant.id}}');
     form.append('subject', document.getElementById('new-subject').value);
     form.append('message', document.getElementById('new-message').value);
 
@@ -213,8 +222,6 @@
       console.log(e);
       document.getElementById('emails-title').innerText = 'Failed to load user emails';
     });
-
-
   });
 </script>
 {% endblock -%}

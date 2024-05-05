@@ -59,7 +59,7 @@ def login_IXIPC_management_required(view):
 
     @functools.wraps(view)
     def wrapped_view(**kwargs):
-        if not g.IXIPC_manager:
+        if g.IXIPC_user is None or (not g.IXIPC_user.organizer):
             if 'language' not in kwargs:
                 kwargs['language'] = 'pt'
             
@@ -1246,11 +1246,33 @@ def management_logout(language='pt'):
 def send_email(language='pt'):
     """Sends an email"""
 
-    address = request.form['address']
+    user = request.form['user']
     subject = request.form['subject']
     message = request.form['message']
 
-    app.send_email(subject, message, [address])
+    users = []
+    with get_session() as db_session:
+        if user == 'ALL':
+            users = db_session.execute(select(User)).scalars().all()
+        
+        elif user == 'ALL_PAID':
+            users = db_session.execute(
+                select(User).filter_by(paid_registration = True)
+            ).scalars().all()
+
+        elif user == 'ALL_NOT_PAID':
+            users = db_session.execute(
+                select(User).filter_by(paid_registration = False)
+            ).scalars().all()
+        
+        else:
+            users = [db_session.get(User, int(user))]
+
+    for user in users:
+        first_name = user.first_name if len(user.first_name) else user.name.strip().split()[0]
+        subject_user = subject.format(first_name=first_name, last_name=user.last_name, name=user.name, email=user.email)
+        message_user = message.format(first_name=first_name, last_name=user.last_name, name=user.name, email=user.email)
+        app.send_email(subject_user, message_user, [user.email])
 
     return json.dumps(''), 200
 
