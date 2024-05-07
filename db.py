@@ -152,8 +152,8 @@ def init_db_command() -> None:
 
         profile = models.Profile(
             name='Filipa Borges', 
-            description_pt='Sou estudante de doutoramento em Antropologia afiliada ao Centro em Rede de Investigação em Antropologia (CRIA-NOVA FCSH/IN2PAST), à Universidade de Exeter e à Universidade do Porto. O meu trabalho combina técnicas de genómica e de ciência social para estudar a interface entre primatas não-humanos e humanos na África Ocidental, principalmente na Serra Leoa.', 
-            description_en='I am a PhD candidate in Anthropology affiliated with the Centre for Research in Anthropology (CRIA-NOVA FCSH/IN2PAST), the University of Exeter, and the University of Porto. My work integrates genomics and social sciences methods to study the human/nonhuman primate interface in West Africa, particularly Sierra Leone.',
+            description_pt='Filipa Borges é estudante de doutoramento em Antropologia afiliada ao Centro em Rede de Investigação em Antropologia (CRIA-NOVA FCSH/IN2PAST), à Universidade de Exeter e à Universidade do Porto. O seu trabalho combina técnicas de genómica e de ciência social para estudar a interface entre primatas não-humanos e humanos na África Ocidental, principalmente na Serra Leoa.', 
+            description_en='Filipa Borges is a PhD candidate in Anthropology affiliated with the Centre for Research in Anthropology (CRIA-NOVA FCSH/IN2PAST), the University of Exeter, and the University of Porto. Her work integrates genomics and social sciences methods to study the human/nonhuman primate interface in West Africa, particularly Sierra Leone.',
             direction=True,
             position_pt='',
             position_en='',
