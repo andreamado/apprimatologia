@@ -1478,9 +1478,7 @@ def participants_list(language='pt'):
     # TODO: include option to limit to paid registrations
     with get_session() as db_session:
         participants = db_session.execute(
-            select(User)
-              .where(User.paid_registration == True)
-              .order_by(User.first_name, User.last_name)
+            select(User).order_by(User.first_name, User.last_name)
         ).scalars()
 
         parts = []
@@ -1620,9 +1618,29 @@ def update_abstract_acceptance_status(id, new_status):
                 'error': f'Failed to update abstract {id}.'
             }), 500
 
+abstract_filters = {
+    'all': select(Abstract).order_by(Abstract.id),
+    'submitted': select(Abstract)
+                  .where(Abstract.submitted == True)
+                  .order_by(Abstract.id),
+    'undecided': select(Abstract)
+                  .where(Abstract.submitted == True)
+                  .where(Abstract.acceptance_status == 0)
+                  .order_by(Abstract.id),
+    'accepted':  select(Abstract)
+                  .where(Abstract.submitted == True)
+                  .where(Abstract.acceptance_status == 1)
+                  .order_by(Abstract.id),
+    'rejected':  select(Abstract)
+                  .where(Abstract.submitted == True)
+                  .where(Abstract.acceptance_status == 2)
+                  .order_by(Abstract.id),
+}
+
 @bp.route('/IX_IPC/management/abstracts_pdf_report')
+@bp.route('/IX_IPC/management/abstracts_pdf_report/<string:filter>')
 @login_IXIPC_management_required
-def abstracts_pdf_report():
+def abstracts_pdf_report(filter=''):
     buffer = BytesIO()
 
     doc = SimpleDocTemplate(buffer, pagesize=A4, showBoundary=0, title='Abstracts list')
@@ -1637,7 +1655,7 @@ def abstracts_pdf_report():
     def first_page(canvas, doc):
         canvas.saveState()
         canvas.setFont('Helvetica', 24)
-        canvas.drawString(mx, mt - 5*cm, "IXIPC abstracts list")
+        canvas.drawString(mx, mt - 5*cm, f"IXIPC abstracts list ({filter})")
         canvas.setFont("Helvetica", 14)
         canvas.drawString(mx, mt - 6*cm, f'(generated {datetime.datetime.utcnow().strftime("%d/%m/%Y, %H:%M")})')    
 
@@ -1653,11 +1671,10 @@ def abstracts_pdf_report():
         canvas.restoreState()
     
     with get_session() as db_session:
-        abstracts = db_session.execute(
-            select(Abstract)
-              .where(Abstract.submitted == True)
-              .order_by(Abstract.id)
-        ).scalars()
+        if filter not in abstract_filters.keys():
+            return json.dumps({'error', 'unrecognized filter'}), 500
+        
+        abstracts = db_session.execute(abstract_filters[filter]).scalars()
 
         story = [Spacer(1, 8*cm)] #[PageBreak()]
         style = styles["Normal"]
@@ -1676,7 +1693,7 @@ def abstracts_pdf_report():
                 select(AbstractAuthor)
                   .where(AbstractAuthor.abstract_id == abstract.id)
                   .order_by(AbstractAuthor.order)
-            ).scalars().all()
+            ).scalars()
 
             for j, author in enumerate(authors):
                 author.details = db_session.get(Author, author.author_id)
@@ -1707,7 +1724,7 @@ def abstracts_pdf_report():
 
             owner = db_session.get(User, abstract.owner)
             abstract_description.append(
-                Paragraph(f'Submitted by {owner.first_name} {owner.last_name} ({owner.email})')
+                Paragraph(f'Created by {owner.first_name} {owner.last_name} ({owner.email})')
             )
             abstract_description.append(Spacer(1, 0.2*cm))
 

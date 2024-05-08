@@ -49,6 +49,7 @@
   (function () {
     let abstractListElement = document.getElementById('abstracts-list');
     let abstractsList = [];
+    let selectedFilter = 'submitted';
 
     const addAbstract = (abstract) => {
       let abstractElement = document.createElement('div');
@@ -56,28 +57,28 @@
 
       let info = document.createElement('div');
       let submittedBadge = document.createElement('span');
+      let approvedBadge = document.createElement('span');
       submittedBadge.classList.add('badge', 'rounded-pill');
       if(abstract.submitted) {
         submittedBadge.classList.add('text-bg-primary');
         submittedBadge.innerText = 'Submitted';
+
+        approvedBadge.classList.add('badge', 'rounded-pill', 'ms-2');
+        if(abstract.acceptance_status == 1) {
+          approvedBadge.classList.add('text-bg-primary');
+          approvedBadge.innerText = 'Accepted';
+        } else if(abstract.acceptance_status == 0) {
+          approvedBadge.classList.add('text-bg-warning');
+          approvedBadge.innerText = 'Undecided';
+        } else {
+          approvedBadge.classList.add('text-bg-danger');
+          approvedBadge.innerText = 'Rejected';
+        }  
       } else {
         submittedBadge.classList.add('text-bg-warning');
         submittedBadge.innerText = 'Not submitted';
       }
       info.appendChild(submittedBadge);
-
-      let approvedBadge = document.createElement('span');
-      approvedBadge.classList.add('badge', 'rounded-pill', 'ms-2');
-      if(abstract.acceptance_status == 1) {
-        approvedBadge.classList.add('text-bg-primary');
-        approvedBadge.innerText = 'Accepted';
-      } else if(abstract.acceptance_status == 0) {
-        approvedBadge.classList.add('text-bg-warning');
-        approvedBadge.innerText = 'Undecided';
-      } else {
-        approvedBadge.classList.add('text-bg-danger');
-        approvedBadge.innerText = 'Rejected';
-      }
       info.appendChild(approvedBadge);
 
       abstractElement.appendChild(info)
@@ -112,6 +113,8 @@
     }
 
     const updateAbstracts = (filter) => {
+      selectedFilter = filter;
+
       let selectedAbstracts = [];
       if(filter == 'all') {
         selectedAbstracts = abstractsList;
@@ -158,15 +161,15 @@
             updateAbstracts(this.value);
         });
     }
+
+    document.getElementById('pdf-report-button').addEventListener('click', (evt) => {
+      evt.preventDefault();
+      window.open("{{ url_for('IX_IPC.abstracts_pdf_report') }}" + '/' + selectedFilter);
+    });
+    document.getElementById('csv-summary-button').addEventListener('click', (evt) => {
+      evt.preventDefault();
+      window.open("{{ url_for('IX_IPC.abstracts_csv_summary') }}");
+    });  
   })();
-  
-  document.getElementById('pdf-report-button').addEventListener('click', (evt) => {
-    evt.preventDefault();
-    window.open("{{ url_for('IX_IPC.abstracts_pdf_report') }}");
-  });
-  document.getElementById('csv-summary-button').addEventListener('click', (evt) => {
-    evt.preventDefault();
-    window.open("{{ url_for('IX_IPC.abstracts_csv_summary') }}");
-  });
 </script>
 {% endblock -%}
