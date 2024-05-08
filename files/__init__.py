@@ -12,6 +12,11 @@ bp = Blueprint('file', __name__, template_folder='templates')
 
 ALLOWED_EXTENSIONS = {'pdf', 'png', 'jpg', 'jpeg', 'gif'}
 
+@app.route('/.well-known/acme-challenge/<path:name>')
+def acmechallenge(name):
+    return send_from_directory(os.path.join(app.instance_path, 'acme-challenge'), name, as_attachment=True)
+
+
 def allowed_file(filename: str) -> bool:
     """Helper function to validate file extension"""
 
