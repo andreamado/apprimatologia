@@ -2,7 +2,7 @@
   <h2 class="mb-1">{{ 'IXIPC-personal-area'|l10n(lang) }}</h2>
   <p class="lead">{{ 'IXIPC-register-to-submit'|l10n(lang) }}</p>
 </div>
-<script src="https://www.google.com/recaptcha/api.js?hl={{lang}}" async defer></script>
+{# <script src="https://www.google.com/recaptcha/api.js?hl={{lang}}" async defer></script> #}
 
 <div class="container mb-5">
   <!-- register form -->
@@ -30,14 +30,14 @@
                 <button type="submit" id="register-submit" class="btn btn-primary">{{ 'IXIPC-register-submit'|l10n(lang) }}</button>
               </div>
             </div>
-            {# <div class="row">
+            <div class="row">
               <div class="col">
                 {% for error in registration_form.recaptcha.errors %}
                   {{ error }}
                 {% endfor %}
                 {{ registration_form.recaptcha }}
               </div>
-            </div> #}
+            </div>
           </form>
         </div>
       </div>
@@ -62,27 +62,27 @@
                 <button type="submit" id="login-submit" class="btn btn-primary">{{ 'IXIPC-register-submit'|l10n(lang) }}</button>
               </div>
             </div>
-            {# <div class="row">
+            <div class="row">
               <div class="col">
                 {% for error in login_form.recaptcha.errors %}
                   {{ error }}
                 {% endfor %}
                 {{ login_form.recaptcha }}
               </div>
-            </div> #}
+            </div>
           </form>
         </div>
       </div>
     </div>
   </div>
-  <div class="row mt-4">
+  {# <div class="row mt-4">
     <div class="col">
       {% for error in registration_form.recaptcha.errors %}
         {{ error }}
       {% endfor %}
       {{ registration_form.recaptcha }}
     </div>
-  </div>  
+  </div>   #}
 </div>
 
 <script>

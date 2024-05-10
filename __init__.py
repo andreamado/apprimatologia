@@ -71,7 +71,10 @@ def create_app(test_config=None):
         )
     else:
         # load the test config if passed in
+        print()
         app.config.from_mapping(test_config)
+
+    print('Warning: testing configuration!!' if app.testing else 'Production configuration')
 
     # ensure the instance folder exists
     try:
