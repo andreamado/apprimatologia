@@ -183,12 +183,29 @@
       })
       .then((response) => response.json())
       .then((data) => {
+        // Close all 
+        for(let el of editInstitutionsForm.children) {
+          console.log(el);
+          let button = el.firstElementChild.firstElementChild;
+          console.log(button);
+          button.classList.add('collapsed');
+          button.setAttribute('aria-expanded', false);
+
+          el.lastElementChild.classList.remove('show');
+        }
+
         newInstitution.id = data.id;
         institutions[newInstitution.id] = newInstitution;
-        editInstitutionsForm.insertAdjacentElement(
+        let newInstitutionElement = editInstitutionsForm.insertAdjacentElement(
           'beforeend',
           institutionHTMLElement(newInstitution)
         );
+        // Open the last option
+        let button = newInstitutionElement.firstElementChild.firstElementChild;
+        button.classList.remove('collapsed');
+        button.setAttribute('aria-expanded', true);
+
+        newInstitutionElement.lastElementChild.classList.add('show');
       })
       .catch((e) => console.log(e));
     }

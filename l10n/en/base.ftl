@@ -119,12 +119,16 @@ IXIPC-abstract-new-author = New author
 IXIPC-abstract-authors = Authors
 IXIPC-abstract-authors-available = Available authors
 IXIPC-abstract-authors-select = Selected authors
-IXIPC-abstract-authors-drag-and-drop = 
-    1. Create authors in the form below
+IXIPC-abstract-authors-drag-and-drop-1 = 
+    Create authors
+IXIPC-abstract-authors-drag-and-drop-2 = 
     2. Drag and drop the authors for selected authors area
-    3. Drag the selected authors for ordering
+    3. Reorder the selected authors
     4. Select the speaker (clicking on the microphone symbol)
+IXIPC-help-me = Help me!
+IXIPC-label = Label
 IXIPC-abstract-speaker = speaker
+IXIPC-abstract-non-speaker = Non speaker
 IXIPC-abstract-validation-errors = Please correct the following errors before submitting:
 IXIPC-abstract-title-empty = The title is not defined
 IXIPC-abstract-title-too-long = The title cannot be longer than 20 words
@@ -147,11 +151,11 @@ IXIPC-institutions-address = Address
 IXIPC-institutions-country = Country
 IXIPC-saved-institution = Institution saved
 IXIPC-authors-affiliations = Affiliations
-IXIPC-abstract-institutions-select = Selected affiliations
-IXIPC-abstract-institutions-available = Available affiliations
+IXIPC-abstract-institutions-select = Selected institutions
+IXIPC-abstract-institutions-available = Available institutions
 IXIPC-abstract-institutions-drag-and-drop = 
     1. Create institutions in the form below
-    2. Drag and drop the institution for selected affiliations area
+    2. Drag and drop the institution for selected institutions area
     3. Drag the selected institution for ordering
 
 IXIPC-personal-data-first-name = First name

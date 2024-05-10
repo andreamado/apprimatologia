@@ -164,44 +164,30 @@
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content text-black">
         <div class="modal-header border-0">
-          <h1 class="modal-title fs-5 mb-0" id="editAuthorsModal">{{ 'IXIPC-abstract-authors'|l10n(lang)|l10n(lang) }}</h1>
+          <h1 class="modal-title mb-0" id="editAuthorsModal">{{ 'IXIPC-abstract-authors'|l10n(lang)|l10n(lang) }}</h1>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <div class="accordion mb-3" id="accordion-authors"></div>
+          <div class="accordion mb-2" id="accordion-authors"></div>
         </div>
         <div class="modal-footer border-0 mt-0">
-          <button type="button" class="btn btn-primary text-white" type="submit" id="new-author-button">
-            <img src='data:image/svg+xml,<svg width="20px" height="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 12H15" stroke="%23fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 9L12 15" stroke="%23fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 12C3 4.5885 4.5885 3 12 3C19.4115 3 21 4.5885 21 12C21 19.4115 19.4115 21 12 21C4.5885 21 3 19.4115 3 12Z" stroke="%23fff" stroke-width="2"/></svg>' alt="" style="height: 25px;">
-            <span class="text-white">{{ 'IXIPC-abstract-new-author'|l10n(lang) }}</span>
-          </button>
-          <button type="button" class="btn btn-primary text-white" data-bs-toggle="modal" data-bs-target="#edit-institutions-modal">
-            Edit institutions
-          </button>
+          <div class="container">
+            <div class="d-flex flex-row mb-1">
+              <div class="col justify-content-start">
+                <h5 data-bs-toggle="modal" data-bs-target="#edit-institutions-modal"><span class="edit-button">< {{ 'IXIPC-abstract-institutions'|l10n(lang)|l10n(lang) }}</span></h5>
+              </div>
+              <div class="col d-flex justify-content-end">
+                <button type="button" class="btn btn-primary text-white" type="submit" id="new-author-button">
+                  <img src='data:image/svg+xml,<svg width="20px" height="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 12H15" stroke="%23fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 9L12 15" stroke="%23fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 12C3 4.5885 4.5885 3 12 3C19.4115 3 21 4.5885 21 12C21 19.4115 19.4115 21 12 21C4.5885 21 3 19.4115 3 12Z" stroke="%23fff" stroke-width="2"/></svg>' alt="" style="height: 25px;">
+                  <span class="text-white">{{ 'IXIPC-abstract-new-author'|l10n(lang) }}</span>
+                </button>
+              </div>
+            </div>  
+          </div>
         </div>
       </div>
     </div>
   </div>
-
-  {# <div class="container text-white mb-3">
-    <div class="rounded-4 card mb-3 abstract-new">
-      <div class="card-body">
-        <h5 class="card-title mb-0">
-          {{ 'IXIPC-abstract-authors'|l10n(lang)|l10n(lang) }}
-        </h5>
-      </div>
-    </div>
-  
-    <div class="container mb-5">
-      <div class="row mb-3">
-        <div class="accordion" id="accordion-authors"></div>
-      </div>
-      <button type="button" class="btn btn-primary text-white" type="submit" id="new-author-button">
-        <img src='data:image/svg+xml,<svg width="20px" height="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 12H15" stroke="%23fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 9L12 15" stroke="%23fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 12C3 4.5885 4.5885 3 12 3C19.4115 3 21 4.5885 21 12C21 19.4115 19.4115 21 12 21C4.5885 21 3 19.4115 3 12Z" stroke="%23fff" stroke-width="2"/></svg>' alt="" style="height: 25px;">
-        <span class="text-white">{{ 'IXIPC-abstract-new-author'|l10n(lang) }}</span>
-      </button>
-    </div>
-  </div> #}
 
 
   <!-- Institutions -->
@@ -209,20 +195,26 @@
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content text-black">
         <div class="modal-header border-0">
-          <h1 class="modal-title fs-5 mb-0" id="editInstitutionsModal">{{ 'IXIPC-abstract-institutions'|l10n(lang)|l10n(lang) }}</h1>
+          <h1 class="modal-title mb-0" id="editInstitutionsModal">{{ 'IXIPC-abstract-institutions'|l10n(lang)|l10n(lang) }}</h1>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <div class="accordion mb-3" id="accordion-institutions"></div>
+          <div class="accordion mb-2" id="accordion-institutions"></div>
         </div>
         <div class="modal-footer border-0 mt-0">
-          <button type="button" class="btn btn-primary text-white" type="submit" id="new-institution-button">
-            <img src='data:image/svg+xml,<svg width="20px" height="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 12H15" stroke="%23fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 9L12 15" stroke="%23fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 12C3 4.5885 4.5885 3 12 3C19.4115 3 21 4.5885 21 12C21 19.4115 19.4115 21 12 21C4.5885 21 3 19.4115 3 12Z" stroke="%23fff" stroke-width="2"/></svg>' alt="" style="height: 25px;">
-            <span class="text-white">{{ 'IXIPC-abstract-new-institution'|l10n(lang) }}</span>
-          </button>
-          <button type="button" class="btn btn-primary text-white" data-bs-toggle="modal" data-bs-target="#edit-authors-modal">
-            Edit authors
-          </button>  
+          <div class="container">
+            <div class="d-flex flex-row mb-1">
+              <div class="col justify-content-start">
+                <h5 data-bs-toggle="modal" data-bs-target="#edit-authors-modal"><span class="edit-button">< {{ 'IXIPC-abstract-authors'|l10n(lang)|l10n(lang) }}</span></h5>
+              </div>
+              <div class="col d-flex justify-content-end">
+                <button type="button" class="btn btn-primary text-white" type="submit" id="new-institution-button">
+                  <img src='data:image/svg+xml,<svg width="20px" height="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 12H15" stroke="%23fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 9L12 15" stroke="%23fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 12C3 4.5885 4.5885 3 12 3C19.4115 3 21 4.5885 21 12C21 19.4115 19.4115 21 12 21C4.5885 21 3 19.4115 3 12Z" stroke="%23fff" stroke-width="2"/></svg>' alt="" style="height: 25px;">
+                  <span class="text-white">{{ 'IXIPC-abstract-new-institution'|l10n(lang) }}</span>
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

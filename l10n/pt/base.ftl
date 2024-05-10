@@ -120,12 +120,16 @@ IXIPC-abstract-new-author = Novo autor
 IXIPC-abstract-authors = Autores
 IXIPC-abstract-authors-available = Autores disponíveis
 IXIPC-abstract-authors-select = Autores selecionados
-IXIPC-abstract-authors-drag-and-drop = 
-    1. Cria autores usando o formulário abaixo
+IXIPC-abstract-authors-drag-and-drop-1 = 
+    Cria autores
+IXIPC-abstract-authors-drag-and-drop-2 = 
     2. Arrasta os autores para a área dos autores selecionados
-    3. Arrasta os autores selecionados para os ordenar
+    3. Reordena os autores selecionados
     4. Seleciona o orador (carregando no símbolo de microfone)
+IXIPC-help-me = Ajuda-me!
+IXIPC-label = Legenda
 IXIPC-abstract-speaker = orador
+IXIPC-abstract-non-speaker = Não orador
 IXIPC-abstract-validation-errors = Por favor, corrige os seguintes erros antes de submeter:
 IXIPC-abstract-title-empty = O título não está definido
 IXIPC-abstract-title-too-long = O título não pode ter mais de 20 palavras
@@ -148,12 +152,12 @@ IXIPC-institutions-address = Endereço
 IXIPC-institutions-country = País
 IXIPC-saved-institution = Instituição salva
 IXIPC-authors-affiliations = Afiliações
-IXIPC-abstract-institutions-select = Afiliações selecionadas
-IXIPC-abstract-institutions-available = Afiliações disponíveis
+IXIPC-abstract-institutions-select = Instituições selecionadas
+IXIPC-abstract-institutions-available = Instituições disponíveis
 IXIPC-abstract-institutions-drag-and-drop = 
     1. Cria instituições usando o formulário abaixo
-    2. Arrasta instituições para a área das afiliações selecionadas
-    3. Arrasta as afiliações selecionadas para as ordenar
+    2. Arrasta instituições para a área das instituições selecionadas
+    3. Arrasta as instituições selecionadas para as ordenar
 
 IXIPC-personal-data-first-name = Nome
 IXIPC-personal-data-last-name = Apelido

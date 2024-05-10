@@ -69,13 +69,30 @@
             <div class="authors-box rounded-1 p-1 h-100" id="selected-authors-{{ abstract.id }}"></div>
           </div>
           <div class="col-6 px-2">
-            <label for="available-authors-{{ abstract.id }}" class="form-label">{{ 'IXIPC-abstract-authors-available'|l10n(lang) }}</label>
+            <label for="available-authors-{{ abstract.id }}" class="form-label">{{ 'IXIPC-abstract-authors-available'|l10n(lang) }} <span class="edit-button" data-bs-toggle="modal" data-bs-target="#edit-authors-modal">(create/edit)</span></label>
             <div class="authors-box rounded-1 p-1 h-100" id="available-authors-{{ abstract.id }}"></div>
           </div>
         </div>
-        <div class="row mb-3">
+        <div class="row mb-3 mt-5">
+          <div class="col-auto px-2">
+            <div class="authors-box rounded-1 p-1 h-100">
+              <p class="mx-2 mb-0">{{ 'IXIPC-label'|l10n(lang) }}:</p>
+              <p class="mx-2 mb-0">
+                <img alt="speaker" class="speaker-selected" style="width:20px;" src='data:image/svg+xml,<svg width="800px" height="800px" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="m 8 0 c -1.660156 0 -3 1.339844 -3 3 v 5 c 0 1.660156 1.339844 3 3 3 s 3 -1.339844 3 -3 v -5 c 0 -1.660156 -1.339844 -3 -3 -3 z m -6 6 v 2.011719 c 0 2.964843 2.164062 5.429687 5 5.90625 v 2.082031 h 2 v -2.082031 c 2.835938 -0.476563 5 -2.941407 5 -5.90625 v -2.011719 h -1.5 v 2.011719 c 0 2.5 -1.992188 4.488281 -4.5 4.488281 s -4.5 -1.988281 -4.5 -4.488281 v -2.011719 z m 0 0" fill="%23fff"/></svg>'>
+                {{ 'IXIPC-abstract-speaker'|l10n(lang)|capitalize }}
+              </p>
+              <p class="mx-2 mb-0">
+                <img alt="speaker" class="speaker" style="width:20px;" src='data:image/svg+xml,<svg width="800px" height="800px" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="m 8 0 c -1.660156 0 -3 1.339844 -3 3 v 0.9375 l -3.46875 -3.46875 l -1.0625 1.0625 l 14 14 l 1.0625 -1.0625 l -2.792969 -2.792969 c 0.789063 -1.011719 1.261719 -2.285156 1.261719 -3.664062 v -2.011719 h -1.5 v 2.011719 c 0 0.972656 -0.304688 1.867187 -0.824219 2.601562 l -1.089843 -1.089843 c 0.261718 -0.445313 0.414062 -0.964844 0.414062 -1.523438 v -5 c 0 -1.660156 -1.339844 -3 -3 -3 z m -6 6 v 2.011719 c 0 2.964843 2.164062 5.429687 5 5.90625 v 2.082031 h 2 v -2.082031 c 0.5 -0.085938 0.976562 -0.230469 1.425781 -0.429688 l -1.164062 -1.164062 c -0.398438 0.113281 -0.824219 0.175781 -1.261719 0.175781 c -2.507812 0 -4.5 -1.988281 -4.5 -4.488281 v -1.449219 l -0.5625 -0.5625 z m 3.003906 2.066406 c 0.035156 1.609375 1.320313 2.894532 2.929688 2.929688 z m 0 0" fill="%23fff"/></svg>'>
+                {{ 'IXIPC-abstract-non-speaker'|l10n(lang)|capitalize }}
+              </p>  
+            </div>
+          </div>
           <div class="col">
-            <div class="form-text">{{'IXIPC-abstract-authors-drag-and-drop'|l10n(lang)}}</div>
+            <p class="mt-0 mb-0"><span class="edit-button" data-bs-toggle="collapse" data-bs-target="#collapseHelp" aria-expanded="false" aria-controls="collapseHelp">{{'IXIPC-help-me'|l10n(lang)}}</span></p>
+            <div class="collapse form-text mt-0" id="collapseHelp">
+              1. <span class="edit-button" data-bs-toggle="modal" data-bs-target="#edit-authors-modal">{{'IXIPC-abstract-authors-drag-and-drop-1'|l10n(lang)}}</span>
+              {{'IXIPC-abstract-authors-drag-and-drop-2'|l10n(lang)}}
+            </div>    
           </div>
         </div>
 
