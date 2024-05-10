@@ -7,7 +7,7 @@
 <div class="container mb-5">
   <!-- register form -->
   <div class="row mb-3">
-    <div class="col-12 col-md-6 g-3">
+    <div class="col-12 g-3">
       <div class="card rounded-4 mb-3 h-100">
         <div class="card-body">
           <h2 class="lh-1 mb-4">{{ 'IXIPC-register'|l10n(lang) }}</h2>
@@ -22,9 +22,6 @@
                 <label for="email" class="form-label">Email</label>
                 {{ registration_form.email(class='form-control') }}
               </div>
-              <div class="col-2">
-                <button type="submit" id="register-submit" class="btn btn-primary">{{ 'IXIPC-register-submit'|l10n(lang) }}</button>
-              </div>
             </div>
             <div class="row">
               <div class="col">
@@ -33,13 +30,18 @@
                 {% endfor %}
                 {{ registration_form.recaptcha }}
               </div>
+              <div class="col">
+                <button type="submit" id="register-submit" class="btn btn-primary">{{ 'IXIPC-register-submit'|l10n(lang) }}</button>
+              </div>  
             </div>
           </form>
         </div>
       </div>
     </div>
+  </div>
+  <div class="row">
     <!-- login form -->
-    <div class="col-12 col-md-6 g-3">
+    <div class="col-12 g-3">
       <div class="card rounded-4 mb-3 h-100">
         <div class="card-body">
           <h2 class="lh-1 mb-4">{{ 'IXIPC-login'|l10n(lang) }}</h2>
@@ -54,9 +56,6 @@
                 <label for="login-form-password" class="form-label">Password</label>
                 {{ login_form.password(class='form-control') }}
               </div>
-              <div class="col-2">
-                <button type="submit" id="login-submit" class="btn btn-primary">{{ 'IXIPC-register-submit'|l10n(lang) }}</button>
-              </div>
             </div>
             <div class="row">
               <div class="col">
@@ -65,6 +64,9 @@
                 {% endfor %}
                 {{ login_form.recaptcha }}
               </div>
+              <div class="col">
+                <button type="submit" id="login-submit" class="btn btn-primary">{{ 'IXIPC-register-submit'|l10n(lang) }}</button>
+              </div>  
             </div>
           </form>
         </div>
