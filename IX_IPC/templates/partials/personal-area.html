@@ -333,6 +333,7 @@ const addAbstract = (event) => {
     div.id = 'abstract-' + String(id);
     div.innerHTML = data['html'];
     container.appendChild(div);
+    openAbstract(id);
   })
   .catch((e) => console.log(e));
 
