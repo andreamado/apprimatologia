@@ -12,8 +12,6 @@ if os.path.isdir('apprimatologia'):
 else:
     database_path = 'apprimatologia.db'
 
-print(database_path)
-
 conn = sqlite3.connect(database_path)
 conn.close()
 

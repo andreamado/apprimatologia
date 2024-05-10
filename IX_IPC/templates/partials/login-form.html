@@ -2,6 +2,15 @@
   <h2 class="mb-1">{{ 'IXIPC-personal-area'|l10n(lang) }}</h2>
   <p class="lead">{{ 'IXIPC-register-to-submit'|l10n(lang) }}</p>
 </div>
+<script>
+  function allowSubmissionLogin() {
+    document.getElementById('login-submit').removeAttribute("disabled");
+  }
+
+  function allowSubmissionRegistration() {
+    document.getElementById('register-submit').removeAttribute("disabled");
+  }
+</script>
 <script src="https://www.google.com/recaptcha/api.js?hl={{lang}}" async defer></script>
 
 <div class="container mb-5">
@@ -83,13 +92,13 @@
     grecaptcha.execute();
   }
 
-  const allowSubmissionLogin = () => {
+  {# function allowSubmissionLogin() {
     document.getElementById('login-submit').removeAttribute("disabled");
   }
 
-  const allowSubmissionRegistration = () => {
-    document.getElementById('login-submit').removeAttribute("disabled");
-  }
+  function allowSubmissionRegistration() {
+    document.getElementById('register-submit').removeAttribute("disabled");
+  } #}
 
   {# function onload() {
     document.getElementById('login-submit').onclick = validate;

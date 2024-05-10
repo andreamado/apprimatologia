@@ -249,7 +249,7 @@ def recover_credentials(language, email):
             )
     else:
         flash(app.translate('IXIPC-invalid-email', language), 'warning')
-    return redirect(url_for("IX_IPC.IXIPC", language=language))
+    return redirect(url_for("IX_IPC.IXIPC", language=language) + '#alerts')
 
 
 @bp.route('/IX_IPC/login/<language:language>', methods=['POST'])
@@ -279,6 +279,10 @@ def login(language):
                 app.translate('IXIPC-login-wrong-email-or-password', language), 
                 'warning'
             )
+            return redirect(url_for('IX_IPC.IXIPC', language=language) + '#alerts')
+    else:
+        flash('Invalid CAPTCHA', 'warning')
+        return redirect(url_for('IX_IPC.IXIPC', language=language) + '#alerts')
     
     return redirect(url_for('IX_IPC.IXIPC', language=language))
 
