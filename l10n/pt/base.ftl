@@ -142,6 +142,7 @@ IXIPC-abstract-no-speaker = Nenhum autor foi designado como orador
 IXIPC-abstract-institutions = Instituições
 IXIPC-abstract-new-institution = Nova instituição
 
+IXIPC-abstract-edit = criar/modificar
 IXIPC-abstract-authors-edit = Cria e modifica autores
 IXIPC-abstract-authors-save = Salva os autores
 IXIPC-saved-author = Autor salvo
@@ -154,10 +155,10 @@ IXIPC-saved-institution = Instituição salva
 IXIPC-authors-affiliations = Afiliações
 IXIPC-abstract-institutions-select = Instituições selecionadas
 IXIPC-abstract-institutions-available = Instituições disponíveis
-IXIPC-abstract-institutions-drag-and-drop = 
-    1. Cria instituições usando o formulário abaixo
-    2. Arrasta instituições para a área das instituições selecionadas
-    3. Arrasta as instituições selecionadas para as ordenar
+IXIPC-abstract-institutions-drag-and-drop-1 = 
+    Cria instituições
+IXIPC-abstract-institutions-drag-and-drop-2 = 
+    2. Arrasta instituições para a área das instituições selecionadas 3. Reordena as instituições selecionadas
 
 IXIPC-personal-data-first-name = Nome
 IXIPC-personal-data-last-name = Apelido

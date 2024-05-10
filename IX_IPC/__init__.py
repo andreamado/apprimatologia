@@ -206,11 +206,11 @@ def register_user(language):
                                 'IXIPC-account-creation-successful', language
                             ), 'success'
                         )
-                        return redirect(url_for("IX_IPC.IXIPC", language=language))
+                        return redirect(url_for("IX_IPC.IXIPC", language=language) + "#alerts")
         else:
             flash(app.translate('IXIPC-invalid-email', language), 'warning')
 
-    return redirect(url_for("IX_IPC.IXIPC", language=language))
+    return redirect(url_for("IX_IPC.IXIPC", language=language) + "#alerts")
 
 
 @bp.route('/IX_IPC/recover_credentials/<language:language>/<string:email>')

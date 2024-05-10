@@ -216,38 +216,51 @@
       form.appendChild(row1);
 
       // Affiliations
+      let row2title = document.createElement('div');
+      row2title.classList.add('row');
+
+      let col21title = document.createElement('div');
+      col21title.classList.add('col-6', 'px-2');
+
+      let label21 = document.createElement('label');
+      label21.setAttribute('for', 'selected-institutions-' + String(author.id));
+      label21.classList.add('form-label');
+      label21.innerHTML = "{{ 'IXIPC-abstract-institutions-select'|l10n(lang) }}";
+      col21title.appendChild(label21);
+
+      let col22title = document.createElement('div');
+      col22title.classList.add('col-6', 'px-2');
+
+      let label22 = document.createElement('label');
+      label22.setAttribute('for', 'available-institutions-' + String(author.id));
+      label22.classList.add('form-label');
+      label22.innerHTML = "{{ 'IXIPC-abstract-institutions-available'|l10n(lang) }} <span class='edit-button' data-bs-toggle='modal' data-bs-target='#edit-institutions-modal'>({{ 'IXIPC-abstract-edit'|l10n(lang) }})</span>";
+      col22title.appendChild(label22);
+
+      row2title.appendChild(col21title);
+      row2title.appendChild(col22title);
+      form.appendChild(row2title);
+
       let row2 = document.createElement('div');
       row2.classList.add('row', 'mb-4');
 
       let col21 = document.createElement('div');
       col21.classList.add('col-6', 'px-2');
 
-      let label21 = document.createElement('label');
-      label21.setAttribute('for', 'selected-institutions-' + String(author.id));
-      label21.classList.add('form-label');
-      label21.innerHTML = "{{ 'IXIPC-abstract-institutions-select'|l10n(lang) }}";
-
       let selectedBox = document.createElement('div');
       selectedBox.classList.add('authors-box', 'rounded-1', 'p-1', 'h-100');
       selectedBox.id = 'selected-institutions-' + String(author.id);
 
-      col21.appendChild(label21);
       col21.appendChild(selectedBox);
 
       let col22 = document.createElement('div');
       col22.classList.add('col-6', 'px-2');
-
-      let label22 = document.createElement('label');
-      label22.setAttribute('for', 'available-institutions-' + String(author.id));
-      label22.classList.add('form-label');
-      label22.innerHTML = "{{ 'IXIPC-abstract-institutions-available'|l10n(lang) }} <span class='edit-button' data-bs-toggle='modal' data-bs-target='#edit-institutions-modal'>(create/edit)</span>";
 
       let availableBox = document.createElement('div');
       availableBox.classList.add('authors-box', 'rounded-1', 'p-1', 'h-100');
       availableBox.id = 'available-institutions-' + String(author.id);
       availableBox.dataset.initiated = 0;
 
-      col22.appendChild(label22);
       col22.appendChild(availableBox);
 
       row2.appendChild(col21);
@@ -263,7 +276,18 @@
 
       let instructions = document.createElement('div');
       instructions.classList.add('form-text');
-      instructions.innerHTML = `{{'IXIPC-abstract-institutions-drag-and-drop'|l10n(lang)}}`;
+      let instructionsButton = document.createElement('div');
+      instructionsButton.classList.add('my-0');
+      instructionsButton.innerHTML = `<span class="edit-button" data-bs-toggle="collapse" data-bs-target="#collapseHelpAuthors" aria-expanded="false" aria-controls="collapseHelpAuthors">{{'IXIPC-help-me'|l10n(lang)}}</span>`
+      instructions.appendChild(instructionsButton);
+
+      let instructionsBody = document.createElement('div');
+      instructionsBody.classList.add('collapse', 'form-text', 'mt-0');
+      instructionsBody.id = 'collapseHelpAuthors';
+      instructionsBody.innerHTML = `1. <span class="edit-button" data-bs-toggle="modal" data-bs-target="#edit-institutions-modal">${"{{'IXIPC-abstract-institutions-drag-and-drop-1'|l10n(lang)}}"}</span> ` + "{{'IXIPC-abstract-institutions-drag-and-drop-2'|l10n(lang)}}";
+      instructions.appendChild(instructionsBody);
+
+      //instructions.innerHTML = `{{'IXIPC-abstract-institutions-drag-and-drop'|l10n(lang)}}`;
 
       col3.appendChild(instructions);
       row3.appendChild(col3);

@@ -141,6 +141,7 @@ IXIPC-abstract-no-speaker = No speaker selected
 IXIPC-abstract-institutions = Institutions
 IXIPC-abstract-new-institution = New institution
 
+IXIPC-abstract-edit = create/edit
 IXIPC-abstract-authors-edit = Create and modify authors
 IXIPC-abstract-authors-save = Save authors
 IXIPC-saved-author = Author saved
@@ -153,10 +154,9 @@ IXIPC-saved-institution = Institution saved
 IXIPC-authors-affiliations = Affiliations
 IXIPC-abstract-institutions-select = Selected institutions
 IXIPC-abstract-institutions-available = Available institutions
-IXIPC-abstract-institutions-drag-and-drop = 
-    1. Create institutions in the form below
-    2. Drag and drop the institution for selected institutions area
-    3. Drag the selected institution for ordering
+IXIPC-abstract-institutions-drag-and-drop-1 = Create institutions
+IXIPC-abstract-institutions-drag-and-drop-2 = 
+    2. Drag and drop the institution for selected institutions area 3. Reorder the selected institutions
 
 IXIPC-personal-data-first-name = First name
 IXIPC-personal-data-last-name = Last name
