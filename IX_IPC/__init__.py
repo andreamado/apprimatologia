@@ -149,6 +149,9 @@ def register_user(language):
     g.links[2]['active'] = True
 
     form = RegistrationForm()
+    if not form.validate_on_submit():
+        flash('invalid captcha!', 'warning')
+        redirect(url_for("IX_IPC.IXIPC", language=language) + "#alerts")
     
     name = form.name.data.strip()
     email = form.email.data
