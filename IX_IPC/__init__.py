@@ -80,6 +80,7 @@ class RegistrationForm(FlaskForm):
 class LoginForm(FlaskForm):
     email = StringField('login-form-email', [validators.DataRequired(), validators.Email()])
     password = PasswordField('login-form-password', [validators.DataRequired()])
+    recaptcha = RecaptchaField()
 
 class ManagementLoginForm(FlaskForm):
     password = PasswordField('login-form-password', [validators.DataRequired()])
