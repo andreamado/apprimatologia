@@ -160,7 +160,7 @@ def register_user(language):
         flash('Email is required.', 'warning')
     elif not name:
         flash('Name is required.', 'warning')
-    else:
+    elif form.validate_on_submit():
         email = sanitize_email(email)
         if email:
             with get_session() as db_session:

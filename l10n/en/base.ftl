@@ -90,6 +90,7 @@ IXIPC-register-to-submit = Register or login submit abstracts
 IXIPC-register-to-submit-logged-in = Submit abstracts for your posters and presentations!
 
 IXIPC-register-first-name = First name
+IXIPC-register-name = Name
 IXIPC-register-last-name = Last name
 IXIPC-register-submit = Submit
 IXIPC-hi = Hello

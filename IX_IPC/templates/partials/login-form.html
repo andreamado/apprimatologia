@@ -15,13 +15,9 @@
             <div class="row mb-3">
               {{ registration_form.csrf_token }}
               <div class="col-12 mb-3">
-                <label for="registration-form-name" class="form-label">{{ 'IXIPC-register-first-name'|l10n(lang) }}</label>
+                <label for="registration-form-name" class="form-label">{{ 'IXIPC-register-name'|l10n(lang) }}</label>
                 {{ registration_form.name(class='form-control') }}
               </div>
-              {# <div class="col-12 mb-3">
-                <label for="last-name" class="form-label">{{ 'IXIPC-register-last-name'|l10n(lang) }}</label>
-                <input type="text" class="form-control" id="last-name" name="last-name">
-              </div> #}
               <div class="col-12 mb-3">
                 <label for="email" class="form-label">Email</label>
                 {{ registration_form.email(class='form-control') }}
@@ -75,14 +71,6 @@
       </div>
     </div>
   </div>
-  {# <div class="row mt-4">
-    <div class="col">
-      {% for error in registration_form.recaptcha.errors %}
-        {{ error }}
-      {% endfor %}
-      {{ registration_form.recaptcha }}
-    </div>
-  </div>   #}
 </div>
 
 <script>

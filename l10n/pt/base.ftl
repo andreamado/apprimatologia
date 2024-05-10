@@ -90,6 +90,7 @@ IXIPC-personal-data-volunteer = Contacta os organizadores se te quiseres volunta
 IXIPC-register-to-submit = Regista-te para te inscreveres e submeter resumos
 IXIPC-register-to-submit-logged-in = Submete resumos para os teus posters e apresentações!
 
+IXIPC-register-name = Nome
 IXIPC-register-first-name = Nome
 IXIPC-register-last-name = Apelido
 IXIPC-register-submit = Submeter

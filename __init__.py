@@ -71,7 +71,6 @@ def create_app(test_config=None):
         )
     else:
         # load the test config if passed in
-        print()
         app.config.from_mapping(test_config)
 
     print('Warning: testing configuration!!' if app.testing else 'Production configuration')
@@ -159,11 +158,3 @@ def create_app(test_config=None):
     #     app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1
     # )
     return app
-
-# if __name__ == '__main__':
-#     import waitress
-#     waitress.serve(
-#         create_app, 
-#         port=5000, 
-#         url_scheme='https'
-#     )
