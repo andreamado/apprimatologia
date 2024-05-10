@@ -2,7 +2,7 @@
   <h2 class="mb-1">{{ 'IXIPC-personal-area'|l10n(lang) }}</h2>
   <p class="lead">{{ 'IXIPC-register-to-submit'|l10n(lang) }}</p>
 </div>
-{# <script src="https://www.google.com/recaptcha/api.js?hl={{lang}}" async defer></script> #}
+<script src="https://www.google.com/recaptcha/api.js?hl={{lang}}" async defer></script>
 
 <div class="container mb-5">
   <!-- register form -->
@@ -14,24 +14,25 @@
           <form action="{{ url_for('IX_IPC.register_user', language=lang) }}" method="post">
             <div class="row mb-3">
               {{ registration_form.csrf_token }}
-              <div class="col-12 mb-3">
+              <div class="col-12 col-sm-6 mb-3">
                 <label for="registration-form-name" class="form-label">{{ 'IXIPC-register-name'|l10n(lang) }}</label>
                 {{ registration_form.name(class='form-control') }}
               </div>
-              <div class="col-12 mb-3">
+              <div class="col-12 col-sm-6 mb-3">
                 <label for="email" class="form-label">Email</label>
                 {{ registration_form.email(class='form-control') }}
               </div>
             </div>
             <div class="row">
-              <div class="col">
+              <div class="col mb-3">
                 {% for error in registration_form.recaptcha.errors %}
                   {{ error }}
                 {% endfor %}
-                {{ registration_form.recaptcha }}
+                <div class="g-recaptcha" data-sitekey="6LcdvrYpAAAAAABBbwEG7ojVIlg44cj1Jqpg18Bg" data-callback="allowSubmissionRegistration"></div>
+                {# {{ registration_form.recaptcha }} #}
               </div>
               <div class="col">
-                <button type="submit" id="register-submit" class="btn btn-primary">{{ 'IXIPC-register-submit'|l10n(lang) }}</button>
+                <button type="submit" id="register-submit" class="btn btn-primary" disabled>{{ 'IXIPC-register-submit'|l10n(lang) }}</button>
               </div>  
             </div>
           </form>
@@ -48,24 +49,25 @@
           <form action="{{ url_for('IX_IPC.login', language=lang) }}" method="post">
             <div class="row mb-3">
               {{ login_form.csrf_token }}
-              <div class="col-12 mb-3">
+              <div class="col-12 col-sm-6 mb-3">
                 <label for="login-form-email" class="form-label">Email</label>
                 {{ login_form.email(class='form-control') }}
               </div>
-              <div class="col-12 mb-3">
+              <div class="col-12 col-sm-6 mb-3">
                 <label for="login-form-password" class="form-label">Password</label>
                 {{ login_form.password(class='form-control') }}
               </div>
             </div>
             <div class="row">
-              <div class="col">
+              <div class="col mb-3">
                 {% for error in login_form.recaptcha.errors %}
                   {{ error }}
                 {% endfor %}
-                {{ login_form.recaptcha }}
+                <div class="g-recaptcha" data-sitekey="6LcdvrYpAAAAAABBbwEG7ojVIlg44cj1Jqpg18Bg" data-callback="allowSubmissionLogin"></div>
+                {# {{ login_form.recaptcha }} #}
               </div>
               <div class="col">
-                <button type="submit" id="login-submit" class="btn btn-primary">{{ 'IXIPC-register-submit'|l10n(lang) }}</button>
+                <button type="submit" id="login-submit" class="btn btn-primary" disabled>{{ 'IXIPC-register-submit'|l10n(lang) }}</button>
               </div>  
             </div>
           </form>
@@ -81,8 +83,16 @@
     grecaptcha.execute();
   }
 
-  function onload() {
+  const allowSubmissionLogin = () => {
+    document.getElementById('login-submit').removeAttribute("disabled");
+  }
+
+  const allowSubmissionRegistration = () => {
+    document.getElementById('login-submit').removeAttribute("disabled");
+  }
+
+  {# function onload() {
     document.getElementById('login-submit').onclick = validate;
     document.getElementById('register-submit').onclick = validate;
-  }
+  } #}
 </script>
