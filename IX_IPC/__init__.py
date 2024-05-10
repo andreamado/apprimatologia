@@ -2,7 +2,7 @@ from flask import flash, render_template, redirect, url_for, Blueprint, g, reque
 from flask import current_app as app
 from flask_wtf import FlaskForm
 from flask_wtf.recaptcha import RecaptchaField
-from wtforms import EmailField, StringField, validators
+from wtforms import EmailField, StringField, PasswordField, validators
 
 from sqlalchemy import select, delete
 
@@ -79,10 +79,10 @@ class RegistrationForm(FlaskForm):
 
 class LoginForm(FlaskForm):
     email = StringField('login-form-email', [validators.DataRequired(), validators.Email()])
-    password = StringField('login-form-password', [validators.DataRequired()])
+    password = PasswordField('login-form-password', [validators.DataRequired()])
 
 class ManagementLoginForm(FlaskForm):
-    password = StringField('login-form-password', [validators.DataRequired()])
+    password = PasswordField('login-form-password', [validators.DataRequired()])
 
 
 @bp.route('/IX_IPC/<language:language>')
