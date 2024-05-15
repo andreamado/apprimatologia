@@ -85,7 +85,10 @@
           </table>
         </div>
       </div>
-      {% if payment_status == 0 -%}
+
+      <h5>{{ 'IXIPC-payment-available-after'|l10n(lang) }}</h5>
+
+      {# {% if payment_status == 0 -%}
         <h5>{{ 'IXIPC-payment-methods-available'|l10n(lang) }}</h5>
       {% endif -%}
       <div id="payment-methods" class="mb-3">
@@ -114,7 +117,7 @@
         </div>
         <div class="col" id="payment-notification"></div>
       </div>
-      {% endif -%}
+      {% endif -%} #}
     </div>
   </div>
 
