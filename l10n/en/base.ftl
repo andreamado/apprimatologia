@@ -62,6 +62,7 @@ IXIPC-payment-failed-please-approve = Please approve the payment in your MBWay a
 IXIPC-payment-failed = Registration payment failed
 IXIPC-payment-failed-reload = Please reload the page and try again
 IXIPC-payment-available-after = Payment will be available here from 01/07/2024
+IXIPC-payment-member-fee = Member registration fee
 
 IXIPC-welcome-email-subject = Welcome to the IX Iberian Primatological Conference!
 IXIPC-welcome-email-body = 
@@ -89,6 +90,8 @@ IXIPC-login-wrong-email-or-password = Wrong email or password
 IXIPC-personal-data = Personal data
 IXIPC-personal-data-student = Student
 IXIPC-personal-data-volunteer = Contact the organizers if you wish to volunteer
+IXIPC-personal-data-member = APP member
+IXIPC-personal-data-scholarship = Scholarship
 
 IXIPC-register-to-submit = Register or login submit abstracts
 IXIPC-register-to-submit-logged-in = Submit abstracts for your posters and presentations!

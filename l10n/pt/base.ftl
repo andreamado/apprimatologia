@@ -63,6 +63,7 @@ IXIPC-payment-failed-please-approve = Por favor, aprova o pagamento na tua app M
 IXIPC-payment-failed = Pagamento da inscrição falhou
 IXIPC-payment-failed-reload = Por favor, recarrega a página e tenta de novo
 IXIPC-payment-available-after = O pagamento estará disponível aqui a partir de 01/07/2024
+IXIPC-payment-member-fee = Taxa inscrição de sócio
 
 IXIPC-welcome-email-subject = Bem-vindo/a ao IX Congresso Ibérico de Primatologia!
 IXIPC-welcome-email-body =
@@ -90,6 +91,8 @@ IXIPC-login-wrong-email-or-password = Email ou password errada
 IXIPC-personal-data = Dados pessoais
 IXIPC-personal-data-student = Estudante
 IXIPC-personal-data-volunteer = Contacta os organizadores se te quiseres voluntariar
+IXIPC-personal-data-member = Sócio APP
+IXIPC-personal-data-scholarship = Bolsa
 
 IXIPC-register-to-submit = Regista-te para te inscreveres e submeter resumos
 IXIPC-register-to-submit-logged-in = Submete resumos para os teus posters e apresentações!

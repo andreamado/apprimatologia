@@ -22,11 +22,13 @@ class User(Base):
     last_name = Column(String(200))
     institution = Column(String(200))
     student = Column(Boolean)
+    member = Column(Boolean)
+    scholarship = Column(Boolean)
     organizer = Column(Boolean)
     paid_registration = Column(Boolean)
     payment_id = Column(ForeignKey('payments.id'))
 
-    def __init__(self, name, email, password=None, first_name=None, last_name=None, institution=None, student=False, paid_registration=False, organizer=False):
+    def __init__(self, name, email, password=None, first_name=None, last_name=None, institution=None, student=False, member=False, scholarship=False, paid_registration=False, organizer=False):
         self.name = name
         self.email = email
         self.password = sha256(password.encode()).hexdigest() if password else sha256(token_hex(16).encode()).hexdigest()
@@ -34,6 +36,8 @@ class User(Base):
         self.last_name = last_name
         self.institution = institution
         self.student = student
+        self.member = member
+        self.scholarship = scholarship
         self.paid_registration = paid_registration
         self.organizer = organizer
 

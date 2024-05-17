@@ -35,7 +35,7 @@
           <input name="institution" id="institution" type="text" class="form-control" value="{{g.IXIPC_user.institution if g.IXIPC_user.institution else ''}}">
         </div>
       </div>
-      <div class="row mb-3">
+      <div class="row mb-0">
         <div class="col">
           <div class="form-check form-switch">
             <input class="form-check-input" type="checkbox" role="switch" id="student"{{' checked' if g.IXIPC_user.student}}>
@@ -43,7 +43,23 @@
           </div>
         </div>
         <div class="col-auto" id="student-volunteer" hidden>
-          <p>{{ 'IXIPC-personal-data-volunteer'|l10n(lang) }}</p>
+          <p class="m-0 p-0">{{ 'IXIPC-personal-data-volunteer'|l10n(lang) }}</p>
+        </div>
+      </div>
+      <div class="row mb-0">
+        <div class="col">
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" role="switch" id="member"{{' checked' if g.IXIPC_user.member}}>
+            <label for="member" class="form-label">{{ 'IXIPC-personal-data-member'|l10n(lang) }}</label>
+          </div>
+        </div>
+      </div>
+      <div class="row mb-0" id="scholarship-selector" hidden>
+        <div class="col">
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" role="switch" id="scholarship"{{' checked' if g.IXIPC_user.scholarship}}>
+            <label for="scholarship" class="form-label">{{ 'IXIPC-personal-data-scholarship'|l10n(lang) }}</label>
+          </div>
         </div>
       </div>
     </form>
@@ -101,7 +117,7 @@
         </div>
       </div>
 
-      <p class="mb-3"><sup>*</sup> Taxa inscrição de sócio: 25€</p>
+      <p class="mb-3"><sup>*</sup> {{ 'IXIPC-payment-member-fee'|l10n(lang) }}: 25€</p>
 
       <h5>{{ 'IXIPC-payment-available-after'|l10n(lang) }}</h5>
 
@@ -271,6 +287,9 @@
 const personalDataManager = () => {
   let element = document.getElementById('personal-data');
   let studentSwitchElement = document.getElementById('student');
+  let memberSwitchElement = document.getElementById('member');
+  let scholarshipSwitchElement = document.getElementById('scholarship');
+  let scholarshipElement = document.getElementById('scholarship-selector');
   let studentVolunteerElement = document.getElementById('student-volunteer');
 
   let saveFlag = false;
@@ -281,6 +300,8 @@ const personalDataManager = () => {
 
       let data = new FormData(element);
       data.append('student', studentSwitchElement.checked);
+      data.append('member', memberSwitchElement.checked);
+      data.append('scholarship', scholarshipSwitchElement.checked);
 
       fetch("{{ url_for('IX_IPC.save_personal_data') }}", {
         method: 'POST',
@@ -300,24 +321,75 @@ const personalDataManager = () => {
     scheduleSave
   );
 
-  const updateStudent = () => {
+  const earlyBirdDate = new Date('2024-09-27');
+
+  const updatePrice = () => {
+    const prices = (earlyBirdDate > (new Date()))
+      //   non-member, member, student non-member, student member non-scholarship, student member scholarship
+        ? [150,        90,     70,                 25,                             40                         ]
+        : [200,        150,    120,                60,                             70                         ];
+    
     const priceElement = document.getElementById('final-price');
-    // TODO: update with the correct dates and prices
-    const prices = ((new Date('2024-08-16') > (new Date())))?[35, 80]:[50, 100];
-  
-    if(studentSwitchElement.checked) {
-      if(priceElement) priceElement.innerHTML = String(prices[0]) + '€';
-      studentVolunteerElement.removeAttribute('hidden');
-    } else {
-      if(priceElement) priceElement.innerHTML = String(prices[1]) + '€';
-      studentVolunteerElement.setAttribute('hidden', '');
+    if(priceElement) { 
+      if(studentSwitchElement.checked) {
+        if(memberSwitchElement.checked) {
+          if(scholarshipSwitchElement.checked) {
+            priceElement.innerHTML = String(prices[4]) + '€';
+          } else {
+            priceElement.innerHTML = String(prices[3]) + '€';
+          }
+        } else {
+          priceElement.innerHTML = String(prices[2]) + '€';
+        }
+      } else {
+        if(memberSwitchElement.checked) {
+          priceElement.innerHTML = String(prices[1]) + '€';
+        } else {
+          priceElement.innerHTML = String(prices[0]) + '€';
+        }
+      }
     }
+  }
+
+  const updateStudent = () => {  
+    if(studentSwitchElement.checked) {
+      studentVolunteerElement.removeAttribute('hidden');
+      if(memberSwitchElement.checked) {
+        scholarshipElement.removeAttribute('hidden');
+      }
+    } else {
+      studentVolunteerElement.setAttribute('hidden', '');
+      scholarshipElement.setAttribute('hidden', '');
+      scholarshipSwitchElement.checked = false;
+    }
+    updatePrice();
   }
   updateStudent();
 
   studentSwitchElement.addEventListener(
     'change', updateStudent
   );
+
+  const updateMember = () => {
+    if(memberSwitchElement.checked && studentSwitchElement.checked) {
+      scholarshipElement.removeAttribute('hidden');
+    } else {
+      scholarshipElement.setAttribute('hidden', '');
+      scholarshipSwitchElement.checked = false;
+    }
+    updatePrice();
+  }
+  updateMember();
+
+  memberSwitchElement.addEventListener(
+    'change', updateMember
+  );
+
+  scholarshipSwitchElement.addEventListener(
+    'change', updatePrice
+  )
+
+  updatePrice();
 
   return {
     'scheduleSave': scheduleSave,
