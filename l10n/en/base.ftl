@@ -164,6 +164,15 @@ IXIPC-personal-data-first-name = First name
 IXIPC-personal-data-last-name = Last name
 IXIPC-personal-data-institution = Institution
 
+IXIPC-timeline-abstract-deadline = August 15
+IXIPC-timeline-abstract-deadline-description = Abstract submission deadline
+IXIPC-timeline-abstract-decision-deadline = September 16
+IXIPC-timeline-abstract-decision-deadline-description = Announcement of abstract decisions
+IXIPC-timeline-earlybird-deadline = September 27
+IXIPC-timeline-earlybird-deadline-description = Early bird registration deadline
+IXIPC-timeline-conference = November 21-23
+IXIPC-timeline-conference-description = Conference
+
 admission-title = Join APP!
 admission-description = Fill the form below to join APP
 
