@@ -4,6 +4,9 @@
 <div class="main-content-dark text-white smaller-column">
   <h1 class="lh-1">{{ 'admission-title'|l10n(lang) }}</h1>
   <p class="lead">{{ 'admission-description'|l10n(lang) }}</p>
+
+  <h3>{{ 'registration-available-from'|l10n(lang) }}</h3>
+
   <form action="/APP/junta-te" method="post">
     {{ form.csrf_token }}
     <div class="rounded-4 card mb-3">
