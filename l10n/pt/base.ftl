@@ -49,18 +49,20 @@ IXIPC-timeline = Timeline
 IXIPC-registration = Inscrição
 IXIPC-payment-description = Pagamento da inscrição no IX Congresso Ibérico de Primatologia 
 IXIPC-payment-methods-available = Métodos de pagamento disponíveis
-IXIPC-payment-normal = Normal
-IXIPC-payment-student = Estudante
-IXIPC-payment-earlybird = Early bird (até 15/08/2024)
-IXIPC-payment-late = Depois de 15/08/2024
+IXIPC-payment-non-member = Não sócio APP
+IXIPC-payment-member = Sócio APP
+IXIPC-payment-non-member-student = Estudante não sócio APP
+IXIPC-payment-member-student-with-fellowship = Estudante sócio APP com bolsa
+IXIPC-payment-member-student-without-fellowship = Estudante sócio APP sem bolsa
+IXIPC-payment-earlybird = Early bird (até 27/09/2024)
+IXIPC-payment-late = Depois de 27/09/2024
 IXIPC-payment-pay = Pagar
 IXIPC-payment-confirmed = Pagamento da inscrição confirmado
 IXIPC-payment-pending = À espera da confirmação de pagamento
 IXIPC-payment-failed-please-approve = Por favor, aprova o pagamento na tua app MBWay
 IXIPC-payment-failed = Pagamento da inscrição falhou
 IXIPC-payment-failed-reload = Por favor, recarrega a página e tenta de novo
-IXIPC-payment-available-after = O pagamento estará disponível aqui a partir de 15/06/2024
-Payment will be available after 15/06/2024
+IXIPC-payment-available-after = O pagamento estará disponível aqui a partir de 01/07/2024
 
 IXIPC-welcome-email-subject = Bem-vindo/a ao IX Congresso Ibérico de Primatologia!
 IXIPC-welcome-email-body =
