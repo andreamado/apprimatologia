@@ -251,3 +251,6 @@ registration-available-from = Inscrições online disponíveis a partir de 01/07
 members-list-title = Lista de associados
 
 upload-form-drag-and-drop = Arrasta um ficheiro ou carrega aqui
+
+IXIPC-scientific-committee = Comité científico
+IXIPC-organizing-committee = Comité organizador

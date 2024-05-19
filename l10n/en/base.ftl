@@ -249,3 +249,6 @@ registration-available-from = Online registration available from 01/07/2024
 members-list-title = Lista de associados
 
 upload-form-drag-and-drop = Drag and drop or click to select a file
+
+IXIPC-scientific-committee = Scientific committee
+IXIPC-organizing-committee = Organizing committee
