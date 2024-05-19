@@ -25,11 +25,13 @@ class User(Base):
     member = Column(Boolean)
     scholarship = Column(Boolean)
     unemployed = Column(Boolean)
+    competition_talk = Column(Boolean)
+    competition_photography = Column(Boolean)
     organizer = Column(Boolean)
     paid_registration = Column(Boolean)
     payment_id = Column(ForeignKey('payments.id'))
 
-    def __init__(self, name, email, password=None, first_name=None, last_name=None, institution=None, student=False, member=False, scholarship=False, unemployed=False, paid_registration=False, organizer=False):
+    def __init__(self, name, email, password=None, first_name=None, last_name=None, institution=None, student=False, member=False, scholarship=False, unemployed=False, competition_talk=False, competition_photography=False, paid_registration=False, organizer=False):
         self.name = name
         self.email = email
         self.password = sha256(password.encode()).hexdigest() if password else sha256(token_hex(16).encode()).hexdigest()
@@ -40,6 +42,8 @@ class User(Base):
         self.member = member
         self.scholarship = scholarship
         self.unemployed = unemployed
+        self.competition_talk = competition_talk
+        self.competition_photography = competition_photography
         self.paid_registration = paid_registration
         self.organizer = organizer
 

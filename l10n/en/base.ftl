@@ -96,6 +96,8 @@ IXIPC-personal-data-student = Student
 IXIPC-personal-data-volunteer = Contact the organizers if you wish to volunteer
 IXIPC-personal-data-member = APP member
 IXIPC-personal-data-scholarship = Scholarship
+IXIPC-personal-data-competition-talk = I want to participate in the best poster/talk competition
+IXIPC-personal-data-competition-photography = I want to participate in the Cláudia Sousa photography competition
 
 IXIPC-register-to-submit = Register or login submit abstracts
 IXIPC-register-to-submit-logged-in = Submit abstracts for your posters and presentations!
