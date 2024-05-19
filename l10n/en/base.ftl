@@ -46,13 +46,17 @@ IXIPC-invited-speakers = Invited speakers
 IXIPC-timeline = Timeline
 
 IXIPC-registration = Registration
-IXIPC-payment-description = IX Iberian Primatological Conference registration fee
+IXIPC-payment-description = Registration fee
 IXIPC-payment-methods-available = Payment methods available
-IXIPC-payment-non-member = Non APP member
-IXIPC-payment-member = APP member
-IXIPC-payment-non-member-student = Non APP student
-IXIPC-payment-member-student-with-fellowship = APP student w/ scholarship
-IXIPC-payment-member-student-without-fellowship = APP student w/o scholarship
+IXIPC-payment-non-member = Non member
+IXIPC-payment-member = Member
+IXIPC-payment-non-member-student = Non member student
+IXIPC-payment-member-student-with-fellowship = Member student w/ scholarship
+IXIPC-payment-member-student-without-fellowship = Member student w/o scholarship
+IXIPC-payment-unemployed-member = Unemployed member
+IXIPC-payment-unemployed-non-member = Unemployed non member
+IXIPC-payment-unemployed = Unemployed
+IXIPC-payment-member-types = Members of APP or APE are eligible for the reduced fee
 IXIPC-payment-earlybird = Early bird (until 27/09/2024)
 IXIPC-payment-late = After 27/09/2024
 IXIPC-payment-pay = Pay
@@ -223,9 +227,9 @@ registration-form-name = Name
 number = Number
 
 # TODO: check the translation of quota
-registration-form-quota-title = Quota (????)
-registration-form-regular-quota = Regular quota (????) (40€/year)
-registration-form-reduced-quota = Reduced Quota (????) (25€/year)
+registration-form-quota-title = Fee
+registration-form-regular-quota = Regular fee (40€/year)
+registration-form-reduced-quota = Reduced fee (25€/year)
 registration-form-voluntary-donation = Voluntary donation
 registration-form-reduced-quota-explanation = Requires upload of a copy of proof of student status (Ph.D. students are not considered students, unless they prove they receive no salary and/or scholarship)
 registration-form-total = Total
