@@ -23,7 +23,6 @@ def register(app):
         postal_code = StringField('registration-form-postal-code', [validators.Length(min=1, max=20)])
         country = StringField('registration-form-country', [validators.Length(min=1, max=50)])
         phone_number = TelField('registration-form-phone-number', [validators.Length(min=1, max=20)])
-        fax = TelField('registration-form-fax', [validators.Length(min=1, max=20)])
         email = EmailField('registration-form-email', [validators.DataRequired(), validators.Email()])
 
         work_place = StringField('registration-form-work-place', [validators.Length(min=1, max=50)])
@@ -32,7 +31,6 @@ def register(app):
         work_postal_code = StringField('registration-form-work-postal-code', [validators.Length(min=1, max=20)])
         work_country = StringField('registration-form-work-country', [validators.Length(min=1, max=20)])
         work_phone_number = TelField('registration-form-work-phone-number', [validators.Length(min=1, max=20)])
-        work_fax = TelField('registration-form-work-fax', [validators.Length(min=1, max=20)])
         work_email = EmailField('registration-form-work-email', [validators.DataRequired(), validators.Email()])
         research_line = TextAreaField('registration-form-research-line')
         species = StringField('registration-form-species')
@@ -44,8 +42,8 @@ def register(app):
 
         supporting_member_name_1 = StringField('registration-form-name', [validators.Length(min=1, max=100)])
         supporting_member_number_1 = IntegerField('number')
-        supporting_member_name_2 = StringField('registration-form-name', [validators.Length(min=1, max=100)])
-        supporting_member_number_2 = IntegerField('number')
+        # supporting_member_name_2 = StringField('registration-form-name', [validators.Length(min=1, max=100)])
+        # supporting_member_number_2 = IntegerField('number')
 
         quota_type = RadioField('registration-form-quota-type', choices=[(1, 'regular-quota'), (2, 'reduced-quota')], default=1)
         voluntary_donation = DecimalField('registration-form-voluntary-donation', places=2)

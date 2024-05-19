@@ -177,7 +177,7 @@ IXIPC-timeline-abstract-deadline-description = Deadline para submissão de resum
 IXIPC-timeline-abstract-decision-deadline = 16 de Setembro 
 IXIPC-timeline-abstract-decision-deadline-description = Comunicação das decisões
 IXIPC-timeline-earlybird-deadline = 27 de Setembro
-IXIPC-timeline-earlybird-deadline-description = Dealine do registo "early bird"
+IXIPC-timeline-earlybird-deadline-description = Deadline do registo "early bird"
 IXIPC-timeline-conference = 21-23 de Novembro
 IXIPC-timeline-conference-description = Conferência
 
@@ -220,7 +220,7 @@ no = Não
 registration-form-upload-payment-proof = Comprovativo de pagamento
 registration-form-upload-reduced-quota-proof = Comprovativo de estatuto de estudante
 
-registration-form-supporting-members = Sócios que apoiam a proposta de admissão
+registration-form-supporting-members = Sócio que apoia a proposta de admissão
 registration-form-name = Nome
 number = Número
 

@@ -218,7 +218,7 @@ no = No
 registration-form-upload-payment-proof = Upload the payment proof
 registration-form-upload-reduced-quota-proof = Upload the student status proof
 
-registration-form-supporting-members = Members who support my application
+registration-form-supporting-members = Member who support my application
 registration-form-name = Name
 number = Number
 

@@ -50,9 +50,6 @@
               {{ form.phone_number|label(lang)|safe }} {{ form.phone_number(size=50, class='form-control') }}
             </div>
             <div class="col">
-              {{ form.fax|label(lang)|safe }} {{ form.fax(size=50, class='form-control') }}
-            </div>
-            <div class="col">
               {{ form.email|label(lang)|safe }} {{ form.email(size=50, class='form-control') }}
             </div>
           </div>
@@ -90,9 +87,6 @@
               {{ form.work_phone_number|label(lang)|safe }} {{ form.work_phone_number(size=50, class='form-control') }}
             </div>
             <div class="col">
-              {{ form.work_fax|label(lang)|safe }} {{ form.work_fax(size=50, class='form-control') }}
-            </div>
-            <div class="col">
               {{ form.work_email|label(lang)|safe }} {{ form.work_email(size=50, class='form-control') }}
             </div>
           </div>
@@ -127,19 +121,19 @@
           </div>
           <div class="row mb-3">
             {% for subfield in form.address_correspondence -%}
-            <div class="col-2">
+            <div class="col-auto">
               {{subfield}} {{ subfield|label(lang)|safe }}
             </div>
             {% endfor -%}
           </div>
           <div class="row">
-            <div class="col-8">
+            <div class="col">
               {{ form.data_authorization|label(lang)|safe }}
             </div>
           </div>
           <div class="row">
             {% for subfield in form.data_authorization -%}
-            <div class="col-2">
+            <div class="col-auto">
               {{subfield}} {{ subfield|label(lang)|safe }}
             </div>
             {% endfor -%}
@@ -159,14 +153,14 @@
               {{ form.supporting_member_number_1|label(lang)|safe }} 1 {{ form.supporting_member_number_1(size=10, class='form-control') }}
             </div>
           </div>
-          <div class="row mb-3">
+          {# <div class="row mb-3">
             <div class="col-8">
               {{ form.supporting_member_name_2|label(lang)|safe }} {{ form.supporting_member_name_2(class='form-control') }}
             </div>
             <div class="col-4">
               {{ form.supporting_member_number_2|label(lang)|safe }} 2 {{ form.supporting_member_number_2(size=10, class='form-control') }}
             </div>
-          </div>
+          </div> #}
         </div>
       </div>
     </div>
