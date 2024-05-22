@@ -10,4 +10,4 @@ phonenumbers==8.13.34
 reportlab==4.2.0
 imap_tools==1.6.
 markdown==3.5.2
-requests==2.31.0
+requests==2.32.0
