@@ -64,7 +64,7 @@ def login_IXIPC_management_required(view):
                 kwargs['language'] = 'pt'
             
             return redirect(
-                url_for('IX_IPC.management', language=kwargs['language'])
+                url_for('IX_IPC.IXIPC', language=kwargs['language'])
             )
 
         return view(**kwargs)
@@ -822,9 +822,6 @@ def load_all_affiliations():
     """Loads all affiliations of the current user's authors"""
 
     with get_session() as db_session:
-        # db_session.add(Affiliation(2, 1, 0))
-        # db_session.commit()
-
         affiliations = db_session.execute(
             select(Affiliation)
             .select_from(Affiliation)
@@ -1219,28 +1216,6 @@ def creditcard_payment_error(language):
     return redirect(url_for('IX_IPC.IXIPC', language=language))
 
 
-@bp.route('/IX_IPC/management/login', methods=['POST'])
-@bp.route('/IX_IPC/management/login/<language:language>', methods=['POST'])
-def management_login(language='pt'):
-    """Logs a manager in
-    
-    Logs a manager in and redirects to the main page. Displays a warning in case
-    the login is unsuccessful. 
-    """
-
-    form = ManagementLoginForm()
-    if form.validate_on_submit():
-        if form.password.data == app.config['IXIPC_MANAGER_PASSWORD']:
-            session['IXIPC_manager'] = True
-        else:
-            flash(
-                app.translate('IXIPC-login-wrong-email-or-password', language), 
-                'warning'
-            )
-    
-    return redirect(url_for('IX_IPC.management', language=language))
-
-
 @bp.route('/IX_IPC/management/logout')
 @bp.route('/IX_IPC/management/logout/<language:language>')
 @login_IXIPC_management_required
@@ -1251,7 +1226,7 @@ def management_logout(language='pt'):
     """
 
     session.clear()
-    return redirect(url_for('IX_IPC.management', language=language))
+    return redirect(url_for('IX_IPC.IXIPC', language=language))
 
 
 @bp.route('/IX_IPC/management/email/send', methods=['POST'])
@@ -1293,25 +1268,16 @@ def send_email(language='pt'):
 
 @bp.route('/IX_IPC/management')
 @bp.route('/IX_IPC/management/<language:language>')
+@login_IXIPC_management_required
 def management(language='pt'):
     """
     """
 
-    # TODO: add recaptcha
-    if g.IXIPC_manager:
-        return render_template(
-            'management/management.html',
-            lang=language,
-            text_column=True
-        )
-    else:
-        form = ManagementLoginForm()
-        return render_template(
-            'management/login.html',
-            form=form,
-            lang=language,
-            text_column=True
-        )
+    return render_template(
+        'management/management.html',
+        lang=language,
+        text_column=True
+    )
 
 
 @bp.route('/IX_IPC/management/participants_csv_summary')
