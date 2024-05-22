@@ -117,7 +117,14 @@
           if(!speakerDefined) {
             warnings += '<br>&emsp;- ' + "{{ 'IXIPC-abstract-no-speaker'|l10n(lang) }}";
             submissionValid = false;
-          }  
+          }
+        }
+
+        if(!(['cognition', 'conservation', 'etnoprimatology', 'genetics', 'socioecology'].includes(abstractElement.querySelector('#scientific-area-'+id).value))) {
+          if(abstractElement.querySelector('#scientific-area-desc-'+id).value.trim() == '') {
+            warnings += '<br>&emsp;- ' + "{{ 'IXIPC-abstract-no-scientific-area'|l10n(lang) }}";
+            submissionValid = false;
+          }
         }
 
         if(!submissionValid)
@@ -185,9 +192,24 @@
         abstractModified = true;
         setTimeout(saveAbstract, saveTimeout);
       }
+
+      let scientificAreaElement = abstractElement.querySelector('#scientific-area-' + id);
+      let scientificAreaOtherElement = abstractElement.querySelector('#scientific-area-desc-' + id);
+      const scientificAreaUpdate = () => {
+        if(scientificAreaElement.value == 'other') {
+          scientificAreaOtherElement.removeAttribute('hidden');
+        } else {
+          scientificAreaOtherElement.setAttribute('hidden', '');
+        }
+        scheduleAbstractSave();
+      }
+
       abstractElement.querySelector('#abstract-type').addEventListener('input', scheduleAbstractSave);
       abstractElement.querySelector('#abstract-title').addEventListener('input', scheduleAbstractSave);
       abstractElement.querySelector('#abstract-body').addEventListener('input', scheduleAbstractSave);
+      abstractElement.querySelector('#abstract-keywords').addEventListener('input', scheduleAbstractSave);
+      scientificAreaElement.addEventListener('change', scientificAreaUpdate);
+      scientificAreaOtherElement.addEventListener('input', scheduleAbstractSave);
 
       abstractAuthors.registerAbstract(id);
     };

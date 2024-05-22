@@ -459,9 +459,15 @@ def save_abstract_local(form, g) -> str:
                 else:
                     return json.dumps({'error': 'unrecognized abstract type'})
             
-            if 'keywords' in form:
+            if 'abstract-keywords' in form:
                 # TODO: process keywords to guarantee they are shown in a uniform fashion
-                abstract.keywords = form['keywords'].strip()
+                abstract.keywords = form['abstract-keywords'].strip()
+
+            if 'scientific-area' in form:
+                if form['scientific-area'] == 'other':
+                    abstract.scientific_area = form['scientific-area-desc']
+                else:
+                    abstract.scientific_area = form['scientific-area']
         else:
             abstract.title = ''
             abstract.abstract = ''

@@ -226,6 +226,7 @@ class Abstract(Base):
     title = Column(Text)
     abstract = Column(Text)
     abstract_type = Column(Integer)
+    scientific_area = Column(String(50))
     keywords = Column(Text)
     owner = Column(ForeignKey('users.id'))
     submitted = Column(Boolean)
@@ -236,10 +237,11 @@ class Abstract(Base):
     created = Column(UtcDateTime(), default=utcnow())
     modified = Column(UtcDateTime(), onupdate=utcnow())
 
-    def __init__(self, owner, title=None, abstract=None, abstract_type=None, keywords='', submitted=False, acceptance_status=0):
+    def __init__(self, owner, title=None, abstract=None, abstract_type=None, scientific_area=None, keywords='', submitted=False, acceptance_status=0):
         self.title = title
         self.abstract = abstract
         self.abstract_type = abstract_type
+        self.scientific_area = scientific_area
         self.keywords = keywords
         self.owner = owner
         self.submitted = submitted
@@ -256,6 +258,10 @@ class Abstract(Base):
         self.acceptance_status = 2
       
     def undecide(self):
+        self.acceptance_status = 0
+
+    def unsubmit(self):
+        self.submitted = False
         self.acceptance_status = 0
 
 

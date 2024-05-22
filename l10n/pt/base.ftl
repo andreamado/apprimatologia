@@ -155,6 +155,14 @@ IXIPC-abstract-no-authors = Tens de selecionar pelo menos um autor
 IXIPC-abstract-no-speaker = Nenhum autor foi designado como orador
 IXIPC-abstract-institutions = Instituições
 IXIPC-abstract-new-institution = Nova instituição
+IXIPC-abstract-scientific-area = Área científica
+IXIPC-abstract-scientific-area-cognition = Cognição
+IXIPC-abstract-scientific-area-conservation = Conservação
+IXIPC-abstract-scientific-area-etnoprimatology = Etnoprimatologia
+IXIPC-abstract-scientific-area-genetics = Genética
+IXIPC-abstract-scientific-area-socioecology = Socioecologia
+IXIPC-abstract-scientific-area-other = Outra
+IXIPC-abstract-no-scientific-area = Tens de selecionar uma área científica
 
 IXIPC-abstract-edit = criar/modificar
 IXIPC-abstract-authors-edit = Cria e modifica autores
