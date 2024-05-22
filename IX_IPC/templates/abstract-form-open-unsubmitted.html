@@ -36,20 +36,22 @@
             <label for="abstract-title" class="form-label">{{ 'IXIPC-abstract-scientific-area'|l10n(lang) }}</label>
           </div>
         </div>
-        {% set scientificAreaOptions = ['cognition', 'conservation', 'etnoprimatology', 'genetics', 'socioecology'] -%}
+        {% set scientificAreaOptions = ['cognition', 'conservation', 'etnoprimatology', 'genetics', 'socioecology', ''] -%}
+        {% set cognitionSelected = (abstract.scientific_area == 'cognition' or abstract.scientific_area == '') -%}
+        {% set otherSelected = (abstract.scientific_area not in scientificAreaOptions) -%}
         <div class="row mb-3">
           <div class="col-12 col-md-5">
             <select class="form-select" id="scientific-area-{{abstract.id}}" name="scientific-area" aria-label="Scientific area">
-              <option value="cognition" {{'selected' if (abstract.scientific_area == 'cognition' or abstract.scientific_area is none)}}>{{ 'IXIPC-abstract-scientific-area-cognition'|l10n(lang) }}</option>
+              <option value="cognition" {{'selected' if cognitionSelected }}>{{ 'IXIPC-abstract-scientific-area-cognition'|l10n(lang) }}</option>
               <option value="conservation" {{'selected' if abstract.scientific_area == 'conservation'}}>{{ 'IXIPC-abstract-scientific-area-conservation'|l10n(lang) }}</option>
               <option value="etnoprimatology" {{'selected' if abstract.scientific_area == 'etnoprimatology'}}>{{ 'IXIPC-abstract-scientific-area-etnoprimatology'|l10n(lang) }}</option>
               <option value="genetics" {{'selected' if abstract.scientific_area == 'genetics'}}>{{ 'IXIPC-abstract-scientific-area-genetics'|l10n(lang) }}</option>
               <option value="socioecology {{'selected' if abstract.scientific_area == 'socioecology'}}">{{ 'IXIPC-abstract-scientific-area-socioecology'|l10n(lang) }}</option>
-              <option value="other" {{'selected' if abstract.scientific_area not in scientificAreaOptions}}>{{ 'IXIPC-abstract-scientific-area-other'|l10n(lang) }}</option>
+              <option value="other" {{'selected' if otherSelected}}>{{ 'IXIPC-abstract-scientific-area-other'|l10n(lang) }}</option>
             </select>
           </div>
           <div class="col-12 col-md-7">
-            <input type="text" class="form-control" id="scientific-area-desc-{{abstract.id}}" name="scientific-area-desc" placeholder="{{ 'IXIPC-abstract-scientific-area'|l10n(lang) }}" value="{{abstract.scientific_area if abstract.scientific_area not in scientificAreaOptions}}" {{'hidden' if abstract.scientific_area in scientificAreaOptions}}>
+            <input type="text" class="form-control" id="scientific-area-desc-{{abstract.id}}" name="scientific-area-desc" placeholder="{{ 'IXIPC-abstract-scientific-area'|l10n(lang) }}" value="{{abstract.scientific_area if otherSelected}}" {{'hidden' if not otherSelected}}>
           </div>
         </div>
 

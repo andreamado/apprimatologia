@@ -237,7 +237,7 @@ class Abstract(Base):
     created = Column(UtcDateTime(), default=utcnow())
     modified = Column(UtcDateTime(), onupdate=utcnow())
 
-    def __init__(self, owner, title=None, abstract=None, abstract_type=None, scientific_area=None, keywords='', submitted=False, acceptance_status=0):
+    def __init__(self, owner, title=None, abstract=None, abstract_type=None, scientific_area='', keywords='', submitted=False, acceptance_status=0):
         self.title = title
         self.abstract = abstract
         self.abstract_type = abstract_type
