@@ -1623,6 +1623,51 @@ abstract_filters = {
                   .order_by(Abstract.id),
 }
 
+def process_authors_affiliations(abstract_id):
+    author_list = []
+    affiliations_list = []
+
+    with get_session() as db_session:
+        authors = db_session.execute(
+            select(AbstractAuthor)
+              .where(AbstractAuthor.abstract_id == abstract_id)
+              .order_by(AbstractAuthor.order)
+        ).scalars()
+
+        for author in authors:
+            author.details = db_session.get(Author, author.author_id)
+            author.affiliations = Affiliation.get_list(db_session, author.author_id)
+
+            author_desc = {
+                'first_name': author.details.first_name,
+                'last_name': author.details.last_name,
+                'presenter': author.presenter,
+                'formatted': '',
+                'affiliations': []
+            }
+
+            if author.presenter:
+                author_desc['formatted'] += f'<u>{author.details.first_name} {author.details.last_name}</u>'
+            else:
+                author_desc['formatted'] += f'{author.details.first_name} {author.details.last_name}'
+
+
+            for affiliation in author.affiliations:
+                id = affiliation.institution_id
+
+                for i, registered_affiliation in enumerate(affiliations_list):
+                    if id == registered_affiliation.id:
+                        author_desc['affiliations'].append(i)
+                        break
+                else:
+                    author_desc['affiliations'].append(len(affiliations_list))
+                    affiliations_list.append(affiliation.institution)
+                    
+            author_list.append(author_desc)
+
+    return author_list, affiliations_list
+        
+
 @bp.route('/IX_IPC/management/abstracts_pdf_report')
 @bp.route('/IX_IPC/management/abstracts_pdf_report/<string:filter>')
 @login_IXIPC_management_required
@@ -1637,6 +1682,7 @@ def abstracts_pdf_report(filter=''):
     styles = getSampleStyleSheet()
     name_style = ParagraphStyle('Name', parent=styles['Normal'], fontName='Helvetica-Bold', fontSize=16)
     bold_style = ParagraphStyle('Bold', parent=styles['Normal'], fontName='Helvetica-Bold')
+    style_small = ParagraphStyle('Small', parent=styles['Normal'], fontSize=8)
 
     def first_page(canvas, doc):
         canvas.saveState()
@@ -1663,48 +1709,42 @@ def abstracts_pdf_report(filter=''):
         abstracts = db_session.execute(abstract_filters[filter]).scalars()
 
         story = [Spacer(1, 8*cm)] #[PageBreak()]
-        style = styles["Normal"]
+        style = styles['Normal']
 
         for i, abstract in enumerate(abstracts):
             abstract_description = [
                 Paragraph(f'{i+1}. {AbstractType.to_string(abstract.abstract_type)} — {abstract.title}', name_style),
                 Spacer(1, 0.5*cm),
-                Paragraph(f'Abstract: {abstract.abstract}', style),
+                Paragraph(f'<b>Scientific area:</b> {abstract.scientific_area.lower()}', style),
                 Spacer(1, 0.2*cm),
-                Paragraph(f'Authors:', style),
+                Paragraph(f'<b>Abstract:</b> {abstract.abstract}', style),
+                Spacer(1, 0.2*cm),
+                Paragraph(f'<b>Authors:</b>', style),
                 Spacer(1, 0.05*cm)
             ]
 
-            authors = db_session.execute(
-                select(AbstractAuthor)
-                  .where(AbstractAuthor.abstract_id == abstract.id)
-                  .order_by(AbstractAuthor.order)
-            ).scalars()
+            authors, affiliations = process_authors_affiliations(abstract.id)
 
-            for j, author in enumerate(authors):
-                author.details = db_session.get(Author, author.author_id)
-                author.affiliations = Affiliation.get_list(db_session, author.author_id)
+            author_str = ''
+            for author in authors:
+                author_str += author['formatted'] + '<sup>'
+                for i in author['affiliations']:
+                    author_str += f'{i+1},'
+                author_str = author_str[:-1] + '</sup>, '
 
-                author_str = f'{j+1}. '
-                if author.presenter:
-                    author_str += f'<u>{author.details.first_name} {author.details.last_name}</u>'
-                else:
-                    author_str += f'{author.details.first_name} {author.details.last_name}'
+            abstract_description.append(Paragraph(author_str[:-2], style))
+            abstract_description.append(Spacer(1, 0.1*cm))
 
-                abstract_description.append(Paragraph(author_str, style))
+            for i, affiliation in enumerate(affiliations):
+                abstract_description.append(Paragraph(
+                    f'  <i>[{i+1}] {affiliation.name}, {affiliation.address} ({affiliation.country.capitalize()})</i>', 
+                    style_small
+                ))
                 abstract_description.append(Spacer(1, 0.05*cm))
-
-                for af in author.affiliations:
-                    abstract_description.append(Paragraph(
-                        f'   { af.institution.name } — { af.institution.country } ({ af.institution.address })',
-                        style
-                    ))
-                    abstract_description.append(Spacer(1, 0.05*cm))
-                abstract_description.append(Spacer(1, 0.2*cm))
                     
             abstract_description.append(Spacer(1, 0.4*cm))
             abstract_description.append(
-                Paragraph(f'Keywords: ' + abstract.keywords, style)
+                Paragraph(f'<b>Keywords:</b> ' + abstract.keywords, style)
             )
             abstract_description.append(Spacer(1, 0.4*cm))
 
@@ -1734,7 +1774,6 @@ def abstracts_pdf_report(filter=''):
         download_name='abstracts_list.pdf',
         mimetype='application/pdf'
     )
-
 
 
 @bp.route('/IX_IPC/management/abstracts_csv_summary')

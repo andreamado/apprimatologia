@@ -45,6 +45,17 @@
     </div>
     <div class="row mb-3">
       <div class="col">
+        <h5 class="mb-0">{{'IXIPC-abstract-scientific-area'|l10n(lang)}}:</h5>
+        {% set scientificAreaOptions = ['cognition', 'conservation', 'etnoprimatology', 'genetics', 'socioecology'] -%}
+        {% if abstract.scientific_area in scientificAreaOptions -%}
+        <p class="ms-3">{{ ('IXIPC-abstract-scientific-area-' + abstract.scientific_area)|l10n(lang) }}</p>
+        {% else -%}
+        <p class="ms-3">{{ abstract.scientific_area }} ({{'IXIPC-abstract-scientific-area-other'|l10n(lang)}})</p>
+        {% endif -%}
+      </div>
+    </div>
+    <div class="row mb-3">
+      <div class="col">
         <h5>Authors:</h5>
         {% for a in abstract.authors -%}
           <div class="ms-3 mb-3">
