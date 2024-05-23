@@ -36,6 +36,13 @@
         </form>
       </div>
     </div>
+    <div class="row mb-3">
+      <div class="col">
+        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#unsubmit-modal">
+          Force unsubmit
+        </button>
+      </div>
+    </div>
     {% endif -%}
     <div class="row mb-3">
       <div class="col">
@@ -87,6 +94,25 @@
     </div>
   </div>
 </div>
+
+<div class="modal fade" id="unsubmit-modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="unsubmitLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content text-black">
+      <div class="modal-header border-0">
+        <h1 class="modal-title fs-5 mb-0" id="unsubmitLabel">Are you sure you want to unsubmit this abstract?</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Proceed if you are sure you want to unsubmit the abstract. The abstract will have to be resubmitted by the user. Do this if the user wants to modify the abstract or if the organization recommended changes to the abstract. Send an email to the user warning them that the abstract has been unsubmitted and explaining why.</p>
+      </div>
+      <div class="modal-footer border-0 mt-0">
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-danger" id="unsubmit-confirm" data-bs-dismiss="modal">Unsubmit</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 {% if abstract.submitted -%}
 <script defer>
   const acceptanceStatus = document.acceptanceStatus.filters;
@@ -104,6 +130,13 @@
         }
       });
   }
+
+  document.getElementById('unsubmit-confirm').addEventListener('click', () => {
+    fetch("{{ url_for('IX_IPC.force_unsubmit', id=abstract.id) }}")
+      .then( () => { location.reload(); } )
+      .catch((e) => console.log(e));
+      
+  })
 </script>
 {% endif -%}
 

@@ -28,15 +28,15 @@
             <div class="col">
               {% set scientificAreaOptions = ['cognition', 'conservation', 'etnoprimatology', 'genetics', 'socioecology'] -%}
               {% if abstract.scientific_area in scientificAreaOptions -%}
-              <p class="mb-0">{{'IXIPC-abstract-scientific-area'|l10n(lang)}}: {{ ('IXIPC-abstract-scientific-area-' + abstract.scientific_area)|l10n(lang) }}</p>
+              <p class="mb-0"><b>{{'IXIPC-abstract-scientific-area'|l10n(lang)}}:</b> {{ ('IXIPC-abstract-scientific-area-' + abstract.scientific_area)|l10n(lang) }}</p>
               {% else -%}
-              <p class="mb-0">{{'IXIPC-abstract-scientific-area'|l10n(lang)}}: {{ abstract.scientific_area }} ({{'IXIPC-abstract-scientific-area-other'|l10n(lang)}})</p>
+              <p class="mb-0"><b>{{'IXIPC-abstract-scientific-area'|l10n(lang)}}:</b> {{ abstract.scientific_area }} ({{'IXIPC-abstract-scientific-area-other'|l10n(lang)}})</p>
               {% endif -%}
             </div>
           </div>
           <div class="row mb-3">
             <div class="col">
-              <p>Keywords: {{ abstract.keywords }}</p>
+              <p><b>{{ 'IXIPC-abstract-keywords'|l10n(lang) }}:</b> {{ abstract.keywords }}</p>
             </div>
           </div>
           <div class="row mb-1">
@@ -46,11 +46,14 @@
           </div>
           <div class="row mb-3">
             <div class="col">
-              <ol>
-                {% for author in authors -%}
-                <li>{{author.firstName}} {{author.lastName}} {{ ('(' + 'IXIPC-abstract-speaker'|l10n(lang) + ')') if author.presenter}}</li>
+                <p class="mb-0">
+                  {% for a in abstract.authors -%}
+                  <span class="{{ 'presenter' if a.presenter }}">{{a.first_name}} {{a.last_name}}</span><sup>{{a.affiliations|join(',')}}</sup>{{ ", " if not loop.last else "" }}
+                  {% endfor -%}
+                </p>
+                {% for a in abstract.affiliations -%}
+                  <p class="mb-0 ms-3 small"><i>{{loop.index}}. {{a.name}}, {{ a.address }} ({{ a.country }})</i></p>
                 {% endfor -%}
-              </ol>
             </div>
           </div>
           <div class="row">

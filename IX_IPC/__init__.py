@@ -496,6 +496,11 @@ def load_abstract(language, id=None, csrf_token = None):
 
     with get_session() as db_session:
         abstract = db_session.get(Abstract, id)
+
+        abstract.authors, abstract.affiliations = process_authors_affiliations(abstract.id)
+        for author in abstract.authors:
+            author['affiliations'] = map(lambda x: str(x+1), author['affiliations'])
+
         if g.IXIPC_user.id == abstract.owner:
             if abstract.submitted:
                 return json.dumps({
@@ -1602,6 +1607,22 @@ def update_abstract_acceptance_status(id, new_status):
         except:
             return json.dumps({
                 'error': f'Failed to update abstract {id}.'
+            }), 500
+
+
+@bp.route('/IX_IPC/management/unsubmit_abstract/<int:id>')
+@login_IXIPC_management_required
+def force_unsubmit(id):
+    """Unsubmit a previously submitted abstract"""
+    with get_session() as db_session:
+        try:
+            abstract = db_session.get(Abstract, id)
+            abstract.unsubmit()
+            db_session.commit()
+            return json.dumps(''), 200
+        except:
+            return json.dumps({
+                'error': f'Failed to unsubmit abstract {id}.'
             }), 500
 
 abstract_filters = {
