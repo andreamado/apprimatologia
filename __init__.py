@@ -153,7 +153,7 @@ def create_app(test_config=None):
     app.jinja_env.filters['word_counter'] = word_counter_generator()
     app.jinja_env.filters['keyword_counter'] = word_counter_generator(';')
 
-    # app.wsgi_app = ProxyFix(
-    #     app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1
-    # )
+    app.wsgi_app = ProxyFix(
+        app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1
+    )
     return app
