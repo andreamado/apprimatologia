@@ -1839,20 +1839,11 @@ def abstract_details(id, language='pt'):
     with get_session() as db_session:
         abstract = db_session.get(Abstract, id)
 
-        abstract.authors = db_session.execute(
-            select(AbstractAuthor)
-              .where(AbstractAuthor.abstract_id == abstract.id)
-              .order_by(AbstractAuthor.order)
-        ).scalars().all()
-
         abstract.user = db_session.get(User, abstract.owner)
+        abstract.authors, abstract.affiliations = process_authors_affiliations(abstract.id)
 
         for author in abstract.authors:
-            author.author = db_session.get(Author, author.author_id)
-            author.affiliations = Affiliation.get_list(db_session, author.author_id)
-
-            for a in author.affiliations:
-                print(a)
+            author['affiliations'] = map(lambda x: str(x+1), author['affiliations'])
 
         return render_template(
             'management/abstract_details.html',

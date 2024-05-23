@@ -57,16 +57,16 @@
     <div class="row mb-3">
       <div class="col">
         <h5>Authors:</h5>
-        {% for a in abstract.authors -%}
-          <div class="ms-3 mb-3">
-            <p class="mb-0"><span class="{{ 'presenter' if a.presenter }}">{{a.author.first_name}} {{a.author.last_name}}</span> ({{a.author.email}})</p>
-            {% for af in a.affiliations -%}
-            <p class="mt-0 mb-0">
-              {{ af.institution.name }} — {{ af.institution.country }} ({{ af.institution.address }})
-            </p>  
+        <div class="ms-3 mb-3">
+          <p class="mb-0">
+            {% for a in abstract.authors -%}
+            <span class="{{ 'presenter' if a.presenter }}">{{a.first_name}} {{a.last_name}}</span><sup>{{a.affiliations|join(',')}}</sup>{{ ", " if not loop.last else "" }}
+            {% endfor -%}
+          </p>
+          {% for a in abstract.affiliations -%}
+            <p class="mb-0 ms-3 small"><i>{{loop.index}}. {{a.name}}, {{ a.address }} ({{ a.country }})</i></p>
           {% endfor -%}
-          </div>
-        {% endfor -%}
+        </div>
       </div>
     </div>
     <div class="row mb-3">
