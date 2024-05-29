@@ -101,6 +101,27 @@ def init_db_command() -> None:
         db_session.add(profile)
 
 
+        # Isa Aleixo Pais
+        photo = file_models.UploadedFile(
+            original_name = 'IsaAleixoPais.jpg',
+            file_path=os.path.join(app.root_path, '..', 'content', 'IsaAleixoPais.jpg')
+        )
+        db_session.add(photo)
+
+        profile = models.Profile(
+            name='Isa Aleixo-Pais', 
+            description_pt='Isa Aleixo-Pais é pós-doutoranda no Centro de Investigação de Montanha no Instituto Politécnico de Bragança, onde desenvolve trabalho com a comunidade pastoril a fim de determinar adaptações às alterações climáticas. Em 2023 concluiu o doutoramento em Antropologia Biológica e Biologia da Conservação pela Universidade de Cardiff, País de Gales, em colaboração com o Centro em Rede de Investigação em Antropologia (CRIA-NOVA FCSH/IN2PAST). Desde 2010 que integra equipas de investigação e conservação de primatas não-humanos em Madagáscar e África Ocidental. A sua investigação combina técnicas de biologia molecular (ex. DNA metabarcoding) e antropologia com o objectivo de estudar sistemas socio-ecológicos em que humanos e animais não-humanos co-habitam e partilham recursos naturais.', 
+            description_en='Isa Aleixo-Pais é pós-doutoranda no Centro de Investigação de Montanha no Instituto Politécnico de Bragança, onde desenvolve trabalho com a comunidade pastoril a fim de determinar adaptações às alterações climáticas. Em 2023 concluiu o doutoramento em Antropologia Biológica e Biologia da Conservação pela Universidade de Cardiff, País de Gales, em colaboração com o Centro em Rede de Investigação em Antropologia (CRIA-NOVA FCSH/IN2PAST). Desde 2010 que integra equipas de investigação e conservação de primatas não-humanos em Madagáscar e África Ocidental. A sua investigação combina técnicas de biologia molecular (ex. DNA metabarcoding) e antropologia com o objectivo de estudar sistemas socio-ecológicos em que humanos e animais não-humanos co-habitam e partilham recursos naturais.',
+            direction=True,
+            position_pt='',
+            position_en='',
+            photo=photo.id,
+            website='https://www.cienciavitae.pt/portal/en/3B1F-4EA6-5719',
+            orcid='0000-0003-2730-3688'
+        )
+        db_session.add(profile)
+
+
         # Susana Costa
         photo = file_models.UploadedFile(
             original_name = 'SusanaCosta.jpg',
@@ -192,31 +213,31 @@ def init_db_command() -> None:
         db_session.add(news)
 
         news = models.News(
-        title_pt = 'IX Congresso Ibérico de Primatologia', 
-        title_en = 'IX Iberian Primatological Conference', 
-        body_pt  = "APP is happy to announce the IX Iberian Primatological Conference. \
-                    The conference will take place in Vila do Conde from **21 to 23 November** 2024. \
-                    Registration will be available from mid-April. \
-                    Stay tuned!", 
-        body_en  =  "APP is happy to announce the IX Iberian Primatological Conference. \
+            title_pt = 'IX Congresso Ibérico de Primatologia', 
+            title_en = 'IX Iberian Primatological Conference', 
+            body_pt  = "APP is happy to announce the IX Iberian Primatological Conference. \
                         The conference will take place in Vila do Conde from **21 to 23 November** 2024. \
                         Registration will be available from mid-April. \
-                        Stay tuned!",
-        image    =  image.id
+                        Stay tuned!", 
+            body_en  =  "APP is happy to announce the IX Iberian Primatological Conference. \
+                            The conference will take place in Vila do Conde from **21 to 23 November** 2024. \
+                            Registration will be available from mid-April. \
+                            Stay tuned!",
+            image    =  image.id
         )
         db_session.add(news)
 
         news = models.News(
-        title_pt = 'IX Congresso Ibérico de Primatologia', 
-        title_en = 'IX Iberian Primatological Conference', 
-        body_pt  = "APP is happy to announce the IX Iberian Primatological Conference. \
-                    The conference will take place in Vila do Conde from **21 to 23 November** 2024. \
-                    Registration will be available from mid-April. \
-                    Stay tuned!", 
-        body_en  =  "APP is happy to announce the IX Iberian Primatological Conference. \
-                    The conference will take place in Vila do Conde from **21 to 23 November** 2024. \
-                    Registration will be available from mid-April. \
-                    Stay tuned!"
+            title_pt = 'IX Congresso Ibérico de Primatologia', 
+            title_en = 'IX Iberian Primatological Conference', 
+            body_pt  = "APP is happy to announce the IX Iberian Primatological Conference. \
+                        The conference will take place in Vila do Conde from **21 to 23 November** 2024. \
+                        Registration will be available from mid-April. \
+                        Stay tuned!", 
+            body_en  =  "APP is happy to announce the IX Iberian Primatological Conference. \
+                        The conference will take place in Vila do Conde from **21 to 23 November** 2024. \
+                        Registration will be available from mid-April. \
+                        Stay tuned!"
         )
 
         db_session.add(news)
