@@ -264,17 +264,24 @@ def login(language):
     if form.validate_on_submit():
         email = sanitize_email(form.email.data)
 
-        with get_session() as db_session:
-            user = db_session.execute(
-                select(User).filter_by(email=email)
-            ).scalar_one()
+        try:
+            with get_session() as db_session:
+                user = db_session.execute(
+                    select(User).filter_by(email=email)
+                ).scalar_one()
 
-        if user and user.check_password(form.password.data):
-            session.clear()
-            session['IXIPC_user_id'] = user.id
-            if user.organizer:
-                session['IXIPC_manager'] = True
-        else:
+            if user and user.check_password(form.password.data):
+                session.clear()
+                session['IXIPC_user_id'] = user.id
+                if user.organizer:
+                    session['IXIPC_manager'] = True
+            else:
+                flash(
+                    app.translate('IXIPC-login-wrong-email-or-password', language), 
+                    'warning'
+                )
+                return redirect(url_for('IX_IPC.IXIPC', language=language) + '#alerts')
+        except:
             flash(
                 app.translate('IXIPC-login-wrong-email-or-password', language), 
                 'warning'
