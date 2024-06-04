@@ -182,6 +182,26 @@ def init_db_command() -> None:
         db_session.add(profile)
 
 
+        # Ivo Colmonero Costeira
+        photo = file_models.UploadedFile(
+            original_name = 'IvoColmoneroCosteira.jpg',
+            file_path=os.path.join(app.root_path, '..', 'content', 'IvoColmoneroCosteira.jpg')
+        )
+        db_session.add(photo)
+
+        profile = models.Profile(
+            name='Ivo Colmonero Costeira', 
+            description_pt="Ivo Colmonero Costeira is a PhD student at Cardiff University, UK, and a research collaborator at the University of Porto and the University of Coimbra, Portugal.  He has been working since 2017 on the conservation of guenons (tribe Cercopithecini) in West Africa, and for his PhD he has been investigating how the socio-cultural importance of non-human primate species changed throughout history and it's link to current population structure, genetic diversity and past fluctuations of effective population size. His work requires the combined use of of genetic/genomic and ethnographic tools.", 
+            description_en="Ivo Colmonero Costeira is a PhD student at Cardiff University, UK, and a research collaborator at the University of Porto and the University of Coimbra, Portugal.  He has been working since 2017 on the conservation of guenons (tribe Cercopithecini) in West Africa, and for his PhD he has been investigating how the socio-cultural importance of non-human primate species changed throughout history and it's link to current population structure, genetic diversity and past fluctuations of effective population size. His work requires the combined use of of genetic/genomic and ethnographic tools.",
+            direction=True,
+            position_pt='Tesoureiro',
+            position_en='Treasurer',
+            photo=photo.id,
+            orcid='0000-0001-9914-0713'
+        )
+        db_session.add(profile)
+
+
         image_file = file_models.UploadedFile(
             original_name='pexels-egor-kamelev-802208_small.jpg',
             file_path=os.path.join(app.root_path, 'static', 'img', 'pexels-egor-kamelev-802208_small.jpg')
