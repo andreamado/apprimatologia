@@ -260,5 +260,5 @@ members-list-title = Lista de associados
 
 upload-form-drag-and-drop = Arrasta um ficheiro ou carrega aqui
 
-IXIPC-scientific-committee = Comité científico
-IXIPC-organizing-committee = Comité organizador
+IXIPC-scientific-committee = Comissão científica
+IXIPC-organizing-committee = Comissão organizadora
