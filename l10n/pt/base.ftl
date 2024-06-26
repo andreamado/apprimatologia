@@ -41,6 +41,11 @@ IXIPC-place = Local
 IXIPC-register-dates = 21 a 23 de Novembro
 
 IXIPC-essential-information = Informação essencial
+IXIPC-essential-information-where-stay = Onde ficar?
+IXIPC-essential-information-where-stay-file = Preparámos sugestões de onde ficar. Vê  
+IXIPC-essential-information-where-stay-here = aqui
+IXIPC-essential-information-contact = Contacto da organização
+
 IXIPC-personal-area = Área pessoal
 IXIPC-program = Programa
 IXIPC-invited-speakers = Oradores convidados
@@ -262,3 +267,5 @@ upload-form-drag-and-drop = Arrasta um ficheiro ou carrega aqui
 
 IXIPC-scientific-committee = Comissão científica
 IXIPC-organizing-committee = Comissão organizadora
+
+IXIPC-invited-speakers-soon = Vamos anunciar os oradores convidados em breve!

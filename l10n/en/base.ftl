@@ -40,6 +40,11 @@ IXIPC-place = Venue
 IXIPC-register-dates = November 21-23
 
 IXIPC-essential-information = Essential information
+IXIPC-essential-information-where-stay = Where can I stay?
+IXIPC-essential-information-where-stay-file = We prepared a file with suggestions for places to stay. Check it 
+IXIPC-essential-information-where-stay-here = here
+IXIPC-essential-information-contact = Organization contact
+
 IXIPC-personal-area = Personal area
 IXIPC-program = Program
 IXIPC-invited-speakers = Invited speakers
@@ -260,3 +265,5 @@ upload-form-drag-and-drop = Drag and drop or click to select a file
 
 IXIPC-scientific-committee = Scientific committee
 IXIPC-organizing-committee = Organizing committee
+
+IXIPC-invited-speakers-soon = We will announce the invited speakers soon!
