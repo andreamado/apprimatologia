@@ -123,6 +123,7 @@ class Profile(Base):
     description_en = Column(Text)
 
     direction = Column(Boolean)
+    direction_order = Column(Integer)
     position_pt = Column(Text)
     position_en = Column(Text)
 
@@ -134,12 +135,13 @@ class Profile(Base):
     created = Column(UtcDateTime(), default=utcnow())
     modified = Column(UtcDateTime(), onupdate=utcnow())
 
-    def __init__(self, user_id=None, name=None, description_pt=None, description_en=None, direction=False, position_pt=None, position_en=None, photo=None, website=None, orcid=None):
+    def __init__(self, user_id=None, name=None, description_pt=None, description_en=None, direction=False, direction_order=10000, position_pt=None, position_en=None, photo=None, website=None, orcid=None):
         self.user_id = user_id
         self.name = name
         self.description_pt = description_pt
         self.description_en = description_en
         self.direction = direction
+        self.direction_order = direction_order
         self.position_pt = position_pt
         self.position_en = position_en
         self.photo = photo

@@ -2,8 +2,8 @@
 
 {% block main -%}
   <div class="container text-white mb-3">
-    <div class="row">
-      <h1 class="lh-1 mb-0">{{ 'members-title' | l10n(lang) }}</h1>
+    {# <div class="row"> #}
+      {# <h1 class="lh-1 mb-0">{{ 'members-title' | l10n(lang) }}</h1> #}
       <div class="row row-cols-1 row-cols-md-3 g-5">
         {% for member in direction %}
         <a class="col member-card text-white mb-2" href="{{url_for('associado.profile', language=lang, id=member.id)}}">
@@ -15,6 +15,6 @@
         </a>
         {% endfor %}
       </div>
-    </div>
+    {# </div> #}
   </div>
 {% endblock main -%}

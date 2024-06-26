@@ -86,7 +86,7 @@ def membros(language='pt'):
         direction = db_session.execute(
             select(Profile)
               .where(Profile.direction == True)
-              .order_by(Profile.name)
+              .order_by(Profile.direction_order)
         ).scalars()
 
         return render_template(
