@@ -62,7 +62,7 @@ IXIPC-payment-member-student-without-fellowship = Estudante membro sem bolsa
 IXIPC-payment-unemployed-member = Membro desempregado
 IXIPC-payment-unemployed-non-member = Desempregado não membro
 IXIPC-payment-unemployed = Desempregado
-IXIPC-payment-member-types = Consideram-se membros os sócios da APP ou da APE
+IXIPC-payment-member-types = Consideram-se membros os associados da APP ou da APE
 IXIPC-payment-earlybird = Early bird (até 27/09/2024)
 IXIPC-payment-late = Depois de 27/09/2024
 IXIPC-payment-pay = Pagar
@@ -72,7 +72,7 @@ IXIPC-payment-failed-please-approve = Por favor, aprova o pagamento na tua app M
 IXIPC-payment-failed = Pagamento da inscrição falhou
 IXIPC-payment-failed-reload = Por favor, recarrega a página e tenta de novo
 IXIPC-payment-available-after = O pagamento estará disponível aqui a partir de 01/07/2024
-IXIPC-payment-member-fee = Taxa inscrição de sócio
+IXIPC-payment-member-fee = Taxa inscrição de associado
 
 IXIPC-welcome-email-subject = Bem-vindo/a ao IX Congresso Ibérico de Primatologia!
 IXIPC-welcome-email-body =
@@ -100,7 +100,7 @@ IXIPC-login-wrong-email-or-password = Email ou password errada
 IXIPC-personal-data = Dados pessoais
 IXIPC-personal-data-student = Estudante
 IXIPC-personal-data-volunteer = Contacta os organizadores se te quiseres voluntariar
-IXIPC-personal-data-member = Sócio APP ou APE
+IXIPC-personal-data-member = Membro APP ou APE
 IXIPC-personal-data-scholarship = Bolsa
 IXIPC-personal-data-competition-talk = Quero participar no concurso de melhor poster/apresentação oral
 IXIPC-personal-data-competition-photography = Quero participar no concurso de fotografia Cláudia Sousa
@@ -239,7 +239,7 @@ no = Não
 registration-form-upload-payment-proof = Comprovativo de pagamento
 registration-form-upload-reduced-quota-proof = Comprovativo de estatuto de estudante
 
-registration-form-supporting-members = Sócio que apoia a proposta de admissão
+registration-form-supporting-members = Associado que apoia a proposta de admissão
 registration-form-name = Nome
 number = Número
 
