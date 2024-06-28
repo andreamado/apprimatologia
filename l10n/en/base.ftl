@@ -48,6 +48,8 @@ IXIPC-travel-guide-what-visit = What to visit
 IXIPC-travel-guide-get-there = How to get to Vila do Conde
 IXIPC-travel-guide-where-eat = Where to eat
 
+IXIPC-conference-dinner = Conference dinner
+
 IXIPC-updates-soon = This section will soon be updated!
 
 IXIPC-personal-area = Personal area
@@ -75,7 +77,7 @@ IXIPC-payment-pending = Awaiting payment confirmation
 IXIPC-payment-failed-please-approve = Please approve the payment in your MBWay app
 IXIPC-payment-failed = Registration payment failed
 IXIPC-payment-failed-reload = Please reload the page and try again
-IXIPC-payment-available-after = Payment will be available here from 01/07/2024
+IXIPC-payment-available-after = Payment will be available here from 15/08/2024
 IXIPC-payment-member-fee = Member registration fee
 
 IXIPC-welcome-email-subject = Welcome to the IX Iberian Primatological Conference!
