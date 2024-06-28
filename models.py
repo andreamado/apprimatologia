@@ -111,6 +111,11 @@ class Member(Base):
         return f'<Member {self.given_name!r} {self.family_name!r})>'
 
 
+# direction: 0 normal member
+# direction: 1 direction
+# direction: 2 assembly
+# direction: 3 supervisory board
+
 class Profile(Base):
     __tablename__ = 'profiles'
 
@@ -122,7 +127,7 @@ class Profile(Base):
     description_pt = Column(Text)
     description_en = Column(Text)
 
-    direction = Column(Boolean)
+    direction = Column(Integer)
     direction_order = Column(Integer)
     position_pt = Column(Text)
     position_en = Column(Text)

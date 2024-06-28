@@ -85,13 +85,27 @@ def membros(language='pt'):
     with get_session() as db_session:
         direction = db_session.execute(
             select(Profile)
-              .where(Profile.direction == True)
+              .where(Profile.direction == 1)
+              .order_by(Profile.direction_order)
+        ).scalars()
+
+        assembly = db_session.execute(
+            select(Profile)
+              .where(Profile.direction == 2)
+              .order_by(Profile.direction_order)
+        ).scalars()
+
+        supervisory_board = db_session.execute(
+            select(Profile)
+              .where(Profile.direction == 3)
               .order_by(Profile.direction_order)
         ).scalars()
 
         return render_template(
             'membros.html',
             direction=direction,
+            assembly=assembly,
+            supervisory_board=supervisory_board,
             lang=language
         )
 

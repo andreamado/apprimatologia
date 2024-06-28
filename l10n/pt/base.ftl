@@ -5,6 +5,8 @@ index-join = Junta-te à APP!
 index-IXIPC-enroll = Inscreve-te aqui!
 
 members-title = Direcção
+members-assembly-title = Mesa da Assembleia
+members-supervisory-board-title = Conselho Fiscal
 
 link-app = APP
 link-news = Notícias

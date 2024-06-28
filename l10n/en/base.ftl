@@ -5,6 +5,8 @@ index-join = Join APP!
 index-IXIPC-enroll = Register here!
 
 members-title = Direction
+members-assembly-title = Assembly
+members-supervisory-board-title = Supervisory board
 
 link-app = APP
 link-news = News
