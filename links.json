@@ -4,6 +4,6 @@
     ]},
     {"name": "link-news",    "active": false, "url": "main_site.noticias",  "submenus": []},
     {"name": "link-events",  "active": false, "url": "IX_IPC.IXIPC",   "submenus": []},
-    {"name": "link-contact", "active": false, "url": "main_site.contacto",  "submenus": []},
+    {"name": "link-about",   "active": false, "url": "main_site.sobre",  "submenus": []},
     {"name": "link-members", "active": false, "url": "main_site.membros",   "submenus": []}
 ]

@@ -62,15 +62,15 @@ def noticias(language='pt'):
         )
 
 
-@bp.route('/contacto/<language:language>')
-@bp.route('/contacto/')
-def contacto(language='pt'):
-    """Contacts page"""
+@bp.route('/sobre/<language:language>')
+@bp.route('/sobre/')
+def sobre(language='pt'):
+    """About page"""
 
     g.links[3]['active'] = True
     return render_template(
-        'contacto.html', 
-        background_monkey=True, 
+        'sobre.html', 
+        background_monkey=False, 
         lang=language
     )
 
