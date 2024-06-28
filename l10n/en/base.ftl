@@ -36,10 +36,17 @@ IXIPC-place = Venue
 IXIPC-register-dates = November 21-23
 
 IXIPC-essential-information = Essential information
-IXIPC-essential-information-where-stay = Where can I stay?
-IXIPC-essential-information-where-stay-file = We prepared a file with suggestions for places to stay. Check it 
-IXIPC-essential-information-where-stay-here = here
 IXIPC-essential-information-contact = Organization contact
+
+IXIPC-travel-guide = Travel guide
+IXIPC-travel-guide-where-stay = Where to stay
+IXIPC-travel-guide-where-stay-file = We prepared a file with suggestions for places to stay. Check it 
+IXIPC-travel-guide-where-stay-here = here
+IXIPC-travel-guide-what-visit = What to visit
+IXIPC-travel-guide-get-there = How to get to Vila do Conde
+IXIPC-travel-guide-where-eat = Where to eat
+
+IXIPC-updates-soon = This section will soon be updated!
 
 IXIPC-personal-area = Personal area
 IXIPC-program = Program
