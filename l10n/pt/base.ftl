@@ -9,6 +9,8 @@ members-assembly-title = Mesa da Assembleia
 members-supervisory-board-title = Conselho Fiscal
 
 about-description = Texto a descrever a APP e as suas actividades. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+about-contacts = Contactos
+about-regulamento-interno = Internal regulations
 
 link-app = APP
 link-news = Notícias

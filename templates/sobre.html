@@ -3,18 +3,20 @@
       <div class="main-content-dark text-white">
         <h1 class="lh-1 mb-4">{{ 'title'|l10n(lang) }}</h1>
         <p class="short-column">{{ 'about-description'|l10n(lang) }}</p>
+        <div class="mt-4 h4"><a class="white-link" target="_blank" href="{{ url_for('static', filename='docs/regulamento_interno_app.pdf') }}">{{ 'about-regulamento-interno'|l10n(lang) }}</a></div>
 
         <div class="col-lg-6 justify-content-start h4 rounded-4 pt-5">
+          
+          <h3>{{ 'about-contacts'|l10n(lang) }}</h3>
           <div class="mb-4">
             <strong>Email</strong><br>
             aportprimatologia@gmail.com
           </div>
           <br>
           <div class="d-flex">
-            <a href="https://m.facebook.com/p/Associa%C3%A7%C3%A3o-Portuguesa-de-Primatologia-100082994737894/"><img src="{{ url_for('static', filename='img/facebook.svg') }}" alt="facebook logo"  style="height: 50px;" /></a> <br>
-            <a class="ms-4" href="https://x.com/app_portuguese"><img src="{{ url_for('static', filename='img/twitter.svg') }}" alt="twitter logo"  style="height: 50px;" /> <br>
+            <a target="_blank" href="https://m.facebook.com/p/Associa%C3%A7%C3%A3o-Portuguesa-de-Primatologia-100082994737894/"><img src="{{ url_for('static', filename='img/facebook.svg') }}" alt="facebook logo" style="height: 50px;"/></a> <br>
+            <a target="_blank" class="ms-4" href="https://x.com/app_portuguese"><img src="{{ url_for('static', filename='img/twitter.svg') }}" alt="twitter logo" style="height: 50px;" /> <br>
           </div>
         </div>
-      
       </div>
 {% endblock main -%}
