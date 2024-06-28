@@ -263,5 +263,3 @@ upload-form-drag-and-drop = Arrasta um ficheiro ou carrega aqui
 
 IXIPC-scientific-committee = Comissão científica
 IXIPC-organizing-committee = Comissão organizadora
-
-IXIPC-invited-speakers-soon = Vamos anunciar os oradores convidados em breve!
