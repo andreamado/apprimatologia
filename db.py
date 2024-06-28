@@ -209,8 +209,8 @@ def init_db_command() -> None:
             description_en='Joana Roque de Pinho is an ecologist and environmental anthropologist whose research focuses on changing West and East African sub-humid and dryland social-ecological systems; and how members of rural natural-resource reliant communities experience and understand environmental changes. She is most passionate about collaborating directly with rural community members as collaborative researchers/visual ethnographers through participatory visual research methodologies. For the MYNA project, she explores the intersection of religious transformations with livelihoods, land tenure/use changes and climatic instability. She contributes a multi-sited Kenyan case-study that explores the neglected role of Christianity in Maasailand’s social-ecological dynamics, and participates in the Mongolia and Mozambique case studies.',
             direction=2,
             direction_order=1,
-            position_pt='Presidente da Mesa da Assembleia',
-            position_en='President of the Assembly',
+            position_pt='Presidente',
+            position_en='President',
             photo=photo.id,
             orcid='0000-0002-4659-2684'
         )

@@ -3,11 +3,11 @@
 {% block main -%}
 <div class="main-content-dark text-white smaller-column">
   <h1 class="lh-1">{{ 'admission-title'|l10n(lang) }}</h1>
-  <p class="lead">{{ 'admission-description'|l10n(lang) }}</p>
+  {# <p class="lead">{{ 'admission-description'|l10n(lang) }}</p> #}
 
   <h3>{{ 'registration-available-from'|l10n(lang) }}</h3>
 
-  <form action="/APP/junta-te" method="post">
+  {# <form action="/APP/junta-te" method="post">
     {{ form.csrf_token }}
     <div class="rounded-4 card mb-3">
       <div class="card-body">
@@ -153,14 +153,6 @@
               {{ form.supporting_member_number_1|label(lang)|safe }} 1 {{ form.supporting_member_number_1(size=10, class='form-control') }}
             </div>
           </div>
-          {# <div class="row mb-3">
-            <div class="col-8">
-              {{ form.supporting_member_name_2|label(lang)|safe }} {{ form.supporting_member_name_2(class='form-control') }}
-            </div>
-            <div class="col-4">
-              {{ form.supporting_member_number_2|label(lang)|safe }} 2 {{ form.supporting_member_number_2(size=10, class='form-control') }}
-            </div>
-          </div> #}
         </div>
       </div>
     </div>
@@ -241,8 +233,8 @@
         {{ form.recaptcha }}
       </div>
     </div>
-  </form>
-  <script>
+  </form> #}
+  {# <script>
     const update_total = () => {
       let total = parseFloat(document.getElementById('voluntary_donation').value);
       if (isNaN(total)) {
@@ -284,6 +276,6 @@
       dropArea = document.getElementById('admission-upload-reduced-quota-proof'),
       csrfToken = '{{ csrf_token() }}'
     );
-  </script>
+  </script> #}
 </div>
 {% endblock -%}

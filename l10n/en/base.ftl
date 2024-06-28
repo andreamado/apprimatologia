@@ -266,7 +266,7 @@ registration-form-transfer-explanation =
     NIB: 003521690003032293030 <br>
     Caixa Geral de Depósitos
 registration-form-check-explanation = To: Associação Portuguesa de Primatologia
-registration-available-from = Online registration available from 01/07/2024
+registration-available-from = Online registration will be available from 15/08/2024
 
 members-list-title = Lista de associados
 
