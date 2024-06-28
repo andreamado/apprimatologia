@@ -4,13 +4,19 @@
   <div class="container text-white mb-3">
     {# <div class="row"> #}
       <h1 class="lh-1 mb-5">{{ 'members-title' | l10n(lang) }}</h1>
-      <div class="row row-cols-1 row-cols-md-3 g-5">
+      <div class="row row-cols-1 row-cols-md-4 g-5">
         {% for member in direction %}
         <a class="col member-card text-white mb-2" href="{{url_for('associado.profile', language=lang, id=member.id)}}">
           <div class="h-100">
             <img class="rounded-circle w-100 mb-3" src="{{url_for('file.get', id=member.photo)}}" alt="{{member.name}} photo">
             <h5 class="ps-2 card-title">{{member.name}}</h5>
-            <p class="ps-2 direction-position"><small>{{member.position_pt}}</small></p>
+            <p class="ps-2 direction-position">
+              {% if lang=='pt' -%}
+              <small>{{member.position_pt}}</small>
+              {% else -%}
+              <small>{{member.position_en}}</small>
+              {% endif -%}
+            </p>
           </div>
         </a>
         {% endfor %}
@@ -18,13 +24,19 @@
     {# </div> #}
     {# <div class="row"> #}
       <h1 class="lh-1 my-5">{{ 'members-assembly-title' | l10n(lang) }}</h1>
-      <div class="row row-cols-1 row-cols-md-3 g-5">
+      <div class="row row-cols-1 row-cols-md-4 g-5">
         {% for member in assembly %}
         <a class="col member-card text-white mb-2" href="{{url_for('associado.profile', language=lang, id=member.id)}}">
           <div class="h-100">
             <img class="rounded-circle w-100 mb-3" src="{{url_for('file.get', id=member.photo)}}" alt="{{member.name}} photo">
             <h5 class="ps-2 card-title">{{member.name}}</h5>
-            <p class="ps-2 direction-position"><small>{{member.position_pt}}</small></p>
+            <p class="ps-2 direction-position">
+              {% if lang=='pt' -%}
+              <small>{{member.position_pt}}</small>
+              {% else -%}
+              <small>{{member.position_en}}</small>
+              {% endif -%}
+            </p>
           </div>
         </a>
         {% endfor %}
@@ -32,13 +44,19 @@
     {# </div>
     <div class="row"> #}
       <h1 class="lh-1 my-5">{{ 'members-supervisory-board-title' | l10n(lang) }}</h1>
-      <div class="row row-cols-1 row-cols-md-3 g-5">
+      <div class="row row-cols-1 row-cols-md-4 g-5">
         {% for member in supervisory_board %}
         <a class="col member-card text-white mb-2" href="{{url_for('associado.profile', language=lang, id=member.id)}}">
           <div class="h-100">
             <img class="rounded-circle w-100 mb-3" src="{{url_for('file.get', id=member.photo)}}" alt="{{member.name}} photo">
             <h5 class="ps-2 card-title">{{member.name}}</h5>
-            <p class="ps-2 direction-position"><small>{{member.position_pt}}</small></p>
+            <p class="ps-2 direction-position">
+              {% if lang=='pt' -%}
+              <small>{{member.position_pt}}</small>
+              {% else -%}
+              <small>{{member.position_en}}</small>
+              {% endif -%}
+            </p>
           </div>
         </a>
         {% endfor %}
