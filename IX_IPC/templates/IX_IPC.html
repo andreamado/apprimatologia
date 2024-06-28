@@ -1,18 +1,20 @@
 {% extends "base.html" -%}
 
 {% block main -%}
-<div class="main-content-dark smaller-column">
+<div class="main-content-IXIPC smaller-column">
   {% if organizer -%}
-  <h4><a class="white-link" href="{{ url_for('IX_IPC.management', language=lang) }}">Management area</a></h4>
+  <h4><a class="dark-link" href="{{ url_for('IX_IPC.management', language=lang) }}">Management area</a></h4>
   {% endif -%}
   <hr class="separator mb-1">
   <!-- Main header -->
   {# <h2 id="IXIPC-title" class="lh-1 mb-1 text-white" data-offset="100">{{ 'IXIPC-title'|l10n(lang) }}</h2> #}
-  <img src="{{ url_for('static', filename='img/IPC_Text Black_Logo.png') }}" alt="IXIPC logo" width="100%">
+  <img src="{{ url_for('static', filename='img/IPC_Text Colour_Logo.png') }}" alt="IXIPC logo" width="100%">
   {# <p id="IXIPC-subtitle" class="lead lh-1 mb-4 text-white" data-offset="100">Beyond Boundaries: Integrating Primate Research</p> #}
   {# <img class="mb-3" src="{{ url_for('static', filename='img/pexels-egor-kamelev-802208_small.jpg') }}" width="100%" alt="" style="opacity:0.9;"> #}
-  <div class="text-white mb-5">
-    {{ 'IXIPC-description'|l10n(lang)|safe }}
+  <div class="mb-5" style="text-align: justify;">
+    <p>{{ 'IXIPC-description-intro'|l10n(lang) }}</p>
+    <p>{{ 'IXIPC-description-main'|l10n(lang) }}</p>
+    <p><i>{{ 'IXIPC-description-end'|l10n(lang) }}</i></p>
   </div>
 
   <hr class="separator mb-5" id="alerts">
@@ -20,39 +22,39 @@
   {% include 'partials/alerts.html' -%}
 
   <!-- Essential information -->
-  <div class="text-white mb-5" id="essential-information">
+  <div class="mb-5" id="essential-information">
     {% include 'partials/essential-information.html' -%}
   </div>
 
   <hr class="separator mb-5">
 
   <!-- Timeline -->
-  <div class="text-white mb-5" id="timeline">
+  <div class="mb-5" id="timeline">
     {% include 'partials/timeline.html' -%}
   </div>
 
   <hr class="separator mb-5">
 
   <!-- Program -->
-  <div class="text-white mb-5" id="program">
+  <div class="mb-5" id="program">
     {% include 'partials/program.html' -%}
   </div>
 
   {# <hr class="separator mb-5">
 
-  <div class="text-white mb-5" id="organizing-committee">
+  <div class="mb-5" id="organizing-committee">
     {% include 'partials/organizing-committee.html' -%}
   </div>
 
   <hr class="separator mb-5">
 
-  <div class="text-white mb-5" id="scientific-committee">
+  <div class="mb-5" id="scientific-committee">
     {% include 'partials/scientific-committee.html' -%}
   </div> #}
 
   <hr class="separator mb-5">
 
-  <div class="text-white mb-5" id="registration-fee">
+  <div class="mb-5" id="registration-fee">
     {% include 'partials/registration-fee.html' -%}
   </div>
 

@@ -118,6 +118,7 @@ def IXIPC(language='pt'):
             registration_form=RegistrationForm(),
             login_form=LoginForm(),
             text_column=True,
+            light_background=True,
             abstracts=abstracts,
             site_map=True,
             payment_status=payment_status,
