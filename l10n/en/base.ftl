@@ -24,6 +24,7 @@ news-published-on = Published on
 news-modified-on = modified on
 
 designed-by = Design and implementation by
+background-by = Background image by
 
 IXIPC-title = IX Iberian Primatological Conference
 IXIPC-description-intro = Dear fellow primates,

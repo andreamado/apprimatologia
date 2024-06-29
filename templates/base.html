@@ -17,6 +17,11 @@
       <div class="row">
         <div class="col designed-by"><a href="https://andreamado.github.io/me">{{ 'designed-by'|l10n(lang) }} André Amado</a></div>
       </div>
+      {% if background_monkey -%}
+      <div class="row">
+        <div class="col designed-by"><a href="https://pixabay.com/users/21500104/">{{ 'background-by'|l10n(lang) }} Anne-Ed C.</a></div>
+      </div>
+      {% endif-%}
     </div>
     <script defer>
       // Reloads the page after 50 mins to refresh the csrf tokens and keep 

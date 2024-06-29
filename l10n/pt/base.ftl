@@ -27,6 +27,7 @@ news-published-on = Publicado a
 news-modified-on = modificado a
 
 designed-by = Design e implementação por
+background-by = Imagem de fundo por 
 
 IXIPC-title = IX Congresso Ibérico de Primatologia
 IXIPC-description-intro = Dear fellow primates,

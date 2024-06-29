@@ -2,7 +2,10 @@
 {% block main -%}
       <div class="main-content-dark text-white">
         <h1 class="lh-1 mb-4">{{ 'title'|l10n(lang) }}</h1>
-        <p class="short-column">{{ 'about-description'|l10n(lang) }}</p>
+        <div class="d-flex flex-row flex-wrap">
+          <p class="short-column">{{ 'about-description'|l10n(lang) }}</p>
+          <img src="{{ url_for('static', filename='img/logo.jpg') }}" class="rounded-circle ms-5" width="200px" height="200px" alt="APP logo">
+        </div>
         <div class="mt-4 h4"><a class="white-link" target="_blank" href="{{ url_for('static', filename='docs/regulamento_interno_app.pdf') }}">{{ 'about-regulamento-interno'|l10n(lang) }}</a></div>
 
         <div class="col-lg-6 justify-content-start h4 rounded-4 pt-5">
