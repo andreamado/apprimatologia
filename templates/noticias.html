@@ -14,9 +14,9 @@
           {% if news.image %}
           {% include 'partials/news-image.html' %}
           {% endif %}
-          <p>
+          <div>
             {{ news.body|safe }}
-          </p>
+          </div>
         </div>  
         {% endfor -%}
       </div>

@@ -347,6 +347,8 @@ def save_personal_data():
         user.unemployed = request.form['unemployed'] == 'true'
         user.competition_talk = request.form['competition_talk'] == 'true'
         user.competition_photography = request.form['competition_photography'] == 'true'
+        user.dinner = request.form['dinner'] == 'true'
+        user.dinner_type = request.form['dinner_type']
 
         db_session.commit()
 
@@ -1501,6 +1503,19 @@ def participants_list(language='pt'):
         )
 
 
+@bp.route('/IX_IPC/management/dinner')
+@bp.route('/IX_IPC/management/dinner/<language:language>')
+@login_IXIPC_management_required
+def dinner_list(language='pt'):
+    """Shows the dinner information"""
+
+    with get_session() as db_session:
+        return render_template(
+            'management/abstracts_list.html',
+            lang=language,
+            text_column=True,
+        )
+
 @bp.route('/IX_IPC/management/abstracts')
 @bp.route('/IX_IPC/management/abstracts/<language:language>')
 @login_IXIPC_management_required
@@ -1898,7 +1913,6 @@ def register(app) -> None:
 
     app.jinja_env.filters['abstract_type'] = abstract_type_filter
 
-    from .db_IXIPC import init_IXIPC_db_command, fill_IXIPC_db_command, set_IXIPC_organizer
+    from .db_IXIPC import init_IXIPC_db_command, set_IXIPC_organizer
     app.cli.add_command(init_IXIPC_db_command)
-    app.cli.add_command(fill_IXIPC_db_command)
     app.cli.add_command(set_IXIPC_organizer)

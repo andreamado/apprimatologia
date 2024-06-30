@@ -30,8 +30,10 @@ class User(Base):
     organizer = Column(Boolean)
     paid_registration = Column(Boolean)
     payment_id = Column(ForeignKey('payments.id'))
+    dinner = Column(Boolean)
+    dinner_type = Column(Integer)
 
-    def __init__(self, name, email, password=None, first_name=None, last_name=None, institution=None, student=False, member=False, scholarship=False, unemployed=False, competition_talk=False, competition_photography=False, paid_registration=False, organizer=False):
+    def __init__(self, name, email, password=None, first_name=None, last_name=None, institution=None, student=False, member=False, scholarship=False, unemployed=False, competition_talk=False, competition_photography=False, paid_registration=False, organizer=False, dinner=False, dinner_type=1):
         self.name = name
         self.email = email
         self.password = sha256(password.encode()).hexdigest() if password else sha256(token_hex(16).encode()).hexdigest()
@@ -46,6 +48,8 @@ class User(Base):
         self.competition_photography = competition_photography
         self.paid_registration = paid_registration
         self.organizer = organizer
+        self.dinner = dinner
+        self.dinner_type = dinner_type
 
     def update_password(self, password) -> None:
         self.password = sha256(password.encode()).hexdigest()

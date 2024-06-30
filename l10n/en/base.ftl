@@ -8,9 +8,22 @@ members-title = Direction
 members-assembly-title = Assembly
 members-supervisory-board-title = Supervisory board
 
-about-description = Texto a descrever a APP e as suas actividades. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+about-description = 
+  <p>
+    The Portuguese Primatology Association (APP) is a non-profit organization dedicated to the study and promotion of knowledge about non-human primates and their conservation. Founded in 2004 with the aim of bringing together researchers, students and enthusiasts in the various areas of primatology, from evolution to behavior and welfare, among others, APP plays a role in the scientific investigation of our closest relatives, facilitating cooperation between all those working in the field, both in Portugal and abroad.
+  </p>
+  <p>
+    APP's mission includes not only advancing scientific research in primatology, but also educating the public about the subject, namely the importance of conserving the various species of non-human primates, many of which face high extinction risk due to habitat loss and destruction, poaching and other environmental threats.
+  </p>
+  <p>
+    The association regularly holds workshops and scientific and educational events that allow its members and the wider public to deepen their knowledge of primates and discuss effective and ethical strategies for their study and protection. In addition, APP collaborates with other national and international associations with objectives similar to its own.
+  </p>
+  <p>
+    With an ongoing commitment to scientific excellence and ensuring civic and environmental responsibility, the Portuguese Primatology Association plays a vital role in researching and disseminating knowledge about non-human primates, as well as defending their welfare and survival.
+  </p>
+
 about-contacts = Contacts
-about-regulamento-interno = Regulamento interno
+about-regulamento-interno = Internal regulations
 
 link-app = APP
 link-news = News
@@ -27,9 +40,19 @@ designed-by = Design and implementation by
 background-by = Background image by
 
 IXIPC-title = IX Iberian Primatological Conference
-IXIPC-description-intro = Dear fellow primates,
-IXIPC-description-main = Welcome to the IX Iberian Primatological Congress that will take place in November (21st - 23) in the beautiful town of Vila do Conde! We hope that you may have a wonderful time during our event with time for learning about us and other primates, exchanging experiences, creating networks and even finding new friends. The coastal town of Vila do Conde is one of the oldest settlements in northern Portugal. Its origins go back further than the foundation of Portuguese territory, with the first written document mentioning Villa de Comite dating back to 953, in a letter of sale of goods by Flamula Deo- Vota to the Monastery of Guimarães. The Monastery of Santa Clara, a monument that was restored and enlarged in the 18th century is a “must-see” Vila do Conde’s ex-libris. You may have to “take it easy” regarding Vila do Conde's exquisite gastronomy which reflects its geographical location, by the sea and it is also a rich agricultural region.  Particularly popular are the "petinga à moda das Caxinas" and all the variety of fish and shellfish, savoury meat dishes and the fresh, natural milk from the local farms. Delicious appetisers and delicacies may distract you from the main dishes. Convent sweets are a centuries-old tradition in Vila do Conde. The convents and monasteries were the main drivers of these traditions from an early age, and Vila do Conde is an example of this, with the monasteries of Santa Clara and Vairão. Among its many specialities, the egg sweets stand out along with “rosca de folar da Páscoa”. There are also several restaurants that offer vegetarian options for those who follow a vegetarian diet. Vila do Conde’s exquisite art crafts are “rendas de Bilros” and  Fishermen's woollens. The last one will protect you from the cold weather during our congress.
-IXIPC-description-end = Come along with us exploring Vila do Conde and participating in our IX Iberian Primatological Congress where you will find high-standard scientific talks given by our invited -speakers, where you can present your work (oral communications or posters) and receive some feedback, where you can exchange dreams with other primatologists and maybe even achieve them!
+IXIPC-description-main = 
+  <p>
+    Dear Fellow Primates,
+  </p>
+  <p>
+    Welcome to the IX Iberian Primatological Conference, which will take place from November 21 to 23 in the beautiful town of Vila do Conde, Portugal! 
+  </p>
+  <p>
+    We hope you have a wonderful time during our event. It's a time for learning about us and other primates, exchanging experiences, creating networks, and even finding new friends.
+  </p>
+  <p>
+    Join us in exploring Vila do Conde and participating in this event. You can attend high-standard scientific talks given by our invited speakers, present your work (oral communications or posters) and receive feedback, exchange dreams with other primatologists, and who knows, maybe even achieve them!
+  </p>
 
 IXIPC-register = Register!
 IXIPC-login = Login
@@ -45,13 +68,29 @@ IXIPC-essential-information-contact = Organization contact
 
 IXIPC-travel-guide = Travel guide
 IXIPC-travel-guide-vila-do-conde = About Vila do Conde
-IXIPC-travel-guide-vila-do-conde-details = The coastal town of Vila do Conde is one of the oldest settlements in northern Portugal. Its origins go back further than the foundation of Portuguese territory, with the first written document mentioning Villa de Comite dating back to 953, in a letter of sale of goods by Flamula Deo-Vota to the Monastery of Guimarães. The Monastery of Santa Clara, a monument that was restored and enlarged in the 18th century is a “must-see” Vila do Conde’s ex-libris. You may have to “take it easy” regarding Vila do Conde's exquisite gastronomy which reflects its geographical location, by the sea and it is also a rich agricultural region. Particularly popular are the "petinga à moda das Caxinas" and all the variety of fish and shellfish, savoury meat dishes and the fresh, natural milk from the local farms. Delicious appetisers and delicacies may distract you from the main dishes. Convent sweets are a centuries-old tradition in Vila do Conde. The convents and monasteries were the main drivers of these traditions from an early age, and Vila do Conde is an example of this, with the monasteries of Santa Clara and Vairão. Among its many specialities, the egg sweets stand out along with “rosca de folar da Páscoa”. There are also several restaurants that offer vegetarian options for those who follow a vegetarian diet. Vila do Conde’s exquisite art crafts are “rendas de Bilros” and Fishermen's woollens. The last one will protect you from the cold weather during our congress.
+IXIPC-travel-guide-vila-do-conde-details = 
+  <p>
+    The coastal town of Vila do Conde is one of the oldest settlements in northern Portugal. Its origins date back further than the foundation of Portuguese territory, with the first written document mentioning Villa de Comite dating back to 953, in a letter of sale of goods by Flamula Deo-Vota to the Monastery of Guimarães. The Monastery of Santa Clara, a monument that was restored and enlarged in the 18th century, is a “must-see” and Vila do Conde’s ex-libris.
+  </p>
+  </p>
+    You may need to “take it easy” with Vila do Conde's exquisite gastronomy, which reflects its geographical location by the sea and its rich agricultural region. Particularly popular are the "petinga à moda das Caxinas" and a variety of fish and shellfish, savory meat dishes, and the fresh, natural milk from the local farms. Delicious appetizers and delicacies may distract you from the main dishes.
+  </p>
+  </p>
+    Convent sweets are a centuries-old tradition in Vila do Conde. The convents and monasteries were the main drivers of these traditions from an early age, and Vila do Conde is an example of this, with the monasteries of Santa Clara and Vairão. Among its many specialties, the egg sweets stand out along with “rosca de folar da Páscoa.” There are also several restaurants that offer vegetarian options for those who follow a vegetarian diet.
+  </p>
+  </p>
+    Vila do Conde’s exquisite art crafts include “rendas de bilros” and Fishermen's woollens. The latter will protect you from the cold weather during our congress.
+  </p>
+
 IXIPC-travel-guide-where-stay = Where to stay
 IXIPC-travel-guide-where-stay-file = We prepared a file with suggestions for places to stay. Check it 
 IXIPC-travel-guide-where-stay-here = here
 IXIPC-travel-guide-what-visit = What to visit
 IXIPC-travel-guide-get-there = How to get to Vila do Conde
 IXIPC-travel-guide-where-eat = Where to eat
+
+IXIPC-photo-competition = Cláudia Sousa photography competition
+IXIPC-photo-competition-description = This section will soon be updated!
 
 IXIPC-conference-dinner = Conference dinner
 
@@ -115,6 +154,11 @@ IXIPC-personal-data-member = APP or APE member
 IXIPC-personal-data-scholarship = Scholarship
 IXIPC-personal-data-competition-talk = I want to participate in the best poster/talk competition
 IXIPC-personal-data-competition-photography = I want to participate in the Cláudia Sousa photography competition
+IXIPC-personal-data-dinner = I will attend the conference dinner
+IXIPC-personal-data-dinner-no-restrictions = No dietary restrictions
+IXIPC-personal-data-dinner-vegetarian = Vegetarian 
+IXIPC-personal-data-dinner-vegan = Vegan
+IXIPC-personal-data-dinner-other-restrictions = Other dietary restrictions
 
 IXIPC-register-to-submit = Register or login submit abstracts
 IXIPC-register-to-submit-logged-in = Submit abstracts for your posters and presentations!

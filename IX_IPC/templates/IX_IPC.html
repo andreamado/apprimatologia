@@ -8,13 +8,11 @@
   <hr class="separator mb-1">
   <!-- Main header -->
   {# <h2 id="IXIPC-title" class="lh-1 mb-1 text-white" data-offset="100">{{ 'IXIPC-title'|l10n(lang) }}</h2> #}
-  <img src="{{ url_for('static', filename='img/IPC_Text Colour_Logo.png') }}" alt="IXIPC logo" width="100%">
+  <img id="IXIPC-title" src="{{ url_for('static', filename='img/IPC_Text Colour_Logo.png') }}" alt="IXIPC logo" width="100%">
   {# <p id="IXIPC-subtitle" class="lead lh-1 mb-4 text-white" data-offset="100">Beyond Boundaries: Integrating Primate Research</p> #}
   {# <img class="mb-3" src="{{ url_for('static', filename='img/pexels-egor-kamelev-802208_small.jpg') }}" width="100%" alt="" style="opacity:0.9;"> #}
   <div class="mb-5" style="text-align: justify;">
-    <p>{{ 'IXIPC-description-intro'|l10n(lang) }}</p>
-    <p>{{ 'IXIPC-description-main'|l10n(lang) }}</p>
-    <p><i>{{ 'IXIPC-description-end'|l10n(lang) }}</i></p>
+    {{ 'IXIPC-description-main'|l10n(lang)|safe }}
   </div>
 
   <hr class="separator mb-5" id="alerts">
@@ -60,6 +58,13 @@
 
   <hr class="separator mb-5">
 
+  <!-- Claudia Sousa photography competition -->
+  <div class="mb-5" id="photo-competition">
+    {% include 'partials/photo-competition.html' -%}
+  </div>
+
+  <hr class="separator mb-5">
+
   <!-- Conference dinner -->
   <div class="mb-5" id="conference-dinner">
     {% include 'partials/conference-dinner.html' -%}
@@ -93,6 +98,7 @@
   <a href="#organizing-committee" class="nav-link">{{ 'IXIPC-organizing-committee'|l10n(lang) }}</a>
   <a href="#scientific-committee" class="nav-link">{{ 'IXIPC-scientific-committee'|l10n(lang) }}</a>
   <a href="#registration-fee" class="nav-link">{{ 'IXIPC-payment-description'|l10n(lang) }}</a>
+  <a href="#photo-competition" class="nav-link">{{ 'IXIPC-photo-competition'|l10n(lang) }}</a>
   <a href="#conference-dinner" class="nav-link">{{ 'IXIPC-conference-dinner'|l10n(lang) }}</a>
   <a href="#travel-guide" class="nav-link">{{ 'IXIPC-travel-guide'|l10n(lang) }}</a>
   <a href="#personal-area" class="nav-link">{{ 'IXIPC-personal-area'|l10n(lang) }}</a>

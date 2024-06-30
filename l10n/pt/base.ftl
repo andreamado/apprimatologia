@@ -8,9 +8,22 @@ members-title = Direcção
 members-assembly-title = Mesa da Assembleia
 members-supervisory-board-title = Conselho Fiscal
 
-about-description = Texto a descrever a APP e as suas actividades. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+about-description = 
+  <p>
+    A Associação Portuguesa de Primatologia (APP) é uma organização sem fins lucrativos dedicada ao estudo e à promoção do conhecimento sobre os primatas não-humanos e à sua conservação. Fundada em 2004 com o objetivo de reunir investigadores, estudantes e entusiastas das várias áreas da primatologia, desde evolução, comportamento e bem-estar, entre outros, a APP desempenha um papel na investigação científica dos nossos parentes mais próximos, facilitando a cooperação entre todos os que trabalham na área, tanto em Portugal como no estrangeiro.
+  </p>
+  <p>
+    A missão da APP inclui não apenas o avanço da investigação científica em primatologia, mas também a educação do público sobre o tema, nomeadamente a importância da conservação das várias espécies de primatas não-humanos, muitas das quais enfrentam elevados riscos de extinção devido à perda e destruição de habitat, à caça ilegal e a outras ameaças ambientais.
+  </p>
+  <p>
+    A associação realiza regularmente workshops e eventos científicos e educativos que permitem aos seus associados e ao público mais alargado aprofundar os seus conhecimentos sobre primatas e discutir estratégias eficazes e éticas para o seu estudo e protecção. Para além disso, a APP colabora com outras associações nacionais e internacionais com objectivos semelhantes aos seus.
+  </p>
+  <p>
+    Com um compromisso contínuo com a excelência científica e assegurando responsabilidade cívica e ambiental, a Associação Portuguesa de Primatologia desempenha um papel vital na investigação e divulgação de conhecimento sobre primatas não-humanos, bem como na defesa do seu bem-estar e sobrevivência.
+  </p>
+
 about-contacts = Contactos
-about-regulamento-interno = Internal regulations
+about-regulamento-interno = Regulamento interno
 
 link-app = APP
 link-news = Notícias
@@ -30,9 +43,19 @@ designed-by = Design e implementação por
 background-by = Imagem de fundo por 
 
 IXIPC-title = IX Congresso Ibérico de Primatologia
-IXIPC-description-intro = Dear fellow primates,
-IXIPC-description-main = Welcome to the IX Iberian Primatological Congress that will take place in November (21st - 23) in the beautiful town of Vila do Conde! We hope that you may have a wonderful time during our event with time for learning about us and other primates, exchanging experiences, creating networks and even finding new friends. The coastal town of Vila do Conde is one of the oldest settlements in northern Portugal. Its origins go back further than the foundation of Portuguese territory, with the first written document mentioning Villa de Comite dating back to 953, in a letter of sale of goods by Flamula Deo- Vota to the Monastery of Guimarães. The Monastery of Santa Clara, a monument that was restored and enlarged in the 18th century is a “must-see” Vila do Conde’s ex-libris. You may have to “take it easy” regarding Vila do Conde's exquisite gastronomy which reflects its geographical location, by the sea and it is also a rich agricultural region.  Particularly popular are the "petinga à moda das Caxinas" and all the variety of fish and shellfish, savoury meat dishes and the fresh, natural milk from the local farms. Delicious appetisers and delicacies may distract you from the main dishes. Convent sweets are a centuries-old tradition in Vila do Conde. The convents and monasteries were the main drivers of these traditions from an early age, and Vila do Conde is an example of this, with the monasteries of Santa Clara and Vairão. Among its many specialities, the egg sweets stand out along with “rosca de folar da Páscoa”. There are also several restaurants that offer vegetarian options for those who follow a vegetarian diet. Vila do Conde’s exquisite art crafts are “rendas de Bilros” and  Fishermen's woollens. The last one will protect you from the cold weather during our congress.
-IXIPC-description-end = Come along with us exploring Vila do Conde and participating in our IX Iberian Primatological Congress where you will find high-standard scientific talks given by our invited -speakers, where you can present your work (oral communications or posters) and receive some feedback, where you can exchange dreams with other primatologists and maybe even achieve them!
+IXIPC-description-main = 
+  <p>
+    Queridos Colegas Primatas,
+  </p>
+  <p>
+    Bem-vindos ao IX Congresso Ibérico de Primatologia, que terá lugar de 21 a 23 de Novembro na bela cidade de Vila do Conde, Portugal!
+  </p>
+  <p>
+    Esperamos que tenham três dias maravilhosos no nosso congresso. Terão a oportunidade de aprender sobre nós e outros primatas, trocar experiências, criar contactos e até fazer novos amigos.
+  </p>
+  <p>
+    Juntem-se a nós para explorarmos Vila do Conde e aproveitarmos ao máximo este evento. Poderão assistir a palestras científicas de alto nível proferias pelos nossos oradores convidados, apresentar o vosso trabalho (comunicações orais ou posters) e receber feedback, discutir sonhos com outros primatólogos e, quem sabe, talvez até realizá-los!
+  </p>
 
 IXIPC-register = Inscreve-te!
 IXIPC-login = Entrar
@@ -48,13 +71,29 @@ IXIPC-essential-information-contact = Contacto da organização
 
 IXIPC-travel-guide = Dicas de viagem
 IXIPC-travel-guide-vila-do-conde = Sobre Vila do Conde
-IXIPC-travel-guide-vila-do-conde-details = The coastal town of Vila do Conde is one of the oldest settlements in northern Portugal. Its origins go back further than the foundation of Portuguese territory, with the first written document mentioning Villa de Comite dating back to 953, in a letter of sale of goods by Flamula Deo-Vota to the Monastery of Guimarães. The Monastery of Santa Clara, a monument that was restored and enlarged in the 18th century is a “must-see” Vila do Conde’s ex-libris. You may have to “take it easy” regarding Vila do Conde's exquisite gastronomy which reflects its geographical location, by the sea and it is also a rich agricultural region. Particularly popular are the "petinga à moda das Caxinas" and all the variety of fish and shellfish, savoury meat dishes and the fresh, natural milk from the local farms. Delicious appetisers and delicacies may distract you from the main dishes. Convent sweets are a centuries-old tradition in Vila do Conde. The convents and monasteries were the main drivers of these traditions from an early age, and Vila do Conde is an example of this, with the monasteries of Santa Clara and Vairão. Among its many specialities, the egg sweets stand out along with “rosca de folar da Páscoa”. There are also several restaurants that offer vegetarian options for those who follow a vegetarian diet. Vila do Conde’s exquisite art crafts are “rendas de Bilros” and Fishermen's woollens. The last one will protect you from the cold weather during our congress.
+IXIPC-travel-guide-vila-do-conde-details = 
+  <p>
+    A cidade costeira de Vila do Conde é uma das mais antigas povoações do Norte de Portugal. As suas origens são anteriores à fundação do território português, sendo que o primeiro documento escrito que menciona a Villa de Comite data de 953, numa carta de venda de mercadorias de Flamula Deo-Vota ao Mosteiro de Guimarães. O Mosteiro de Santa Clara, monumento restaurado e ampliado no século XVIII, é de visita obrigatória e um dos ex-líbris de Vila do Conde.
+  </p>
+  </p>
+    A requintada gastronomia de Vila do Conde reflecte a sua localização geográfica junto ao mar e a sua rica região agrícola. A petinga à moda das Caxinas e uma grande variedade de peixes e mariscos são particularmente apreciados, assim como saborosos pratos de carne e o leite fresco e natural das quintas locais. Deliciosos petiscos e iguarias podem distrair-vos dos pratos principais!
+  </p>
+  </p>
+    Os doces conventuais são uma tradição secular em Vila do Conde. Desde cedo que os conventos e mosteiros foram os principais impulsionadores destas tradições, sendo Vila do Conde um exemplo disso, com os mosteiros de Santa Clara e Vairão. Entre as suas muitas especialidades, destacam-se os doces de ovos e a rosca de folar da Páscoa. Existem também vários restaurantes que oferecem opções vegetarianas para quem segue uma dieta vegetariana.
+  </p>
+  </p>
+    O requintado artesanato de Vila do Conde inclui as rendas de Bilros e as lãs de pescador. Estas últimas irão proteger-vos do frio que se poderá fazer sentir durante o nosso congresso.
+  </p>
+
 IXIPC-travel-guide-where-stay = Onde ficar
 IXIPC-travel-guide-where-stay-file = Preparámos sugestões de onde ficar. Vê  
 IXIPC-travel-guide-where-stay-here = aqui
 IXIPC-travel-guide-what-visit = O que visitar
 IXIPC-travel-guide-get-there = Como chegar a Vila do Conde
 IXIPC-travel-guide-where-eat = Onde comer
+
+IXIPC-photo-competition = Concurso de fotografia Cláudia Sousa
+IXIPC-photo-competition-description = Esta secção será actualizada em breve!
 
 IXIPC-conference-dinner = Jantar do congresso
 
@@ -118,6 +157,11 @@ IXIPC-personal-data-member = Membro APP ou APE
 IXIPC-personal-data-scholarship = Bolsa
 IXIPC-personal-data-competition-talk = Quero participar no concurso de melhor poster/apresentação oral
 IXIPC-personal-data-competition-photography = Quero participar no concurso de fotografia Cláudia Sousa
+IXIPC-personal-data-dinner = Quero participar no jantar da conferência
+IXIPC-personal-data-dinner-no-restrictions = Sem restrições alimentares
+IXIPC-personal-data-dinner-vegetarian = Vegetariano
+IXIPC-personal-data-dinner-vegan = Vegan
+IXIPC-personal-data-dinner-other-restrictions = Outras restrições
 
 IXIPC-register-to-submit = Regista-te para te inscreveres e submeter resumos
 IXIPC-register-to-submit-logged-in = Submete resumos para os teus posters e apresentações!
@@ -138,7 +182,7 @@ IXIPC-abstract-keywords-explanation = Introduz 3-5 palavras-chave separadas por 
 IXIPC-abstract-keywords = Palavras-chave
 IXIPC-abstract-poster = Poster
 IXIPC-abstract-presentation = Apresentação oral
-IXIPC-abstract-select-abstract-type = Seleciona o tipo de resumo
+IXIPC-abstract-select-abstract-type = Selecciona o tipo de resumo
 IXIPC-abstract-save = Salvar
 IXIPC-abstract-save-success = Dados do resumo salvos!
 IXIPC-abstract-save-fail = Erro ao salvar os dados
@@ -152,13 +196,13 @@ IXIPC-untitled = sem título
 IXIPC-abstract-new-author = Novo autor
 IXIPC-abstract-authors = Autores
 IXIPC-abstract-authors-available = Autores disponíveis
-IXIPC-abstract-authors-select = Autores selecionados
+IXIPC-abstract-authors-select = Autores seleccionados
 IXIPC-abstract-authors-drag-and-drop-1 = 
     Cria autores
 IXIPC-abstract-authors-drag-and-drop-2 = 
-    2. Arrasta os autores para a área dos autores selecionados
-    3. Reordena os autores selecionados
-    4. Seleciona o orador (carregando no símbolo de microfone)
+    2. Arrasta os autores para a área dos autores seleccionados
+    3. Reordena os autores seleccionados
+    4. Selecciona o orador (carregando no símbolo de microfone)
 IXIPC-help-me = Ajuda-me!
 IXIPC-label = Legenda
 IXIPC-abstract-speaker = orador
@@ -170,7 +214,7 @@ IXIPC-abstract-abstract-empty = O texto do resumo não está definido
 IXIPC-abstract-abstract-too-long = O resumo não pode ter mais de 200 palavras
 IXIPC-abstract-few-keywords = Usa pelo menos 3 palavras-chave
 IXIPC-abstract-many-keywords = Usa no máximo 5 palavras-chave
-IXIPC-abstract-no-authors = Tens de selecionar pelo menos um autor
+IXIPC-abstract-no-authors = Tens de seleccionar pelo menos um autor
 IXIPC-abstract-no-speaker = Nenhum autor foi designado como orador
 IXIPC-abstract-institutions = Instituições
 IXIPC-abstract-new-institution = Nova instituição
@@ -181,7 +225,7 @@ IXIPC-abstract-scientific-area-etnoprimatology = Etnoprimatologia
 IXIPC-abstract-scientific-area-genetics = Genética
 IXIPC-abstract-scientific-area-socioecology = Socioecologia
 IXIPC-abstract-scientific-area-other = Outra
-IXIPC-abstract-no-scientific-area = Tens de selecionar uma área científica
+IXIPC-abstract-no-scientific-area = Tens de seleccionar uma área científica
 
 IXIPC-abstract-edit = criar/modificar
 IXIPC-abstract-authors-edit = Cria e modifica autores
@@ -194,12 +238,12 @@ IXIPC-institutions-address = Endereço
 IXIPC-institutions-country = País
 IXIPC-saved-institution = Instituição salva
 IXIPC-authors-affiliations = Afiliações
-IXIPC-abstract-institutions-select = Instituições selecionadas
+IXIPC-abstract-institutions-select = Instituições seleccionadas
 IXIPC-abstract-institutions-available = Instituições disponíveis
 IXIPC-abstract-institutions-drag-and-drop-1 = 
     Cria instituições
 IXIPC-abstract-institutions-drag-and-drop-2 = 
-    2. Arrasta instituições para a área das instituições selecionadas 3. Reordena as instituições selecionadas
+    2. Arrasta instituições para a área das instituições seleccionadas 3. Reordena as instituições seleccionadas
 
 IXIPC-personal-data-first-name = Nome
 IXIPC-personal-data-last-name = Apelido

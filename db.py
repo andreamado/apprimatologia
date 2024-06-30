@@ -321,66 +321,49 @@ def init_db_command() -> None:
         )
         db_session.add(profile)
 
+        # News
+        image_file = file_models.UploadedFile(
+            original_name='IPC_Text Black_Logo.png',
+            file_path=os.path.join(app.root_path, 'static', 'img', 'IPC_Text Black_Logo.png')
+        )
+        db_session.add(image_file)
 
-        # image_file = file_models.UploadedFile(
-        #     original_name='pexels-egor-kamelev-802208_small.jpg',
-        #     file_path=os.path.join(app.root_path, 'static', 'img', 'pexels-egor-kamelev-802208_small.jpg')
-        # )
-        # db_session.add(image_file)
+        image = models.Image(
+             image_file.id,
+             subtitle_pt='IX Conferência Ibéria de Primatologia (Vila do Conde, 21 a 23 de Novembro 2024)', 
+             subtitle_en='IX Iberian Primatological Conference (Vila do Conde, November 21-23 2024)', 
+             alt_pt=None, 
+             alt_en=None
+        )
+        db_session.add(image)
+        db_session.commit()
 
-        # image = models.Image(
-        #      image_file.id,
-        #      subtitle_pt='APP is happy to announce the IX Iberian Primatological Conference.The conference will take place in Vila do Conde from **21 to 23 November** 2024. Registration will be available from mid-April.', 
-        #      subtitle_en='APP is happy to announce the IX Iberian Primatological Conference.The conference will take place in Vila do Conde from **21 to 23 November** 2024. Registration will be available from mid-April.', 
-        #      alt_pt=None, 
-        #      alt_en=None
-        # )
-        # db_session.add(image)
-        # db_session.commit()
-
-        # news = models.News(
-        #     title_pt = 'IX Congresso Ibérico de Primatologia', 
-        #     title_en = 'IX Iberian Primatological Conference', 
-        #     body_pt  = "APP is happy to announce the IX Iberian Primatological Conference. \
-        #                 The conference will take place in Vila do Conde from 21 to 23 November 2024. \
-        #                 Registration will be available from mid-April. \
-        #                 Stay tuned!", 
-        #     body_en  =  "APP is happy to announce the IX Iberian Primatological Conference. \
-        #                 The conference will take place in Vila do Conde from 21 to 23 November 2024. \
-        #                 Registration will be available from mid-April. \
-        #                 Stay tuned!"
-        # )
-        # db_session.add(news)
-
-        # news = models.News(
-        #     title_pt = 'IX Congresso Ibérico de Primatologia', 
-        #     title_en = 'IX Iberian Primatological Conference', 
-        #     body_pt  = "APP is happy to announce the IX Iberian Primatological Conference. \
-        #                 The conference will take place in Vila do Conde from **21 to 23 November** 2024. \
-        #                 Registration will be available from mid-April. \
-        #                 Stay tuned!", 
-        #     body_en  =  "APP is happy to announce the IX Iberian Primatological Conference. \
-        #                     The conference will take place in Vila do Conde from **21 to 23 November** 2024. \
-        #                     Registration will be available from mid-April. \
-        #                     Stay tuned!",
-        #     image    =  image.id
-        # )
-        # db_session.add(news)
-
-        # news = models.News(
-        #     title_pt = 'IX Congresso Ibérico de Primatologia', 
-        #     title_en = 'IX Iberian Primatological Conference', 
-        #     body_pt  = "APP is happy to announce the IX Iberian Primatological Conference. \
-        #                 The conference will take place in Vila do Conde from **21 to 23 November** 2024. \
-        #                 Registration will be available from mid-April. \
-        #                 Stay tuned!", 
-        #     body_en  =  "APP is happy to announce the IX Iberian Primatological Conference. \
-        #                 The conference will take place in Vila do Conde from **21 to 23 November** 2024. \
-        #                 Registration will be available from mid-April. \
-        #                 Stay tuned!"
-        # )
-
-        # db_session.add(news)
+        news = models.News(
+            title_pt = 'IX Congresso Ibérico de Primatologia', 
+            title_en = 'IX Iberian Primatological Conference', 
+            body_pt  = ''
+              '<p>'
+              '  É com enorme prazer que as Associações de Primatologia Portuguesa e Espanhola (APP e APE) anunciam o IX Congresso Ibérico de Primatologia, que terá lugar em Novembro de 2024 em Vila do Conde, Portugal, com o tema Beyond Boundaries: Integrating Primate Research. '
+              '  Comunicações das diferentes áreas que integram a primatologia são bem-vindas e encorajamos todos os investigadores, independentemente da fase de carreira em que se encontrem, a submeterem um resumo. O prazo para submissão de resumos é 15 de Agosto. '
+              "  Visita, por favor, o <a class='white-link' href='/IX_Iberian_Primatological_Conference/pt'>site do congresso</a> para saberes mais detalhes e te registares. E fica à vontade para nos contactares caso surja alguma dúvida. "
+              '</p>'
+              '<p>'
+              '  Esperamos ver-te em breve!'
+              '</p>'
+            '', 
+            body_en  =  ''
+              '<p>'
+              '  The Portuguese and Spanish Primatological Associations (APP and APE) are thrilled to announce the IX Iberian Primatological Conference, which will take place in November 2024 in Vila do Conde, Portugal, with the theme Beyond Boundaries: Integrating Primate Research. '
+              '  We welcome communications from all fields of primatology and encourage researchers at all career stages to submit an abstract. Abstract submission closes on August 15th. '
+              "  Please visit the <a class='white-link' href='/IX_Iberian_Primatological_Conference/en'>conference website</a> for details and registration, and do not hesitate to contact us if you have any questions. "
+              '</p>'
+              '<p>'
+              '  We look forward to meeting you soon!'
+              '</p>'
+            '',
+            image    = image.id
+        )
+        db_session.add(news)
 
         # member = models.Member(given_name='Zé', family_name='Chimp', number=1, species='Homo Sapiens')
         # db_session.add(member)

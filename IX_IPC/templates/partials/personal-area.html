@@ -86,6 +86,35 @@
           </div>
         </div>
       </div>
+      {# Uncomment to activate dinner options #}
+      {# <div class="row mb-0" id="dinner-selector">
+        <div class="col">
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" role="switch" id="dinner"{{' checked' if g.IXIPC_user.dinner}}>
+            <label for="dinner" class="form-label">{{ 'IXIPC-personal-data-dinner'|l10n(lang) }}</label>
+          </div>
+        </div>
+      </div>
+      <div class="row mb-0 ms-1" id="dinner-type-selector" hidden>
+        <div class="col">
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="dinner-type" value="1" role="switch" id="dinner-type-no-restrictions"{{' checked' if g.IXIPC_user.dinner_type == 1}}>
+            <label for="dinner-type-no-restrictions" class="form-check-label">{{ 'IXIPC-personal-data-dinner-no-restrictions'|l10n(lang) }}</label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="dinner-type" value="2" role="switch" id="dinner-type-vegetarian"{{' checked' if g.IXIPC_user.dinner_type == 2}}>
+            <label for="dinner-type-vegetarian" class="form-check-label">{{ 'IXIPC-personal-data-dinner-vegetarian'|l10n(lang) }}</label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="dinner-type" value="3" role="switch" id="dinner-type-vegan"{{' checked' if g.IXIPC_user.dinner_type == 3}}>
+            <label for="dinner-type-vegan" class="form-check-label">{{ 'IXIPC-personal-data-dinner-vegan'|l10n(lang) }}</label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="dinner-type" value="4" role="switch" id="dinner-type-other-restrictions"{{' checked' if g.IXIPC_user.dinner_type == 4}}>
+            <label for="dinner-type-other-restrictions" class="form-check-label">{{ 'IXIPC-personal-data-dinner-other-restrictions'|l10n(lang) }}</label>
+          </div>
+        </div>
+      </div> #}
     </form>
   </div>
 
@@ -272,11 +301,13 @@ const personalDataManager = () => {
   let memberSwitchElement = document.getElementById('member');
   let scholarshipSwitchElement = document.getElementById('scholarship');
   let unemployedSwitchElement = document.getElementById('unemployed');
-  let competitionTalkSwitchElement = document.getElementById('competition-talk')
-  let competitionPhotographySwitchElement = document.getElementById('competition-photography')
+  let competitionTalkSwitchElement = document.getElementById('competition-talk');
+  let competitionPhotographySwitchElement = document.getElementById('competition-photography');
   let competitionTalkElement = document.getElementById('competition-talk-selector')
   let scholarshipElement = document.getElementById('scholarship-selector');
   let studentVolunteerElement = document.getElementById('student-volunteer');
+  let dinnerSwitchElement = document.getElementById('dinner');
+  let dinnerTypeElement = document.getElementById('dinner-type-selector');
 
   let saveFlag = false;
 
@@ -291,6 +322,8 @@ const personalDataManager = () => {
       data.append('unemployed', unemployedSwitchElement.checked);
       data.append('competition_talk', competitionTalkSwitchElement.checked);
       data.append('competition_photography', competitionPhotographySwitchElement.checked);
+      data.append('dinner', dinnerSwitchElement.checked);
+      data.append('dinner_type', document.querySelector('input[name="dinner-type"]:checked').value);
 
       fetch("{{ url_for('IX_IPC.save_personal_data') }}", {
         method: 'POST',
@@ -386,6 +419,20 @@ const personalDataManager = () => {
   );
 
   updatePrice();
+
+  const updateDinner = () => {
+    if(dinnerSwitchElement.checked) {
+      dinnerTypeElement.removeAttribute('hidden');
+    } else {
+      dinnerTypeElement.setAttribute('hidden', '');
+    }
+  }
+
+  dinnerSwitchElement.addEventListener(
+    'change', updateDinner
+  );
+
+  updateDinner();
 
   return {
     'scheduleSave': scheduleSave,

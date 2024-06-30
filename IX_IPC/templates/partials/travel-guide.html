@@ -1,21 +1,21 @@
 <h2 class="mb-1">{{ 'IXIPC-travel-guide'|l10n(lang) }}</h2>
 <div>
   <h4 class="mt-3">{{ 'IXIPC-travel-guide-vila-do-conde'|l10n(lang) }}</h4>
-  <p>{{ 'IXIPC-travel-guide-vila-do-conde-details'|l10n(lang) }}</p>
+  {{ 'IXIPC-travel-guide-vila-do-conde-details'|l10n(lang)|safe }}
 </div>
 <div>
-  <h4 class="mt-3">{{ 'IXIPC-travel-guide-get-there'|l10n(lang) }}</h4>
+  <h4 class="mt-4">{{ 'IXIPC-travel-guide-get-there'|l10n(lang) }}</h4>
   <p class="lead">{{ 'IXIPC-updates-soon'|l10n(lang) }}</p>
 </div>
 <div>
-  <h4 class="mt-3">{{ 'IXIPC-travel-guide-where-stay'|l10n(lang) }}</h4>
-  <p class="lead">{{ 'IXIPC-travel-guide-where-stay-file'|l10n(lang) }} <a class="dark-link" href="{{ url_for('static', filename='docs/IX IPC_Accommodation proposals.pdf') }}" target="_blank">{{ 'IXIPC-travel-guide-where-stay-here'|l10n(lang) }}</a></p>
+  <h4 class="mt-4">{{ 'IXIPC-travel-guide-where-stay'|l10n(lang) }}</h4>
+  <p class="lead">{{ 'IXIPC-travel-guide-where-stay-file'|l10n(lang) }} <a class="dark-link" href="{{ url_for('static', filename='docs/IX IPC_Accommodation proposals.pdf') }}" target="_blank">{{ 'IXIPC-travel-guide-where-stay-here'|l10n(lang) }}</a> {{'(em inglês)' if lang == 'pt'}}</p>
 </div>
 <div>
-  <h4 class="mt-3">{{ 'IXIPC-travel-guide-what-visit'|l10n(lang) }}</h4>
+  <h4 class="mt-4">{{ 'IXIPC-travel-guide-what-visit'|l10n(lang) }}</h4>
   <p class="lead">{{ 'IXIPC-updates-soon'|l10n(lang) }}</p>
 </div>
 <div>
-  <h4 class="mt-3">{{ 'IXIPC-travel-guide-where-eat'|l10n(lang) }}</h4>
+  <h4 class="mt-4">{{ 'IXIPC-travel-guide-where-eat'|l10n(lang) }}</h4>
   <p class="lead">{{ 'IXIPC-updates-soon'|l10n(lang) }}</p>
 </div>
