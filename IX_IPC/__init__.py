@@ -1511,7 +1511,7 @@ def dinner_list(language='pt'):
 
     with get_session() as db_session:
         return render_template(
-            'management/abstracts_list.html',
+            'management/dinner_details.html',
             lang=language,
             text_column=True,
         )
