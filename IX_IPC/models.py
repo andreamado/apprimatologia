@@ -32,8 +32,12 @@ class User(Base):
     payment_id = Column(ForeignKey('payments.id'))
     dinner = Column(Boolean)
     dinner_type = Column(Integer)
+    dinner_restriction = Column(String(200))
+    dinner_p1 = Column(Boolean)
+    dinner_type_p1 = Column(Integer)
+    dinner_restriction_p1 = Column(String(200))
 
-    def __init__(self, name, email, password=None, first_name=None, last_name=None, institution=None, student=False, member=False, scholarship=False, unemployed=False, competition_talk=False, competition_photography=False, paid_registration=False, organizer=False, dinner=False, dinner_type=1):
+    def __init__(self, name, email, password=None, first_name=None, last_name=None, institution=None, student=False, member=False, scholarship=False, unemployed=False, competition_talk=False, competition_photography=False, paid_registration=False, organizer=False, dinner=False, dinner_type=1, dinner_restriction='', dinner_p1=False, dinner_type_p1=1, dinner_restriction_p1=''):
         self.name = name
         self.email = email
         self.password = sha256(password.encode()).hexdigest() if password else sha256(token_hex(16).encode()).hexdigest()
@@ -50,6 +54,10 @@ class User(Base):
         self.organizer = organizer
         self.dinner = dinner
         self.dinner_type = dinner_type
+        self.dinner_restriction = dinner_restriction
+        self.dinner_p1 = dinner_p1
+        self.dinner_type_p1 = dinner_type_p1
+        self.dinner_restriction_p1 = dinner_restriction_p1
 
     def update_password(self, password) -> None:
         self.password = sha256(password.encode()).hexdigest()
