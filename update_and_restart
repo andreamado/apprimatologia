@@ -1,0 +1,5 @@
+cd apprimatologia &&
+git pull &&
+cd .. &&
+pkill gunicorn &&
+nohup ./run_server > log.out 2> log.err &

@@ -1,0 +1,3 @@
+tar -czvf file.tar.gz instance/ apprimatologia/uploaded_files/ &&
+rm instance/*.db apprimatologia/uploaded_files/* &&
+flask --app apprimatologia init-db init-IXIPC-db
