@@ -23,7 +23,7 @@ about-description =
   </p>
 
 about-contacts = Contacts
-about-regulamento-interno = Internal regulations
+about-regulamento-interno = Internal regulations (in Portuguese) 
 
 link-app = APP
 link-news = News
