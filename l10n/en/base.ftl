@@ -53,6 +53,9 @@ IXIPC-description-main =
   <p>
     Join us in exploring Vila do Conde and participating in this event. You can attend high-standard scientific talks given by our invited speakers, present your work (oral communications or posters) and receive feedback, exchange dreams with other primatologists, and who knows, maybe even achieve them!
   </p>
+  <p>
+    <small>Abstracts are accepted in English.</small>
+  </p>
 
 IXIPC-register = Register!
 IXIPC-login = Login
