@@ -14,9 +14,15 @@
     <div class="container-fluid {{'main-light' if light_background else 'main'}}{{ ' monkey-bg' if background_monkey }}{{' smaller-column' if text_column}}" data-bs-spy="scroll" data-bs-smooth-scroll="true" data-bs-target="#site-map">
       {% block main %}{% endblock main %}
       <br>
+      {% if light_background -%}
+      <div class="row">
+        <div class="col designed-by-light"><a href="https://andreamado.github.io/me">{{ 'designed-by'|l10n(lang) }} André Amado</a></div>
+      </div>
+      {% else -%}
       <div class="row">
         <div class="col designed-by"><a href="https://andreamado.github.io/me">{{ 'designed-by'|l10n(lang) }} André Amado</a></div>
       </div>
+      {% endif -%}
       {% if background_monkey -%}
       <div class="row">
         <div class="col designed-by"><a href="https://pixabay.com/users/21500104/">{{ 'background-by'|l10n(lang) }} Anne-Ed C.</a></div>
