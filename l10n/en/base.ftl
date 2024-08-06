@@ -124,7 +124,7 @@ IXIPC-payment-pending = Awaiting payment confirmation
 IXIPC-payment-failed-please-approve = Please approve the payment in your MBWay app
 IXIPC-payment-failed = Registration payment failed
 IXIPC-payment-failed-reload = Please reload the page and try again
-IXIPC-payment-available-after = Payment will be available here from 15/08/2024
+IXIPC-payment-available-after = Payment will be available here from 15/09/2024
 IXIPC-payment-member-fee = Member registration fee
 
 IXIPC-welcome-email-subject = Welcome to the IX Iberian Primatological Conference!
@@ -248,11 +248,14 @@ IXIPC-personal-data-first-name = First name
 IXIPC-personal-data-last-name = Last name
 IXIPC-personal-data-institution = Institution
 
-IXIPC-timeline-abstract-deadline = August 15
+IXIPC-timeline-abstract-deadline = September 15
+IXIPC-timeline-abstract-deadline-old = August 15
 IXIPC-timeline-abstract-deadline-description = Abstract submission deadline
-IXIPC-timeline-abstract-decision-deadline = September 16
+IXIPC-timeline-abstract-decision-deadline = September 30
+IXIPC-timeline-abstract-decision-deadline-old = September 16
 IXIPC-timeline-abstract-decision-deadline-description = Announcement of abstract decisions
-IXIPC-timeline-earlybird-deadline = September 27
+IXIPC-timeline-earlybird-deadline = October 10
+IXIPC-timeline-earlybird-deadline-old = September 27
 IXIPC-timeline-earlybird-deadline-description = Early bird registration deadline
 IXIPC-timeline-conference = November 21-23
 IXIPC-timeline-conference-description = Conference
@@ -316,7 +319,7 @@ registration-form-transfer-explanation =
     NIB: 003521690003032293030 <br>
     Caixa Geral de Depósitos
 registration-form-check-explanation = To: Associação Portuguesa de Primatologia
-registration-available-from = Online registration will be available from 15/08/2024
+registration-available-from = Online registration will be available from 15/09/2024
 
 members-list-title = Lista de associados
 
