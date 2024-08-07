@@ -313,6 +313,8 @@ const personalDataManager = () => {
   let studentVolunteerElement = document.getElementById('student-volunteer');
   {# let dinnerSwitchElement = document.getElementById('dinner');
   let dinnerTypeElement = document.getElementById('dinner-type-selector'); #}
+  let firstName = document.getElementById('first-name');
+  let lastName = document.getElementById('last-name');
 
   let saveFlag = false;
 
@@ -321,6 +323,8 @@ const personalDataManager = () => {
       saveFlag = false;
 
       let data = new FormData(element);
+      data.append('first-name', firstName.value);
+      data.append('last-name', lastName.value);
       data.append('student', studentSwitchElement.checked);
       data.append('member', memberSwitchElement.checked);
       data.append('scholarship', scholarshipSwitchElement.checked);

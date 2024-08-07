@@ -347,8 +347,8 @@ def save_personal_data():
         user.unemployed = request.form['unemployed'] == 'true'
         user.competition_talk = request.form['competition_talk'] == 'true'
         user.competition_photography = request.form['competition_photography'] == 'true'
-        user.dinner = request.form['dinner'] == 'true'
-        user.dinner_type = request.form['dinner_type']
+        # user.dinner = request.form['dinner'] == 'true'
+        # user.dinner_type = request.form['dinner_type']
 
         db_session.commit()
 
