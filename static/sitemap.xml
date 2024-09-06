@@ -4,8 +4,6 @@
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
             http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
-<!-- created with Free Online Sitemap Generator www.xml-sitemaps.com -->
-
 
 <url>
   <loc>https://apprimatologia.pt/</loc>
@@ -13,12 +11,17 @@
   <priority>1.00</priority>
 </url>
 <url>
-  <loc>https://apprimatologia.pt/pt/</loc>
+  <loc>https://apprimatologia.pt/en/</loc>
+  <lastmod>2024-08-30T15:22:08+00:00</lastmod>
+  <priority>1.00</priority>
+</url>
+<url>
+  <loc>https://apprimatologia.pt/noticias/pt</loc>
   <lastmod>2024-08-30T15:22:08+00:00</lastmod>
   <priority>0.80</priority>
 </url>
 <url>
-  <loc>https://apprimatologia.pt/noticias/pt</loc>
+  <loc>https://apprimatologia.pt/noticias/en</loc>
   <lastmod>2024-08-30T15:22:08+00:00</lastmod>
   <priority>0.80</priority>
 </url>
@@ -28,7 +31,17 @@
   <priority>0.80</priority>
 </url>
 <url>
+  <loc>https://apprimatologia.pt/IX_Iberian_Primatological_Conference/en</loc>
+  <lastmod>2024-08-30T15:22:08+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
   <loc>https://apprimatologia.pt/sobre/pt</loc>
+  <lastmod>2024-08-30T15:22:08+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://apprimatologia.pt/sobre/en</loc>
   <lastmod>2024-08-30T15:22:08+00:00</lastmod>
   <priority>0.80</priority>
 </url>
@@ -38,7 +51,7 @@
   <priority>0.80</priority>
 </url>
 <url>
-  <loc>https://apprimatologia.pt/en/</loc>
+  <loc>https://apprimatologia.pt/membros/en</loc>
   <lastmod>2024-08-30T15:22:08+00:00</lastmod>
   <priority>0.80</priority>
 </url>
@@ -48,14 +61,9 @@
   <priority>0.80</priority>
 </url>
 <url>
-  <loc>https://apprimatologia.pt/noticias/en</loc>
+  <loc>https://apprimatologia.pt/APP/junta-te/en</loc>
   <lastmod>2024-08-30T15:22:08+00:00</lastmod>
-  <priority>0.64</priority>
-</url>
-<url>
-  <loc>https://apprimatologia.pt/IX_Iberian_Primatological_Conference/en</loc>
-  <lastmod>2024-08-30T15:22:08+00:00</lastmod>
-  <priority>0.64</priority>
+  <priority>0.80</priority>
 </url>
 <url>
   <loc>https://apprimatologia.pt/static/docs/IX%20IPC_Accommodation%20proposals.pdf</loc>
@@ -63,19 +71,9 @@
   <priority>0.3</priority>
 </url>
 <url>
-  <loc>https://apprimatologia.pt/sobre/en</loc>
-  <lastmod>2024-08-30T15:22:08+00:00</lastmod>
-  <priority>0.64</priority>
-</url>
-<url>
   <loc>https://apprimatologia.pt/static/docs/regulamento_interno_app.pdf</loc>
   <lastmod>2024-06-28T17:29:59+00:00</lastmod>
   <priority>0.3</priority>
-</url>
-<url>
-  <loc>https://apprimatologia.pt/membros/en</loc>
-  <lastmod>2024-08-30T15:22:08+00:00</lastmod>
-  <priority>0.64</priority>
 </url>
 <url>
   <loc>https://apprimatologia.pt/associado/pt/1</loc>
@@ -143,75 +141,69 @@
   <priority>0.64</priority>
 </url>
 <url>
-  <loc>https://apprimatologia.pt/APP/junta-te/en</loc>
+  <loc>https://apprimatologia.pt/associado/en/1</loc>
   <lastmod>2024-08-30T15:22:08+00:00</lastmod>
   <priority>0.64</priority>
 </url>
 <url>
-  <loc>https://apprimatologia.pt/associado/en/1</loc>
-  <lastmod>2024-08-30T15:22:08+00:00</lastmod>
-  <priority>0.51</priority>
-</url>
-<url>
   <loc>https://apprimatologia.pt/associado/en/2</loc>
   <lastmod>2024-08-30T15:22:08+00:00</lastmod>
-  <priority>0.51</priority>
+  <priority>0.64</priority>
 </url>
 <url>
   <loc>https://apprimatologia.pt/associado/en/3</loc>
   <lastmod>2024-08-30T15:22:08+00:00</lastmod>
-  <priority>0.51</priority>
+  <priority>0.64</priority>
 </url>
 <url>
   <loc>https://apprimatologia.pt/associado/en/4</loc>
   <lastmod>2024-08-30T15:22:08+00:00</lastmod>
-  <priority>0.51</priority>
+  <priority>0.64</priority>
 </url>
 <url>
   <loc>https://apprimatologia.pt/associado/en/5</loc>
   <lastmod>2024-08-30T15:22:08+00:00</lastmod>
-  <priority>0.51</priority>
+  <priority>0.64</priority>
 </url>
 <url>
   <loc>https://apprimatologia.pt/associado/en/6</loc>
   <lastmod>2024-08-30T15:22:08+00:00</lastmod>
-  <priority>0.51</priority>
+  <priority>0.64</priority>
 </url>
 <url>
   <loc>https://apprimatologia.pt/associado/en/7</loc>
   <lastmod>2024-08-30T15:22:08+00:00</lastmod>
-  <priority>0.51</priority>
+  <priority>0.64</priority>
 </url>
 <url>
   <loc>https://apprimatologia.pt/associado/en/8</loc>
   <lastmod>2024-08-30T15:22:08+00:00</lastmod>
-  <priority>0.51</priority>
+  <priority>0.64</priority>
 </url>
 <url>
   <loc>https://apprimatologia.pt/associado/en/9</loc>
   <lastmod>2024-08-30T15:22:08+00:00</lastmod>
-  <priority>0.51</priority>
+  <priority>0.64</priority>
 </url>
 <url>
   <loc>https://apprimatologia.pt/associado/en/10</loc>
   <lastmod>2024-08-30T15:22:08+00:00</lastmod>
-  <priority>0.51</priority>
+  <priority>0.64</priority>
 </url>
 <url>
   <loc>https://apprimatologia.pt/associado/en/11</loc>
   <lastmod>2024-08-30T15:22:08+00:00</lastmod>
-  <priority>0.51</priority>
+  <priority>0.64</priority>
 </url>
 <url>
   <loc>https://apprimatologia.pt/associado/en/12</loc>
   <lastmod>2024-08-30T15:22:08+00:00</lastmod>
-  <priority>0.51</priority>
+  <priority>0.64</priority>
 </url>
 <url>
   <loc>https://apprimatologia.pt/associado/en/13</loc>
   <lastmod>2024-08-30T15:22:08+00:00</lastmod>
-  <priority>0.51</priority>
+  <priority>0.64</priority>
 </url>
-
 
 </urlset>
