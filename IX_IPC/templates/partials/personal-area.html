@@ -188,13 +188,17 @@
         </div>
         {% endfor -%}
       </div>
-      <form id="abstract-new" action="" class="mb-5">
-        {{ registration_form.csrf_token }}
-        <button type="button" class="btn btn-primary text-white" type="submit">
-          <img src='data:image/svg+xml,<svg width="20px" height="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 12H15" stroke="%23fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 9L12 15" stroke="%23fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 12C3 4.5885 4.5885 3 12 3C19.4115 3 21 4.5885 21 12C21 19.4115 19.4115 21 12 21C4.5885 21 3 19.4115 3 12Z" stroke="%23fff" stroke-width="2"/></svg>' alt="" style="height: 25px;">
-          <span class="text-white">{{ 'IXIPC-abstract-new-abstract'|l10n(lang) }}</span>
-        </button>
-      </form>
+      {% if submission_open -%}
+        <form id="abstract-new" action="" class="mb-5">
+          {{ registration_form.csrf_token }}
+          <button type="button" class="btn btn-primary text-white" type="submit">
+            <img src='data:image/svg+xml,<svg width="20px" height="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 12H15" stroke="%23fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 9L12 15" stroke="%23fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 12C3 4.5885 4.5885 3 12 3C19.4115 3 21 4.5885 21 12C21 19.4115 19.4115 21 12 21C4.5885 21 3 19.4115 3 12Z" stroke="%23fff" stroke-width="2"/></svg>' alt="" style="height: 25px;">
+            <span class="text-white">{{ 'IXIPC-abstract-new-abstract'|l10n(lang) }}</span>
+          </button>
+        </form>
+      {% else -%}
+        <p>{{ 'IXIPC-abstract-submission-closed'|l10n(lang) }}</p>
+      {% endif -%}
     </div>
 
     {# <div class="row">
@@ -301,6 +305,8 @@
 };*/
 
 const personalDataManager = () => {
+  let abstract_submission_open = {{submission_open}};
+
   let element = document.getElementById('personal-data');
   let studentSwitchElement = document.getElementById('student');
   let memberSwitchElement = document.getElementById('member');
@@ -463,38 +469,41 @@ Promise.all([authors, institutions]).then((values) =>{
 });
 
 const addAbstract = (event) => {
-  event.preventDefault();
-  let id = null;
-  let container = document.getElementById('abstract-forms-container');
-  fetch("{{ url_for('IX_IPC.create_new_abstract', language=lang) }}", {
-    method: 'POST',
-    body: new FormData(document.getElementById('abstract-new'))
-  })
-  .then((response) => response.json())
-  .then((data) => {
-    const div = document.createElement('div');
-    id = data['id'];
-    div.id = 'abstract-' + String(id);
-    div.innerHTML = data['html'];
-    container.appendChild(div);
-    openAbstract(id);
-  })
-  .catch((e) => console.log(e));
+  if(abstract_submission_open) {
+    event.preventDefault();
+    let id = null;
+    let container = document.getElementById('abstract-forms-container');
+    fetch("{{ url_for('IX_IPC.create_new_abstract', language=lang) }}", {
+      method: 'POST',
+      body: new FormData(document.getElementById('abstract-new'))
+    })
+    .then((response) => response.json())
+    .then((data) => {
+      const div = document.createElement('div');
+      id = data['id'];
+      div.id = 'abstract-' + String(id);
+      div.innerHTML = data['html'];
+      container.appendChild(div);
+      openAbstract(id);
+    })
+    .catch((e) => console.log(e));
 
-  const callback = (mutationList, observer) => {
-    document.getElementById('abstract-' + String(id)).scrollIntoView({behavior: "smooth", block: "center"});
-    observer.disconnect();
+    const callback = (mutationList, observer) => {
+      document.getElementById('abstract-' + String(id)).scrollIntoView({behavior: "smooth", block: "center"});
+      observer.disconnect();
+    }
+
+    const config = { attributes: false, childList: true, subtree: false };
+    const observer = new MutationObserver(callback);
+    observer.observe(container, config);
   }
-
-  const config = { attributes: false, childList: true, subtree: false };
-  const observer = new MutationObserver(callback);
-  observer.observe(container, config);
 }
-
-document.getElementById('abstract-new').addEventListener(
-  'click',
-  addAbstract
-);
+if (abstract_submission_open) {
+  document.getElementById('abstract-new').addEventListener(
+    'click',
+    addAbstract
+  );
+}
 </script>
 
 {# {% include 'scripts/payment-logic.html' %} #}
