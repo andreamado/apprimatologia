@@ -1307,7 +1307,7 @@ def participants_csv_summary():
     with StringIO() as buffer:
         writer = csv.writer(buffer, delimiter=';')
 
-        fields = ['first_name', 'last_name', 'email', 'institution', 'student', 'paid', 'submitted_abstract']
+        fields = ['first_name', 'last_name', 'email', 'institution', 'student', 'scholarship', 'unemployed', 'paid', 'submitted_abstract', 'talk_competition', 'photography_competition']
         writer.writerow(fields)
 
         with get_session() as db_session:
@@ -1328,8 +1328,12 @@ def participants_csv_summary():
                     participant.email,
                     participant.institution,
                     1 if participant.student else 0,
+                    1 if participant.scholarship else 0,
+                    1 if participant.unemployed else 0,
                     1 if participant.paid_registration else 0,
-                    len(abstracts)
+                    len(abstracts),
+                    1 if participant.competition_talk else 0,
+                    1 if participant.competition_photography else 0
                 ])
 
             buffer.seek(0)
