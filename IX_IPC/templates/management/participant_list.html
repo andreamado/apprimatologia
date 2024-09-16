@@ -17,6 +17,9 @@
     <h4 class="mb-3"><a class="white-link" href="{{ url_for('IX_IPC.participant_details', language=lang, id=participant.id) }}">{{ participant.first_name }} {{ participant.last_name }}</a> {{'(student)' if participant.student}}</h4>
     <p class="mb-2">Email: {{ participant.email }}</p>
     <p class="mb-2">Institution: {{ participant.institution }}</p>
+    {% if participant.student -%}
+      <p class="mb-2">Student</p>
+    {% endif -%}
     {% if participant.paid_registration -%}
     <p class="mb-2">Paid {{ participant.payment.value }}€ on {{ participant.payment.concluded.strftime('%d/%m/%Y') }} (via {{'MBWay' if participant.payment.method == 1 else 'Credit card' }})</p>
     {% endif -%}

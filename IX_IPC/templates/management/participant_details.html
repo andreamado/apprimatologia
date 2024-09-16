@@ -25,30 +25,22 @@
             Participant has not paid yet
           {% endif %}
         </p>
-        <p>
-          {% if participant.student -%}
-            {% if participant.scholarship -%}
-              Student with scholarship
-            {% else -%}
-              Student without scholarship
-            {% endif -%}
+        {% if participant.student -%}
+          {% if participant.scholarship -%}
+            <p>Student with scholarship</p>
+          {% else -%}
+            <p>Student without scholarship</p>
           {% endif -%}
-        </p>
-        <p>
-          {% if participant.unemployed -%}
-            Unemployed participant
-          {% endif -%}
-        </p>
-        <p>
-          {% if participant.competition_talk -%}
-            Talk/poster competition
-          {% endif -%}
-        </p>
-        <p>
-          {% if participant.competition_photography -%}
-            Photography competition
-          {% endif -%}
-        </p>
+        {% endif -%}
+        {% if participant.unemployed -%}
+          <p>Unemployed participant</p>
+        {% endif -%}
+        {% if participant.competition_talk -%}
+          <p>Talk/poster competition</p>
+        {% endif -%}
+        {% if participant.competition_photography -%}
+          <p>Photography competition</p>
+        {% endif -%}
       </div>
     </div>
 
