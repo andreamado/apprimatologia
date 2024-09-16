@@ -1728,7 +1728,7 @@ def abstracts_pdf_report(filter=''):
     mx = 3*cm
     mt = doc._topMargin
     styles = getSampleStyleSheet()
-    name_style = ParagraphStyle('Name', parent=styles['Normal'], fontName='Helvetica-Bold', fontSize=16)
+    name_style = ParagraphStyle('Name', parent=styles['Normal'], fontName='Helvetica-Bold', fontSize=16, leading=16)
     bold_style = ParagraphStyle('Bold', parent=styles['Normal'], fontName='Helvetica-Bold')
     style_small = ParagraphStyle('Small', parent=styles['Normal'], fontSize=8)
 
@@ -1758,6 +1758,9 @@ def abstracts_pdf_report(filter=''):
 
         story = [Spacer(1, 8*cm)] #[PageBreak()]
         style = styles['Normal']
+        
+        # justify
+        style.listAttrs['alignment'] = 4
 
         for i, abstract in enumerate(abstracts):
             abstract_description = [
