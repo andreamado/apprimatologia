@@ -238,6 +238,8 @@ IXIPC-abstract-scientific-area-socioecology = Socioecology
 IXIPC-abstract-scientific-area-other = Other
 IXIPC-abstract-no-scientific-area = Select a scientific area
 
+IXIPC-abstract-submission-closed = Abstract submission has closed
+
 IXIPC-abstract-edit = create/edit
 IXIPC-abstract-authors-edit = Create and modify authors
 IXIPC-abstract-authors-save = Save authors

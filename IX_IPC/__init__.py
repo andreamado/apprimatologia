@@ -29,6 +29,8 @@ from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 bp = Blueprint('IX_IPC', __name__, template_folder='templates')
 
 
+abstract_submission_open = True
+
 def login_IXIPC_required(view):
     """Guarantees the user is logged in
      
@@ -122,7 +124,8 @@ def IXIPC(language='pt'):
             abstracts=abstracts,
             site_map=True,
             payment_status=payment_status,
-            organizer=organizer
+            organizer=organizer,
+            submission_open=abstract_submission_open
         )
 
 

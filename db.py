@@ -365,27 +365,27 @@ def init_db_command() -> None:
         # )
         # db_session.add(news)
 
-        news = models.News(
-            title_pt = 'Novas datas!', 
-            title_en = 'New dates!', 
-            body_pt  = ''
-              '<p>'
-              '  Estendemos o prazo para submissão de resumos para o IX Congresso Ibérico de Primatologia até 15 de Setembro.'
-              '</p>'
-              '<p>'
-              '  Aproveita! Até breve.'
-              '</p>'
-            '', 
-            body_en  =  ''
-              '<p>'
-              '  We have extended the deadline for abstract submissions for the IX Iberian Primatological Conference to September 15th.'
-              '</p>'
-              '<p>'
-              '  Take advantage of this opportunity! See you soon.'
-              '</p>'
-            ''
-        )
-        db_session.add(news)
+        # news = models.News(
+        #     title_pt = 'Novas datas!', 
+        #     title_en = 'New dates!', 
+        #     body_pt  = ''
+        #       '<p>'
+        #       '  Estendemos o prazo para submissão de resumos para o IX Congresso Ibérico de Primatologia até 15 de Setembro.'
+        #       '</p>'
+        #       '<p>'
+        #       '  Aproveita! Até breve.'
+        #       '</p>'
+        #     '', 
+        #     body_en  =  ''
+        #       '<p>'
+        #       '  We have extended the deadline for abstract submissions for the IX Iberian Primatological Conference to September 15th.'
+        #       '</p>'
+        #       '<p>'
+        #       '  Take advantage of this opportunity! See you soon.'
+        #       '</p>'
+        #     ''
+        # )
+        # db_session.add(news)
 
         db_session.commit()
 
