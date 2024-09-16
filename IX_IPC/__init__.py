@@ -537,7 +537,8 @@ def load_abstract(language, id=None, csrf_token = None):
                       form=request.form, 
                       reload=True,
                       abstract=abstract,
-                      csrf_token=csrf_token
+                      csrf_token=csrf_token,
+                      submission_open=abstract_submission_open
                   )
               }), 200
         else:
