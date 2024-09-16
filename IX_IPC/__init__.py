@@ -30,6 +30,7 @@ bp = Blueprint('IX_IPC', __name__, template_folder='templates')
 
 
 abstract_submission_open = True
+registration_open = False
 
 def login_IXIPC_required(view):
     """Guarantees the user is logged in
