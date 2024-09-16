@@ -62,21 +62,21 @@ def register(app):
     app.jinja_env.filters['label'] = label_generator()
 
 
-    @app.route('/APP/junta-te/<language:language>')
-    @app.route('/APP/junta-te')
-    def juntate(language='pt', methods=['GET', 'POST']):
-        """Members admission page"""
+    # @app.route('/APP/junta-te/<language:language>')
+    # @app.route('/APP/junta-te')
+    # def juntate(language='pt', methods=['GET', 'POST']):
+    #     """Members admission page"""
 
-        g.links[0]['active'] = True
+    #     g.links[0]['active'] = True
 
-        if request.method == 'POST':
-            pass
+    #     if request.method == 'POST':
+    #         pass
 
-        return render_template(
-            'admission.html',
-            lang=language,
-            form=RegistrationForm()
-        )
+    #     return render_template(
+    #         'admission.html',
+    #         lang=language,
+    #         form=RegistrationForm()
+    #     )
     
     # @app.route('/api/save_juntate', methods=['POST'])
     # def save_juntate():
