@@ -1757,10 +1757,7 @@ def abstracts_pdf_report(filter=''):
         abstracts = db_session.execute(abstract_filters[filter]).scalars()
 
         story = [Spacer(1, 8*cm)] #[PageBreak()]
-        style = styles['Normal']
-        
-        # justify
-        style.listAttrs['alignment'] = 4
+        style = ParagraphStyle('BaseStyle', parent=styles['Normal'], alignment=4)
 
         for i, abstract in enumerate(abstracts):
             abstract_description = [
