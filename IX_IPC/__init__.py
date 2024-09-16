@@ -1307,7 +1307,7 @@ def participants_csv_summary():
     with StringIO() as buffer:
         writer = csv.writer(buffer, delimiter=';')
 
-        fields = ['first_name', 'last_name', 'email', 'institution', 'student', 'scholarship', 'unemployed', 'paid', 'submitted_abstract', 'talk_competition', 'photography_competition']
+        fields = ['first_name', 'last_name', 'email', 'institution', 'student', 'scholarship', 'unemployed', 'paid', 'submitted_talks', 'submitted_posters', 'talk_competition', 'photography_competition']
         writer.writerow(fields)
 
         with get_session() as db_session:
@@ -1317,9 +1317,16 @@ def participants_csv_summary():
             ).scalars()
 
             for participant in participants:
-                abstracts = db_session.execute(
+                abstracts_talk = db_session.execute(
                     select(Abstract)
                       .where(Abstract.owner == participant.id)
+                      .where(Abstract.abstract_type == AbstractType.PRESENTATION)
+                ).scalars().all()
+
+                abstracts_poster = db_session.execute(
+                    select(Abstract)
+                      .where(Abstract.owner == participant.id)
+                      .where(Abstract.abstract_type == AbstractType.POSTER)
                 ).scalars().all()
 
                 writer.writerow([
@@ -1331,7 +1338,8 @@ def participants_csv_summary():
                     1 if participant.scholarship else 0,
                     1 if participant.unemployed else 0,
                     1 if participant.paid_registration else 0,
-                    len(abstracts),
+                    len(abstracts_poster),
+                    len(abstracts_talk),
                     1 if participant.competition_talk else 0,
                     1 if participant.competition_photography else 0
                 ])
