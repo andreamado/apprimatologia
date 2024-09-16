@@ -93,7 +93,18 @@ IXIPC-travel-guide-get-there = How to get to Vila do Conde
 IXIPC-travel-guide-where-eat = Where to eat
 
 IXIPC-photo-competition = Cláudia Sousa photography competition
-IXIPC-photo-competition-description = This section will soon be updated!
+IXIPC-photo-competition-description = 
+  <p>Since our colleague Cláudia left us in 2014, we decided to organize a photo competition in her honour at every congress. This was one of the ways we chose to keep her permanently in our memory as the APP/APE congresses go by.</p>
+  <p>Cláudia was one of the first primatologists in the country and was also a founding member of APP. She was involved in all the APP and APP/APE congresses and activities, and in her work she always tried to involve Portuguese students in particular. After all, contrary to PhD students from other countries, many of us find it difficult to study primates in their natural habitats. That is  how our “field station” in Guinea-Bissau was born: not only as a way of having a research space for Portuguese students to work in natural habitats without waiting lists, but also to involve Guinean students. That spirit, those values and that idea, which was innovative at the time - and which benefited many Portuguese students - remains in our minds. Even when research is done outside Guinea-Bissau, the principles applied are the same.</p>
+  <p>We hope that these photo competitions will continue to remind us of our “Caia” and her magnificent work. In her honour, here is the contest for this congress, which follows the rules of previous contests:</p>
+  <ol>
+    <li>Anyone interested in entering must tick the relevant option on the registration form on our website and mention it on the first day of the congress, when the event materials are handed out. This means that, in order to enter, the candidate must be registered for the congress and the photo competition;</li>
+    <li>It is also on the first day of the congress, at registration, that each candidate hands in their photo, its caption (containing the year the photo was taken and where) and adhesive material of their choice;</li>
+    <li>Each candidate can only submit one photograph;</li>
+    <li>Photographs made from camera images or digitally modified are not allowed;</li>
+    <li>The author is always responsible for choosing the print size of the photograph;</li>
+    <li>Photographs may contain non-human primates in their natural habitat or in colonies, such as zoos, laboratories, sanctuaries and other places.</li>
+  </ol>
 
 IXIPC-conference-dinner = Conference dinner
 

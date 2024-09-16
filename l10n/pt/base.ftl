@@ -96,7 +96,18 @@ IXIPC-travel-guide-get-there = Como chegar a Vila do Conde
 IXIPC-travel-guide-where-eat = Onde comer
 
 IXIPC-photo-competition = Concurso de fotografia Cláudia Sousa
-IXIPC-photo-competition-description = Esta secção será actualizada em breve!
+IXIPC-photo-competition-description = 
+  <p>Desde que a nossa colegas Cláudia partiu no ano de 2014, resolvemos organizar um concurso de fotografia em sua homenagem em todos os congressos. Esta foi uma das formas que elegemos para que ela estivesse permanentemente na nossa memória à medida que vão passando os congressos APP/APE.</p>
+  <p>A Cláudia foi das primeiras primatólogas do país e foi também sócia fundadora da APP. Esteve envolvida em todos os congressos e atividades da APP e da APP/APE e, no seu trabalho, sempre procurou envolver sobretudo estudantes portugueses. Afinal, muitos de nós sentimos algumas dificuldades em estudar em habitat natural frente a doutorandos de outros países. Foi assim que nasceu a nossa “estação de campo” na Guiné-Bissau: não apenas como uma forma de termos um espaço de pesquisa para estudantes portugueses trabalharem em habitat natural sem terem listas de espera, mas também para envolver estudantes guineenses. Esse espírito, esses valores e essa ideia, na altura inovadora – e que beneficiou muitos estudantes portugueses –, permanece na nossa mente. Mesmo aquando de pesquisa feita fora da Guiné-Bissau, os princípios aplicados são os mesmos.</p>
+  <p>Esperamos que estes concursos de fotografia nos continuem a recordar da nossa “Caia” e do seu magnífico trabalho. Em sua homenagem, aqui está o concurso deste congresso, que segue as regras de anteriores concursos:</p>
+  <ol>
+    <li>Cada interessado em concorrer deve assinalar a respectiva opção no formulário de inscrição no nosso website e mencioná-lo no primeiro dia do congresso, quando são entregues os materiais do evento. Tal significa que, para concorrer, o candidato tem de estar inscrito no congresso e no concurso de fotografia;</li>
+    <li>É também no primeiro dia de congresso, na altura do registo, que cada candidato entrega a sua fotografia, respectiva legenda (contendo o ano em que a fotografia foi tirada e onde) e material colante à sua escolha;</li>
+    <li>Cada candidato só pode concorrer com uma única fotografia;</li>
+    <li>Não são autorizadas fotografias feitas a partir de imagens de câmaras ou modificadas digitalmente;</li>
+    <li>A escolha do tamanho de impressão da fotografia é sempre da responsabilidade do autor;</li>
+    <li>As fotografias podem conter primatas não humanos em habitat natural ou em colónias, como zoos, laboratórios, santuários e outros locais.</li>
+  </ol>
 
 IXIPC-conference-dinner = Jantar do congresso
 
