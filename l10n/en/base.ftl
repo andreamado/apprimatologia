@@ -261,7 +261,7 @@ IXIPC-personal-data-first-name = First name
 IXIPC-personal-data-last-name = Last name
 IXIPC-personal-data-institution = Institution
 
-IXIPC-timeline-abstract-deadline = September 15
+IXIPC-timeline-abstract-deadline = September 20
 IXIPC-timeline-abstract-deadline-old = August 15
 IXIPC-timeline-abstract-deadline-description = Abstract submission deadline
 IXIPC-timeline-abstract-decision-deadline = September 30
@@ -275,6 +275,9 @@ IXIPC-timeline-conference-description = Conference
 
 admission-title = Join APP!
 admission-description = Fill the form below to join APP
+
+admission-success-title = Thank you for applying in APP!
+admission-success-description = We will review your application as soon as possible and get back to you.
 
 registration-form-title-id = Personal information
 registration-form-given-name = First name

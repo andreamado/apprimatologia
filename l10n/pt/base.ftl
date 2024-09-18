@@ -265,7 +265,7 @@ IXIPC-personal-data-first-name = Nome
 IXIPC-personal-data-last-name = Apelido
 IXIPC-personal-data-institution = Instituição
 
-IXIPC-timeline-abstract-deadline = 15 de Setembro
+IXIPC-timeline-abstract-deadline = 20 de Setembro
 IXIPC-timeline-abstract-deadline-old = 15 de Agosto
 IXIPC-timeline-abstract-deadline-description = Deadline para submissão de resumos
 IXIPC-timeline-abstract-decision-deadline = 30 de Setembro
@@ -279,6 +279,9 @@ IXIPC-timeline-conference-description = Conferência
 
 admission-title = Junta-te à APP!
 admission-description = Preenche o formulário abaixo para te juntares à APP 
+
+admission-success-title = Obrigado por te candidatares à APP!
+admission-success-description = Vamos analisar a tua candidatura assim que possível.
 
 registration-form-title-id = Identificação pessoal
 registration-form-given-name = Nome
