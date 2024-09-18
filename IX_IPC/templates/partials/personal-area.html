@@ -305,7 +305,7 @@
 };*/
 
 const personalDataManager = () => {
-  let abstract_submission_open = {{submission_open}};
+  let abstract_submission_open = {{submission_open|lower}};
 
   let element = document.getElementById('personal-data');
   let studentSwitchElement = document.getElementById('student');
@@ -388,7 +388,7 @@ const personalDataManager = () => {
     }
   }
 
-  const updateStudent = () => {  
+  const updateStudent = () => {
     if(studentSwitchElement.checked) {
       studentVolunteerElement.removeAttribute('hidden');
       competitionTalkElement.removeAttribute('hidden');
