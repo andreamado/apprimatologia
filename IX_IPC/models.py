@@ -69,15 +69,18 @@ class User(Base):
         return f'<User {self.first_name} {self.last_name} - {self.institution} ({"paid" if self.paid_registration == True else "not paid"})>'
 
 class PaymentMethod:
-    MBWay = 1
-    Card  = 2
-    Other = 3
+    MBWay    = 1
+    Card     = 2
+    Other    = 3
+    Transfer = 4
 
     def to_str(method):
         if method == PaymentMethod.MBWay:
             return 'MBWay'
         elif method == PaymentMethod.Card:
             return 'Credit Card'
+        elif method == PaymentMethod.Transfer:
+            return 'Transfer'
         else:
             return 'Unknown payment method'
             

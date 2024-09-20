@@ -1,11 +1,16 @@
 <script>
-  const makeUploader = (dropArea, csrfToken) => {
+  const makeUploader = (dropArea, csrfToken, userId=undefined) => {
     let elem = dropArea.querySelector('.upload-result');
     let elemText = dropArea.querySelector('.upload-result-text');
     let inputElem = dropArea.querySelector('input[type=file]')
     let feedbackArea = dropArea.querySelector('.card-footer')
 
     let previousFile = null;
+    let callback = null;
+
+    const setCallback = (cb) => {
+      callback = cb;
+    }
 
     function preventDefaults(e) {
       e.preventDefault();
@@ -59,6 +64,7 @@
       let uploadForm = new FormData();
       uploadForm.append('file', file);
       uploadForm.append('csrf_token', csrfToken);
+      uploadForm.append('userId', userId);
 
       fetch("{{ url_for('file.upload') }}", {
         method: 'POST',
@@ -76,10 +82,12 @@
           feedbackArea.classList.remove('bg-danger')
           feedbackArea.classList.add('bg-success')
           previousFile = data;
+          if(callback) callback(data);
         }
       }).catch((error) => {
-        console.log(error)
-      }) 
+        console.log(error);
+        previousFile = null;
+      })
     }
 
     dropArea.addEventListener('click', () => {
@@ -89,5 +97,15 @@
     inputElem.addEventListener('change', (e) => {
       uploadFile(inputElem.files[0]);
     });
+
+    const getFileData = () => {
+      return previousFile;
+    }
+
+    return {
+      uploadFile: uploadFile,
+      getFileData: getFileData,
+      setCallback: setCallback
+    }
   }
 </script>

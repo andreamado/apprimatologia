@@ -35,6 +35,11 @@ def upload():
     else:
         return json.dumps({'error': 'no file uploaded'}), 400 
 
+    try:
+        user = g.user
+    except:
+        user = request.form['userId']
+
     if f.filename == '':
         return json.dumps({'error': 'no selected file'}), 400
 
@@ -48,7 +53,7 @@ def upload():
         else None
     
     with get_session() as db_session:
-        file = UploadedFile(f.filename, description, g.user)
+        file = UploadedFile(f.filename, description, user)
         try:
             f.save(os.path.join(app.config['UPLOAD_FOLDER'], str(file.id)))
         except:

@@ -64,7 +64,7 @@ IXIPC-register = Inscreve-te!
 IXIPC-login = Entrar
 IXIPC-logout = Sair
 IXIPC-email-already-registered = O email {$email} já está registado. Usa outro email ou entra com as credenciais que te enviámos no email de registo. Se perdeste as credenciais carrega <a href="{$recover_credentials}">aqui</a> para as receber de novo.
-IXIPC-upload-payment-proof = Upload da confirmação de pagamento
+IXIPC-upload-payment-proof = Upload do comprovativo de pagamento
 IXIPC-dates = Datas
 IXIPC-place = Local
 IXIPC-register-dates = 21 a 23 de Novembro
@@ -276,6 +276,18 @@ IXIPC-timeline-earlybird-deadline-old = 27 de Setembro
 IXIPC-timeline-earlybird-deadline-description = Deadline do registo "early bird"
 IXIPC-timeline-conference = 21-23 de Novembro
 IXIPC-timeline-conference-description = Conferência
+
+IXIPC-registration-warning = Antes de te inscreveres, verifica que a tua informação pessoal na secção acima está correcta e completa. Após a inscrição não poderás modificá-la!
+IXIPC-payment-method = De seguida, faz aqui upload do teu comprovativo de pagamento e carrega no botão "Submeter". Iremos verificar os dados e, quando tudo estiver em ordem, verás a mensagem “Pagamento concluído” no teu perfil. Este processo pode demorar até três dias.
+IXIPC-payment-success = Pagamento concluído - esperamos ver-te muito em breve!
+IXIPC-payment-checking = Estamos a verificar o pagamento. Quando tudo estiver em ordem, verás aqui a mensagem “Pagamento concluído”. Este processo pode demorar até três dias.
+IXIPC-payment-member-renew = Se gostarias de te tornar membro da APP ou se precisas de renovar a tua inscrição para este ano, por favor, envia um email para aportprimatologia@gmail.com antes de avançares com o pagamento.
+IXIPC-payment-instructions = Para pagares a inscrição, faz uma transferência para:
+IXIPC-payment-amount = Valor
+IXIPC-payment-beneficiary = Beneficiário
+IXIPC-payment-submit = Submeter
+IXIPC-feedback-registration-intro = Antes de submeter, preenche
+IXIPC-feedback-registration-proof-warning = Faz upload do <strong>comprovativo de pagamento</strong>.
 
 admission-title = Junta-te à APP!
 admission-description = Preenche o formulário abaixo para te juntares à APP 

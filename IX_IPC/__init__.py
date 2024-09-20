@@ -89,6 +89,12 @@ class ManagementLoginForm(FlaskForm):
     password = PasswordField('login-form-password', [validators.DataRequired()])
 
 
+class BankDetails():
+    def __init__(self) -> None:
+        self.beneficiario = app.config['IXIPC_BANK_BENEFICIARY']
+        self.iban = app.config['IXIPC_BANK_IBAN']
+        self.bic = app.config['IXIPC_BANK_BIC']
+
 @bp.route('/IX_IPC/<language:language>')
 @bp.route('/IX_IPC')
 @bp.route('/IX_Iberian_Primatological_Conference/<language:language>')
@@ -98,6 +104,7 @@ def IXIPC(language='pt'):
 
     g.links[2]['active'] = True
 
+    user_id = None
     with get_session() as db_session:
         abstracts = []
         payment_status = 0
@@ -107,6 +114,8 @@ def IXIPC(language='pt'):
                 select(Abstract).filter_by(owner=g.IXIPC_user.id)
             ).scalars()
 
+            user_id = g.IXIPC_user.id
+
             if g.IXIPC_user.paid_registration:
                 payment_status = 1
             elif g.IXIPC_user.payment_id:
@@ -114,7 +123,7 @@ def IXIPC(language='pt'):
 
             if g.IXIPC_user.organizer:
                 organizer = True
-            
+        
         return render_template(
             'IX_IPC.html',
             lang=language,
@@ -126,7 +135,9 @@ def IXIPC(language='pt'):
             site_map=True,
             payment_status=payment_status,
             organizer=organizer,
-            submission_open=abstract_submission_open
+            submission_open=abstract_submission_open,
+            bank_details=BankDetails(),
+            user_id=user_id
         )
 
 
@@ -918,11 +929,32 @@ def save_institutions():
 # 122 - Transaction declined to the user.
 # 999 - Error on initializing the request. You can try again.
 
+                               #  year, month, day
+earlyBirdDate = datetime.datetime(2024, 10,    10)
+
+all_prices = [
+  #  non-member, member, student non-member, student member non-scholarship, student member scholarship
+    [150,        90,     70,                 25,                             40                         ],
+    [200,        150,    120,                60,                             70                         ]
+]
 
 def get_payment_value(user):
     """Returns the value of the payment for current user"""
-    # TODO: update to the real values and take early bird into consideration
-    return 35 if user.student else 80
+
+    prices = all_prices[0] if earlyBirdDate > datetime.datetime.now() else all_prices[1]
+    if user.student or user.unemployed:
+        if user.member:
+            if user.scholarship:
+                return prices[4]
+            else:
+                return prices[3]
+        else:
+            return prices[2]
+    else:
+        if user.member:
+          return prices[1]
+        else:
+          return prices[0]
 
 HEADERS_JSON = {
     "accept": "application/json",
@@ -1240,6 +1272,42 @@ def creditcard_payment_error(language):
         print(f'error: could not find payment {request.args["requestId"]} in the database')
 
     return redirect(url_for('IX_IPC.IXIPC', language=language))
+
+
+@bp.route('/IX_IPC/submit_registration/<language:language>', methods=['POST'])
+@login_IXIPC_required
+def submit_registration(language):
+    """Submit registration
+
+    Submits a user registration to the event.
+    """
+    
+    proof_id = request.form['proofId']
+
+    if g.IXIPC_user.paid_registration:
+        print(f'user {g.IXIPC_user.id} already paid')
+        return json.dumps({'error': 'User has already paid'}), 403
+    elif g.IXIPC_user.payment_id:
+        print(f'user {g.IXIPC_user.id} waiting for payment validation')
+        return json.dumps({'error': 'User payment being processed'}), 403
+    else:
+        # TODO update this function!!!!
+        value = get_payment_value(g.IXIPC_user)
+
+        with get_session() as db_session:
+            payment = Payment(g.IXIPC_user.id, PaymentMethod.Transfer, proof_id, value)
+
+            db_session.add(payment)
+            db_session.commit()
+
+            user = db_session.get(User, g.IXIPC_user.id)
+            user.payment_id = payment.id
+
+            db_session.commit()
+
+            print(f'user {g.IXIPC_user.id} registered')
+
+    return '', 200
 
 
 @bp.route('/IX_IPC/management/logout')

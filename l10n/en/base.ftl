@@ -61,7 +61,7 @@ IXIPC-register = Register!
 IXIPC-login = Login
 IXIPC-logout = Logout
 IXIPC-email-already-registered = {$email} is already registered. Please use a different email or login with the credentials we sent to your registration email. In case you lost the credentials, click <a href="{$recover_credentials}">here</a> to receive them again.
-IXIPC-upload-payment-proof = Please upload the payment proof
+IXIPC-upload-payment-proof = Please upload the proof of payment
 IXIPC-dates = Dates
 IXIPC-place = Venue
 IXIPC-register-dates = November 21-23
@@ -272,6 +272,18 @@ IXIPC-timeline-earlybird-deadline-old = September 27
 IXIPC-timeline-earlybird-deadline-description = Early bird registration deadline
 IXIPC-timeline-conference = November 21-23
 IXIPC-timeline-conference-description = Conference
+
+IXIPC-registration-warning = Before registering, please make sure your personal information is correct and complete in the section above. After registering you won't be able to modify it!
+IXIPC-payment-method = Please upload your proof of payment here and click on the submit button. We will verify the details, and once everything is in order, you will see the message &quot;Payment completed&quot; in your profile. This process may take up to three days.
+IXIPC-payment-success = Payment completed – we look forward to seeing you very soon!
+IXIPC-payment-checking = We are verifying the payment. Once everything is in order, you will see here the message &quot;Payment completed&quot;. This process may take up to three days.
+IXIPC-payment-member-renew = If you would like to become a member of APP or need to renew your membership for the current year, please email aportprimatologia@gmail.com before proceeding with the payment.
+IXIPC-payment-instructions = To pay the registration, please make a transfer to: 
+IXIPC-payment-amount = Amount
+IXIPC-payment-beneficiary = Beneficiary
+IXIPC-payment-submit = Submit
+IXIPC-feedback-registration-intro = Before submitting fill the following fields
+IXIPC-feedback-registration-proof-warning = Upload the <strong>payment proof</strong>.
 
 admission-title = Join APP!
 admission-description = Fill the form below to join APP

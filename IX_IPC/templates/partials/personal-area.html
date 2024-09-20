@@ -129,13 +129,61 @@
     </div>
     <div class="mt-3" id="payment">
       {# <h5>Preços</h5> #}
+      {# <h5>{{ 'IXIPC-payment-available-after'|l10n(lang) }}</h5> #}
+      
+      {% if payment_status == 0 -%}
+        <h5 class="mb-3">{{ 'IXIPC-registration-warning'|l10n(lang) }}</h5>
+        <p class="mb-3">{{ 'IXIPC-payment-member-renew'|l10n(lang) }}</p>
 
-      <h5>{{ 'IXIPC-payment-available-after'|l10n(lang) }}</h5>
+        <p class="mb-3">{{ 'IXIPC-payment-instructions'|l10n(lang) }}</p>
+        <div class="mb-4 mx-3 bg-white py-3 px-4 rounded">
+          <div class="row align-items-start">
+            <div class="col col-4 col-md-3">{{ 'IXIPC-payment-amount'|l10n(lang) }}</div>
+            <div class="col"><strong><span id="final-price">100€</span></strong></div>
+          </div>
+          <div class="row align-items-start">
+            <div class="col col-4 col-md-3">IBAN</div>
+            <div class="col"><strong>{{bank_details.iban}}</strong></div>
+          </div>
+          <div class="row align-items-start">
+            <div class="col col-4 col-md-3">Beneficiário</div>
+            <div class="col">{{bank_details.beneficiario}}</div>
+          </div>
+          <div class="row align-items-start">
+            <div class="col col-4 col-md-3">BIC/SWIFT</div>
+            <div class="col">{{bank_details.bic}}</div>
+          </div>
+        </div>
+        <p class="mb-3">{{ 'IXIPC-payment-method'|l10n(lang) }}</p>
 
-      {# {% if payment_status == 0 -%}
-        <h5>{{ 'IXIPC-payment-methods-available'|l10n(lang) }}</h5>
+        <div class="row justify-content-center mb-3" id="upload-payment-proof">
+          <div class="col">
+            <div class="form-label">
+              {{ 'IXIPC-upload-payment-proof'|l10n(lang) }}
+            </div>
+            {% with upload_area={'id': 'upload-payment-proof'} -%}
+              {% include "partials/upload-form.html" %}
+            {% endwith -%}
+          </div>
+        </div>
+        <button type="button" id="submit-registration-button" class="btn btn-primary mb-3" disabled>
+          {{ 'IXIPC-payment-submit'|l10n(lang) }}
+        </button>
+        <div id="feedback-registration" class="bg-warning p-3 rounded">
+          <p id="feedback-registration-intro" class="my-0">{{'IXIPC-feedback-registration-intro'|l10n(lang)}}</p>
+          <ul class="my-0">
+            <li id="feedback-registration-first-name"><strong>{{ 'IXIPC-personal-data-first-name'|l10n(lang) }}</strong></li>
+            <li id="feedback-registration-last-name"><strong>{{ 'IXIPC-personal-data-last-name'|l10n(lang) }}</strong></li>
+            <li id="feedback-registration-institution"><strong>{{ 'IXIPC-personal-data-institution'|l10n(lang) }}</strong></li>
+          </ul>
+          <p class="my-0" id="feedback-registration-payment-proof">{{ 'IXIPC-feedback-registration-proof-warning'|l10n(lang)|safe }}</p>
+        </div>
+      {% elif payment_status == 1 -%}
+        <h5 class="mb-3">{{ 'IXIPC-payment-success'|l10n(lang) }}</h5>
+      {% else -%}
+        <h5 class="mb-3">{{ 'IXIPC-payment-checking'|l10n(lang) }}</h5>
       {% endif -%}
-      <div id="payment-methods" class="mb-3">
+      {# <div id="payment-methods" class="mb-3">
         <div class="row">
           {% if payment_status == 0 -%}
             {% include 'partials/payment-methods.html' -%}
@@ -282,7 +330,7 @@
       {{ registration_form.csrf_token }}
       <input type="hidden" id="user_id" name="user_id" value="{{ g.user.id }}"> 
       <button type="submit" class="btn btn-primary">{{ 'IXIPC-logout'|l10n(lang) }}</button>
-    </form>  
+    </form>
   </div>
 </div>
 
@@ -296,6 +344,7 @@
 {% include "scripts/authors-manager.html" -%}
 {% include "scripts/affiliations-manager.html" -%}
 {% include "scripts/abstract-authors.html" %}
+{% include "scripts/upload-form.html" %}
 
 <script defer>
 // Display a warning when navigating out of the page
@@ -303,10 +352,32 @@
 /*window.onbeforeunload = function() {
   return true;
 };*/
+let paymentProofUploader = null;
+{% if payment_status == 0 -%}
+  paymentProofUploader = makeUploader(
+    dropArea = document.getElementById('upload-payment-proof'),
+    csrfToken = '{{ csrf_token() }}',
+    userId = 'IXIPC_{{ user_id }}'
+  );
+
+  let submitRegistrationButton = document.getElementById('submit-registration-button');
+  submitRegistrationButton.onclick = () => {
+    let element = document.getElementById('personal-data');
+    let data = new FormData(element);
+    data.append('proofId', paymentProofUploader.getFileData().id);
+
+    fetch("{{ url_for('IX_IPC.submit_registration', language=lang) }}", {
+      method: 'POST',
+      body: data
+    })
+    .then(() => {
+      location.reload()
+    })
+    .catch((e) => console.log(e));
+  };
+{% endif-%}
 
 const personalDataManager = () => {
-  let abstract_submission_open = {{submission_open|lower}};
-
   let element = document.getElementById('personal-data');
   let studentSwitchElement = document.getElementById('student');
   let memberSwitchElement = document.getElementById('member');
@@ -321,6 +392,7 @@ const personalDataManager = () => {
   let dinnerTypeElement = document.getElementById('dinner-type-selector'); #}
   let firstName = document.getElementById('first-name');
   let lastName = document.getElementById('last-name');
+  let institution = document.getElementById('institution');
 
   let saveFlag = false;
 
@@ -348,8 +420,51 @@ const personalDataManager = () => {
     }
   }
 
+  let submissionFeedback = document.getElementById('feedback-registration');
+  let firstNameFeedback = document.getElementById('feedback-registration-first-name');
+  let lastNameFeedback = document.getElementById('feedback-registration-last-name');
+  let institutionFeedback = document.getElementById('feedback-registration-institution');
+  let paymentProofFeedback = document.getElementById('feedback-registration-payment-proof');
+  let introFeedback = document.getElementById('feedback-registration-intro');
+  let submitButton = document.getElementById('submit-registration-button');
+
+  const showhide = (valid, element) => {
+    if(valid) {
+      element.setAttribute('hidden', '');
+    } else {
+      element.removeAttribute('hidden');
+    }
+  }
+
+  const personalFieldsValidation = () => {
+    if( {{payment_status}} == 0) {
+      let firstNameValid = firstName.value.trim().length > 0;
+      let lastNameValid = lastName.value.trim().length > 0;
+      let institutionValid = institution.value.trim().length > 0;
+      let fileUploaded = paymentProofUploader.getFileData() !== null;
+
+      showhide(firstNameValid, firstNameFeedback);
+      showhide(lastNameValid, lastNameFeedback);
+      showhide(institutionValid, institutionFeedback);
+      showhide(fileUploaded, paymentProofFeedback);
+
+      showhide(firstNameValid && lastNameValid && institutionValid, introFeedback);
+
+      if(firstNameValid && lastNameValid && institutionValid && fileUploaded) {
+        submissionFeedback.setAttribute('hidden', '');
+        submitButton.removeAttribute('disabled');
+      } else {
+        submissionFeedback.removeAttribute('hidden');
+        submitButton.setAttribute('disabled', '');
+      }
+    }
+  }
+  personalFieldsValidation()
+  if(paymentProofUploader) paymentProofUploader.setCallback(() => personalFieldsValidation());
+
   const scheduleSave = () => {
     saveFlag = true;
+    personalFieldsValidation();
     setTimeout(save, 2000);
   }
 
@@ -358,7 +473,7 @@ const personalDataManager = () => {
     scheduleSave
   );
 
-  const earlyBirdDate = new Date('2024-09-27');
+  const earlyBirdDate = new Date('2024-10-10');
 
   const updatePrice = () => {
     const prices = (earlyBirdDate > (new Date()))
@@ -449,12 +564,33 @@ const personalDataManager = () => {
 
   updateDinner(); #}
 
+  const disableForm = () => {
+    studentSwitchElement.setAttribute('disabled', '');
+    memberSwitchElement.setAttribute('disabled', '');
+    scholarshipSwitchElement.setAttribute('disabled', '');
+    unemployedSwitchElement.setAttribute('disabled', '');
+    competitionTalkSwitchElement.setAttribute('disabled', '');
+    competitionPhotographySwitchElement.setAttribute('disabled', '');
+    competitionTalkElement.setAttribute('disabled', '');
+    scholarshipElement.setAttribute('disabled', '');
+    studentVolunteerElement.setAttribute('disabled', '');
+    firstName.setAttribute('disabled', '');
+    lastName.setAttribute('disabled', '');
+    institution.setAttribute('disabled', '');
+  }
+
   return {
     'scheduleSave': scheduleSave,
-    'save': save
+    'save': save,
+    'disableForm': disableForm
   }
 }
 let personalData = personalDataManager();
+
+{% if payment_status > 0 -%}
+  personalData.disableForm();
+{% endif-%}
+
 
 let authors = authorsManager();
 let institutions = institutionsManager();
@@ -469,7 +605,7 @@ Promise.all([authors, institutions]).then((values) =>{
 });
 
 const addAbstract = (event) => {
-  if(abstract_submission_open) {
+  if({{submission_open|lower}}) {
     event.preventDefault();
     let id = null;
     let container = document.getElementById('abstract-forms-container');
@@ -498,7 +634,7 @@ const addAbstract = (event) => {
     observer.observe(container, config);
   }
 }
-if (abstract_submission_open) {
+if ({{submission_open|lower}}) {
   document.getElementById('abstract-new').addEventListener(
     'click',
     addAbstract
