@@ -274,9 +274,9 @@ IXIPC-timeline-conference = November 21-23
 IXIPC-timeline-conference-description = Conference
 
 IXIPC-registration-warning = Before registering, please make sure your personal information is correct and complete in the section above. After registering you won't be able to modify it!
-IXIPC-payment-method = Please upload your proof of payment here and click on the submit button. We will verify the details, and once everything is in order, you will see the message &quot;Payment completed&quot; in your profile. This process may take up to three days.
+IXIPC-payment-method = Please upload your proof of payment here and click on the submit button. We will verify the details, and once everything is in order, you will see the message "Payment completed" in your profile. This process may take up to three days.
 IXIPC-payment-success = Payment completed – we look forward to seeing you very soon!
-IXIPC-payment-checking = We are verifying the payment. Once everything is in order, you will see here the message &quot;Payment completed&quot;. This process may take up to three days.
+IXIPC-payment-checking = We are verifying the payment. Once everything is in order, you will see here the message "Payment completed". This process may take up to three days.
 IXIPC-payment-member-renew = If you would like to become a member of APP or need to renew your membership for the current year, please email aportprimatologia@gmail.com before proceeding with the payment.
 IXIPC-payment-instructions = To pay the registration, please make a transfer to: 
 IXIPC-payment-amount = Amount
