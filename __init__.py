@@ -46,6 +46,7 @@ def create_app(test_config=None):
         CCARD_KEY = config['CCARD_KEY'],
         ANTI_PHISHING_KEY = config['ANTI_PHISHING_KEY'],
         MAINTENANCE_EMAIL = config['MAINTENANCE_EMAIL'],
+        MAX_CONTENT_LENGTH = 16 * 1000 * 1000,
         IXIPC_BANK_BENEFICIARY = config['IXIPC_BANK_BENEFICIARY'],
         IXIPC_BANK_IBAN = config['IXIPC_BANK_IBAN'],
         IXIPC_BANK_BIC = config['IXIPC_BANK_BIC']
