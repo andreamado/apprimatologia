@@ -45,7 +45,10 @@ def create_app(test_config=None):
         MBWAY_KEY = config['MBWAY_KEY'],
         CCARD_KEY = config['CCARD_KEY'],
         ANTI_PHISHING_KEY = config['ANTI_PHISHING_KEY'],
-        MAINTENANCE_EMAIL = config['MAINTENANCE_EMAIL']
+        MAINTENANCE_EMAIL = config['MAINTENANCE_EMAIL'],
+        IXIPC_BANK_BENEFICIARY = config['IXIPC_BANK_BENEFICIARY'],
+        IXIPC_BANK_IBAN = config['IXIPC_BANK_IBAN'],
+        IXIPC_BANK_BIC = config['IXIPC_BANK_BIC']
     )
 
     # register the internationalization module
