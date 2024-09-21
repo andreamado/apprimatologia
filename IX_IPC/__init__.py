@@ -29,7 +29,7 @@ from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 bp = Blueprint('IX_IPC', __name__, template_folder='templates')
 
 
-abstract_submission_open = datetime.datetime.now() < datetime.datetime(2024, 9, 21, 4)
+abstract_submission_open = False
 registration_open = False
 
 def login_IXIPC_required(view):
