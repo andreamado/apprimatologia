@@ -1,7 +1,9 @@
-from flask import Blueprint, request, send_from_directory
+from flask import Blueprint, request, send_from_directory, g
 from flask import current_app as app
 from sqlalchemy import select
+from werkzeug.routing import BaseConverter
 
+from shutil import copyfile
 import json, os
 from uuid import UUID
 
@@ -68,14 +70,56 @@ def upload():
         }), 200
 
 
+def get_extension(id):
+    with get_session() as db_session:
+        file = db_session.get(UploadedFile, id)
+        return file.extension
+
+
 @bp.route("/file/get/<uuid:id>")
-# TODO: find a more performant method
 # https://tedboy.github.io/flask/generated/flask.send_from_directory.html
 def get(id):
     """Sends a file from the upload directory"""
 
-    # TODO: add verification that the file can be openly accessed
-    return send_from_directory('uploaded_files', str(id))
+    upload_folder = app.config['UPLOAD_FOLDER']
+
+    # TODO: update the verification to include direction
+    with get_session() as db_session:
+      file = db_session.get(UploadedFile, id)
+      if file.public:
+        return send_from_directory(upload_folder, id)
+      else:
+        if g.IXIPC_user is None or (not g.IXIPC_user.organizer):
+          return 'access unauthorized', 401
+        else:
+          return send_from_directory(upload_folder, id)
+
+@bp.route("/file/get/<uuid:id>/<string:name>")
+# https://tedboy.github.io/flask/generated/flask.send_from_directory.html
+def get_with_name(id, name=None):
+    """Sends a file from the upload directory"""
+
+    upload_folder = app.config['UPLOAD_FOLDER']
+    temp_folder = app.config['TEMP_FOLDER']
+
+    # TODO: update the verification to include direction
+    with get_session() as db_session:
+        file = db_session.get(UploadedFile, id)
+
+        if file.public:
+            # TODO: authorize for public files after proper escaping
+            return send_from_directory(upload_folder, id)
+        else:
+            if g.IXIPC_user is None or (not g.IXIPC_user.organizer):
+                return 'access unauthorized', 401
+            else:
+                filename = f'{name}.{get_extension(id)}'
+
+                orig_file = os.path.join(upload_folder, str(id))
+                dest_file = os.path.join(temp_folder, filename)
+
+                copyfile(orig_file, dest_file)
+                return send_from_directory(temp_folder, filename)
 
 
 @bp.route("/file/remove", methods=['POST'])

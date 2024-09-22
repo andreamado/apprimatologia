@@ -146,7 +146,7 @@ class Payment(Base):
 
 
     def __repr__(self):
-        return f'<Payment user={self.user_id!r} method={self.method!r} ({self.value}€) status={self.status}>'
+        return f'<Payment user={self.user_id!r} method={self.method!r} method_id={self.method_id!r} ({self.value}€) status={self.status}>'
 
 
 class Author(Base):

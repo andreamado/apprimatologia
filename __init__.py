@@ -42,6 +42,7 @@ def create_app(test_config=None):
         # MAIL_SUPPRESS_SEND = default app.testing,
         # MAIL_ASCII_ATTACHMENTS = default False
         UPLOAD_FOLDER = os.path.join(app.root_path, 'uploaded_files'),
+        TEMP_FOLDER = os.path.join(app.root_path, 'temp'),
         MBWAY_KEY = config['MBWAY_KEY'],
         CCARD_KEY = config['CCARD_KEY'],
         ANTI_PHISHING_KEY = config['ANTI_PHISHING_KEY'],

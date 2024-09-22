@@ -15,14 +15,18 @@ class UploadedFile(Base):
     extension = Column(String(6))
     description = Column(Text)
     deleted = Column(Boolean, nullable=False)
+    public = Column(Boolean, nullable=False)
+    # alter table uploaded_files add column public boolean not null default 0;
+    # update uploaded_files set public=1;
 
-    def __init__(self, original_name, description=None, user=None, file_path=None):
+    def __init__(self, original_name, description=None, user=None, file_path=None, public=False):
         self.id = uuid.uuid4()
         self.user = user
         self.original_name = secure_filename(original_name)
         self.extension = self.original_name.split('.')[-1]
         self.description = description
         self.deleted = False
+        self.public = False
 
         if file_path:
             shutil.copy(file_path, os.path.join(app.root_path, 'uploaded_files', str(self.id)))

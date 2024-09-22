@@ -13,6 +13,7 @@ import phonenumbers
 
 from .db_IXIPC import get_session
 from .models import User, Abstract, AbstractType, Author, AbstractAuthor, Institution, Affiliation, Payment, PaymentMethod, PaymentStatus
+from ..files import UploadedFile
 
 import json, functools
 from hashlib import sha256
@@ -1977,6 +1978,31 @@ def abstract_details(id, language='pt'):
         return render_template(
             'management/abstract_details.html',
             abstract=abstract,
+            lang=language,
+            text_column=True
+        )
+
+
+@bp.route('/IX_IPC/management/registrations/')
+@bp.route('/IX_IPC/management/registrations/<language:language>')
+@login_IXIPC_management_required
+def registrations(language='pt'):
+    with get_session() as db_session:
+        participants = db_session.execute(
+                select(User)
+                  .where(User.payment_id != None)
+            ).scalars().all()
+        
+        for participant in participants:
+            participant.payment = db_session.get(Payment, participant.payment_id)
+            participant.payment.filepath = participant.first_name + participant.last_name + 'PaymentProof'
+            participant.payment.filepath = ''.join(participant.payment.filepath.split())
+
+        print(participants)
+
+        return render_template(
+            'management/registrations.html',
+            participants=participants,
             lang=language,
             text_column=True
         )
