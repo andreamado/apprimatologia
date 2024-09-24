@@ -8,8 +8,8 @@
 
   <div>
     {% for participant in participants -%}
-    <div>
-      <h5 class="mb-2">{{participant.first_name}} {{participant.last_name}}</h5>
+    <div class="mb-4">
+      <h4 class="mb-2"><a class="white-link" href="{{ url_for('IX_IPC.participant_details', language=lang, id=participant.id) }}">{{ participant.first_name }} {{ participant.last_name }}</a> {{'(student)' if participant.student}}</h4>
       <p class="mb-0">Payment: {{participant.payment.value}}€</p>
       <a class="mb-4 white-link" href=" {{url_for('file.get_with_name', id=participant.payment.method_id, name=participant.payment.filepath)}} " target="_blank" rel="noopener noreferrer">
         Payment proof (uploaded on: {{participant.payment.started.strftime('%d/%m/%y %H:%M')}})
