@@ -86,24 +86,71 @@ class Member(Base):
     authorized = Column(Boolean, default=False)
 
     given_name = Column(String(50))
-    family_name = Column(String(50))
+    family_name = Column(String(100))
+    cc_passaporte = Column(String(50))
+    nationality = Column(String(50))
+
+    private_address = Column(String(100))
+    city = Column(String(50))
+    postal_code = Column(String(50))
+    country = Column(String(50))
+    phone_number = Column(String(50))
+    email = Column(String(200))
+
+    work_place = Column(String(100))
+    work_address = Column(String(100))
+    work_city = Column(String(50))
+    work_postal_code = Column(String(50))
+    work_country = Column(String(50))
+    work_phone_number = Column(String(50))
+    work_email = Column(String(200))
     
-    work_place = Column(String(50))
     research_line = Column(Text)
     species = Column(String(100))
 
+    # academic_title = ?
+    # current_studies = ?
+    # address_correspondence = ?
+
     data_authorization = Column(Boolean)
+
+    # supporting_member_name_1 = ?
+    # supporting_member_number_1 = ?
+
+    # quota_type = ?
+    # voluntary_donation = ?
+    # registration-form-total = ?
+    # admission-upload-reduced-quota-proof = ?
+    # payment_method = ?
+    # admission-upload-payment-proof = ?
 
     photo = Column(String(50))
 
     created = Column(UtcDateTime(), default=utcnow())
     modified = Column(UtcDateTime(), onupdate=utcnow())
 
-    def __init__(self, number=None, given_name=None, family_name=None, work_place=None, research_line=None, species=None):
+    def __init__(self, number=None, given_name=None, family_name=None, research_line=None, species=None, cc_passport=None, nationality=None, private_address=None, city=None, postal_code=None, country=None, phone_number=None, email=None, work_place=None, work_address=None, work_city=None, work_postal_code=None, work_country=None, work_phone_number=None, work_email=None):
         self.number = number
         self.given_name = given_name
         self.family_name = family_name
+        self.cc_passaporte = cc_passport
+        self.nationality = nationality
+
+        self.private_address = private_address
+        self.city = city
+        self.postal_code = postal_code
+        self.country = country
+        self.phone_number = phone_number
+        self.email = email
+
         self.work_place = work_place
+        self.work_address = work_address
+        self.work_city = work_city
+        self.work_postal_code = work_postal_code
+        self.work_country = work_country
+        self.work_phone_number = work_phone_number
+        self.work_email = work_email
+
         self.research_line = research_line
         self.species = species
 

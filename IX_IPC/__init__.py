@@ -1998,14 +1998,26 @@ def registrations(language='pt'):
             participant.payment.filepath = participant.first_name + participant.last_name + 'PaymentProof'
             participant.payment.filepath = ''.join(participant.payment.filepath.split())
 
-        print(participants)
-
         return render_template(
             'management/registrations.html',
             participants=participants,
             lang=language,
             text_column=True
         )
+
+
+@bp.route('/IX_IPC/management/toggle_registration_status/<string:id>')
+@login_IXIPC_management_required
+def update_registration_status(id):
+    with get_session() as db_session:
+        participant = db_session.get(User, id)
+        participant.paid_registration = not participant.paid_registration
+        db_session.commit()
+
+        feedback = f'user {id} registration updated ({"verified" if participant.paid_registration else "not verified"})'
+        print(feedback)
+
+        return feedback, 200
 
 
 def register(app) -> None:
