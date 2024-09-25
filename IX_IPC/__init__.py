@@ -1843,7 +1843,13 @@ def generate_docx_abstract(abstract, j):
     with get_session() as db_session:
         authors, affiliations = process_authors_affiliations(abstract.id)
         owner = db_session.get(User, abstract.owner)
-        owner_name = f"{owner.first_name.lower().replace(' ', '_')}_{owner.last_name.lower().replace(' ', '_')}"
+        
+        owner_name = ''
+        if owner.first_name and owner.last_name:
+            owner_name = f"{owner.first_name.lower().replace(' ', '_')}_{owner.last_name.lower().replace(' ', '_')}"
+        else:
+            owner_name = 'no_name'
+        
         abstract_type = AbstractType.to_string(abstract.abstract_type).lower().replace(' ', '_')
 
         folder = f"{app.config['TEMP_FOLDER']}/abstracts/"
