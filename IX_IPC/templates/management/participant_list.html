@@ -21,7 +21,7 @@
       <p class="mb-2">Student</p>
     {% endif -%}
     {% if participant.paid_registration -%}
-    <p class="mb-2">Paid {{ participant.payment.value }}€ on {{ participant.payment.concluded.strftime('%d/%m/%Y') }} (via {{'MBWay' if participant.payment.method == 1 else 'Credit card' }})</p>
+    <p class="mb-2">Paid {{ participant.payment.value }}€</p>.{#  on {{ participant.payment.concluded.strftime('%d/%m/%Y') }} (via {{'MBWay' if participant.payment.method == 1 else 'Credit card' }})</p> #}
     {% endif -%}
     <h5 class="mt-4">Submitted abstracts:</h5>
     <div class="mb-3">
