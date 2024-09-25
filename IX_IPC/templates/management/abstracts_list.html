@@ -39,6 +39,7 @@
   <h4>Downloads</h4>
   <button type="button" id="pdf-report-button" class="btn btn-primary mb-4">PDF list download</button>
   <button type="button" id="csv-summary-button" class="btn btn-primary mb-4">CSV summary download (Excel)</button>
+  <button type="button" id="docx-list-button" class="btn btn-primary mb-4">List of docx files download</button>
 
   <h4>List</h4>
   <div id="abstracts-list"></div>
@@ -169,7 +170,11 @@
     document.getElementById('csv-summary-button').addEventListener('click', (evt) => {
       evt.preventDefault();
       window.open("{{ url_for('IX_IPC.abstracts_csv_summary') }}");
-    });  
+    });
+    document.getElementById('docx-list-button').addEventListener('click', (evt) => {
+      evt.preventDefault();
+      window.open("{{ url_for('IX_IPC.docx_list') }}" + '/' + selectedFilter);
+    }); 
   })();
 </script>
 {% endblock -%}

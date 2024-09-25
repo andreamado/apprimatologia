@@ -1,4 +1,4 @@
-from flask import flash, render_template, redirect, url_for, Blueprint, g, request, session, send_file
+from flask import flash, render_template, redirect, url_for, Blueprint, g, request, session, send_file, send_from_directory
 from flask import current_app as app
 from flask_wtf import FlaskForm
 from flask_wtf.recaptcha import RecaptchaField
@@ -27,11 +27,14 @@ from reportlab.lib.units import cm
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, PageBreak, KeepTogether
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 
+from docx import Document
+from docx.shared import Pt
+
 bp = Blueprint('IX_IPC', __name__, template_folder='templates')
 
 
 abstract_submission_open = False
-registration_open = False
+
 
 def login_IXIPC_required(view):
     """Guarantees the user is logged in
@@ -1796,7 +1799,111 @@ def process_authors_affiliations(abstract_id):
             author_list.append(author_desc)
 
     return author_list, affiliations_list
+
+
+import shutil
+import os
+from glob import glob
+
+@bp.route('/IX_IPC/management/docx_list/<string:filter>')
+@bp.route('/IX_IPC/management/docx_list')
+@login_IXIPC_management_required
+def docx_list(filter=''):
+    try:
+        os.remove(f"{app.config['TEMP_FOLDER']}/abstracts.zip")
+    except:
+        pass
+
+    for f in glob(f"{app.config['TEMP_FOLDER']}/*.docx"):
+        try:
+            os.remove(f)
+        except:
+            pass
+    
+    file_list = []
+    with get_session() as db_session:
+        if filter not in abstract_filters.keys():
+            return json.dumps({'error', 'unrecognized filter'}), 500
         
+        abstracts = db_session.execute(abstract_filters[filter]).scalars()
+
+        for i, abstract in enumerate(abstracts):
+            file_list.append(generate_docx_abstract(abstract, i+1))
+    
+    shutil.make_archive(
+        f"{app.config['TEMP_FOLDER']}/abstracts",
+        'zip',
+        f"{app.config['TEMP_FOLDER']}/abstracts/"
+    )
+
+    return send_from_directory(app.config['TEMP_FOLDER'], 'abstracts.zip')
+
+
+def generate_docx_abstract(abstract, j):
+    with get_session() as db_session:
+        authors, affiliations = process_authors_affiliations(abstract.id)
+        owner = db_session.get(User, abstract.owner)
+        owner_name = f"{owner.first_name.lower().replace(' ', '_')}_{owner.last_name.lower().replace(' ', '_')}"
+        abstract_type = AbstractType.to_string(abstract.abstract_type).lower().replace(' ', '_')
+
+        folder = f"{app.config['TEMP_FOLDER']}/abstracts/"
+        filename = f"{abstract_type}_{owner_name}_{j}.docx"
+        
+        doc = Document()
+        paragraph_style = doc.styles['Normal']
+        paragraph_style.font.name = 'Helvetica' 
+
+        doc.add_heading(f'{AbstractType.to_string(abstract.abstract_type)} — {abstract.title}', 0)
+        
+        p = doc.add_paragraph()
+        p.add_run('Scientific area: ').bold = True
+        p.add_run(abstract.scientific_area.lower())
+
+        p = doc.add_paragraph()
+        p.add_run('Abstract: ').bold = True
+        p.add_run(abstract.abstract)
+
+        p = doc.add_paragraph()
+        p.add_run('Authors: ').bold = True
+        p.paragraph_format.space_after = Pt(1)
+
+        p = doc.add_paragraph()
+        for k, author in enumerate(authors):
+            author_run = p.add_run(f"{author['first_name']} {author['last_name']} ")
+            if author['presenter']:
+                author_run.underline = True
+
+            author_affiliations = ''
+            for i in author['affiliations']:
+                author_affiliations += f'{i+1},'
+            p.add_run(author_affiliations[:-1]).font.superscript = True
+
+            if k + 1 < len(authors):
+                p.add_run(', ')
+        p.paragraph_format.space_after = Pt(3)
+
+        for i, affiliation in enumerate(affiliations):
+            p = doc.add_paragraph()
+            r = p.add_run(f"[{i+1}] {affiliation.name}, {affiliation.address} ({affiliation.country.capitalize()})")
+            r.italic = True
+            r.font.size = Pt(9)
+            p.paragraph_format.space_after = Pt(3)
+        p.paragraph_format.space_after = Pt(11)  
+
+        p = doc.add_paragraph()
+        p.add_run('Keywords: ').bold = True
+        p.add_run(abstract.keywords)
+
+        p = doc.add_paragraph()
+        p.add_run(f"Created by {owner.first_name} {owner.last_name} ({owner.email})")
+        p.paragraph_format.space_after = Pt(36)
+
+        doc.add_paragraph(f"Submitted on {abstract.submitted_on.strftime('%d/%m/%Y')}").paragraph_format.space_after = Pt(3)
+        doc.add_paragraph(f"Docx generated on {datetime.datetime.now().strftime('%d/%m/%Y')}")
+
+        doc.save(folder + filename)
+        return filename
+
 
 @bp.route('/IX_IPC/management/abstracts_pdf_report')
 @bp.route('/IX_IPC/management/abstracts_pdf_report/<string:filter>')
