@@ -1814,7 +1814,7 @@ def docx_list(filter=''):
     except:
         pass
 
-    for f in glob(f"{app.config['TEMP_FOLDER']}/*.docx"):
+    for f in glob(f"{app.config['TEMP_FOLDER']}/abstracts/*.docx"):
         try:
             os.remove(f)
         except:
