@@ -1333,32 +1333,59 @@ def management_logout(language='pt'):
 def send_email(language='pt'):
     """Sends an email"""
 
-    user = request.form['user']
+    user_code = request.form['user']
     subject = request.form['subject']
     message = request.form['message']
 
     users = []
     with get_session() as db_session:
-        if user == 'ALL':
+        if user_code == 'ALL':
             users = db_session.execute(select(User)).scalars().all()
         
-        elif user == 'ALL_PAID':
+        elif user_code == 'ACCEPTED_ABSTRACTS':
+            abstracts = db_session.execute(
+                abstract_filters['accepted']
+            ).scalars().all()
+            for abstract in abstracts:
+                user_profile = db_session.get(User, abstract.owner)
+                user_profile.abstract_title = abstract.title
+                user_profile.abstract_type = AbstractType.to_string(abstract.abstract_type).lower()
+
+                users.append(user_profile)
+
+        elif user_code == 'ALL_PAID':
             users = db_session.execute(
                 select(User).filter_by(paid_registration = True)
             ).scalars().all()
 
-        elif user == 'ALL_NOT_PAID':
+        elif user_code == 'ALL_NOT_PAID':
             users = db_session.execute(
                 select(User).filter_by(paid_registration = False)
             ).scalars().all()
         
         else:
-            users = [db_session.get(User, int(user))]
+            users = [db_session.get(User, int(user_code))]
 
     for user in users:
-        first_name = user.first_name if len(user.first_name) else user.name.strip().split()[0]
-        subject_user = subject.format(first_name=first_name, last_name=user.last_name, name=user.name, email=user.email)
-        message_user = message.format(first_name=first_name, last_name=user.last_name, name=user.name, email=user.email)
+        first_name, last_name, name = '', '', ''
+        if user.first_name:
+            first_name = user.first_name if len(user.first_name) else user.name.strip().split()[0]
+        else:
+            first_name = user.name.strip().split()[0]
+
+        if user.last_name:
+            last_name = user.last_name
+        
+        if user.name:
+            name = user.name
+
+        abstract_title = ''
+        if user_code == 'ACCEPTED_ABSTRACTS':
+            abstract_title = user.abstract_title
+            abstract_type = user.abstract_type
+
+        subject_user = subject.format(first_name=first_name, last_name=last_name, name=name, email=user.email, abstract_title=abstract_title, abstract_type=abstract_type)
+        message_user = message.format(first_name=first_name, last_name=last_name, name=name, email=user.email, abstract_title=abstract_title, abstract_type=abstract_type)
         app.send_email(subject_user, message_user, [user.email])
 
     return json.dumps(''), 200

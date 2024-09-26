@@ -13,6 +13,11 @@
     Send email to all participants
   </button>
 
+  <button type="button" class="btn btn-primary mb-4" data-bs-toggle="modal" data-bs-target="#send-email-modal-abstracts">
+    Send email to all participants with accepted abstracts
+  </button>
+
+
   {% for participant in participants -%}
     <h4 class="mb-3"><a class="white-link" href="{{ url_for('IX_IPC.participant_details', language=lang, id=participant.id) }}">{{ participant.first_name }} {{ participant.last_name }}</a> {{'(student)' if participant.student}}</h4>
     <p class="mb-2">Email: {{ participant.email }}</p>
@@ -86,12 +91,67 @@
   </div>
 </div>
 
+
+<div class="modal fade" id="send-email-modal-abstracts" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="sendEmailLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content text-black">
+      <div class="modal-header border-0">
+        <h1 class="modal-title fs-5 mb-0" id="sendEmailLabel">Send email to all participants with accepted abstracts</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label for="new-subject-abstracts" class="form-label">Subject</label>
+          <input type="text" class="form-control" id="new-subject-abstracts">
+        </div>
+        <div>
+          <label for="new-message-abstracts" class="form-label">Message</label>
+          <textarea class="form-control" id="new-message-abstracts" rows="10" aria-describedby="messageHelp"></textarea>
+          <div id="messageHelp" class="form-text">
+            A few placeholders can be included in the text to be replaced in the final email with the correct participant information. This allows the organizers to write emails that get automatically personalized to each participant. They are
+            <ul>
+              <li>{name}</li>
+              <li>{first_name}</li>
+              <li>{last_name}</li>
+              <li>{email}</li>
+              <li>{abstract_title}</li>
+              <li>{abstract_type} (poster/oral presentation)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer border-0 mt-0">
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" data-bs-target="#confirm-send-email-abstracts" data-bs-toggle="modal">Send</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal fade" id="confirm-send-email-abstracts" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="confirmSendEmailLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content text-black">
+      <div class="modal-header border-0">
+        <div class="w-75">
+          <h1 class="modal-title fs-5 mb-0 text-danger" id="confirmSendEmailLabel">This action will send the email to all participants with accepted abstracts. Are you sure you want to proceed?</h1>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-footer border-0 mt-0">
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">No</button>
+        <button type="button" class="btn btn-primary" id="send-email-confirm-abstracts" data-bs-dismiss="modal">Yes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="modal fade" id="confirm-send-email" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="confirmSendEmailLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content text-black">
       <div class="modal-header border-0">
         <div class="w-75">
-          <h1 class="modal-title fs-5 mb-0 text-danger" id="confirmSendEmailLabel">This action will send the email to all participants in the conference. Are you sure you want to proceed?</h1>
+          <h1 class="modal-title fs-5 mb-0 text-danger" id="confirmSendEmailLabel">This action will send the email to all participants. Are you sure you want to proceed?</h1>
         </div>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
@@ -102,6 +162,7 @@
     </div>
   </div>
 </div>
+
 
 {% include "scripts/utilities.html" -%}
 <script>
@@ -119,6 +180,22 @@
     form.append('user', 'ALL');
     form.append('subject', document.getElementById('new-subject').value);
     form.append('message', document.getElementById('new-message').value);
+
+    fetch("{{ url_for('IX_IPC.send_email') }}", {
+      method: 'POST',
+      body: form
+    })
+    .catch((e) => {
+      console.log(e);
+      document.getElementById('emails-title').innerText = 'Failed to load user emails';
+    });
+  });
+
+  document.getElementById('send-email-confirm-abstracts').addEventListener('click', () => {
+    let form = blankForm();
+    form.append('user', 'ACCEPTED_ABSTRACTS');
+    form.append('subject', document.getElementById('new-subject-abstracts').value);
+    form.append('message', document.getElementById('new-message-abstracts').value);
 
     fetch("{{ url_for('IX_IPC.send_email') }}", {
       method: 'POST',
