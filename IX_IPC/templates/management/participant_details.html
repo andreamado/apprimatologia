@@ -20,7 +20,7 @@
       <div class="col">
         <p>
           {% if participant.paid_registration -%}
-            Paid {{ participant.payment.value }}€ on {{ participant.payment.concluded.strftime('%d/%m/%Y') }} (via {{'MBWay' if participant.payment.method == 1 else 'Credit card' }})
+            Paid {{ participant.payment.value }}€ {#on {{ participant.payment.concluded.strftime('%d/%m/%Y') }} (via {{'MBWay' if participant.payment.method == 1 else 'Credit card' }})#}
           {% else -%}
             Participant has not paid yet
           {% endif %}
