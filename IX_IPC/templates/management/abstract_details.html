@@ -17,8 +17,12 @@
       </div>
     </div>
     <div class="row mb-3">
-      {% if abstract.submitted -%}
+      {% if abstract.submitted and abstract.acceptance_status != 3 -%}
       <div class="col"><span class="badge rounded-pill text-bg-primary">Submitted</span></div>
+      {% elif abstract.submitted and abstract.acceptance_status == 3 -%}
+      <div class="col"><span class="badge rounded-pill text-bg-primary">Resubmitted by authors</span></div>
+      {% elif abstract.acceptance_status == 3 -%}
+      <div class="col"><span class="badge rounded-pill text-bg-secondary">Conditionally accepted - waiting for authors resubmission</span></div>
       {% else -%}
       <div class="col"><span class="badge rounded-pill text-bg-warning">Not submitted</span></div>
       {% endif -%}
@@ -140,7 +144,6 @@
     fetch("{{ url_for('IX_IPC.force_unsubmit', id=abstract.id) }}")
       .then( () => { location.reload(); } )
       .catch((e) => console.log(e));
-      
   })
 </script>
 {% endif -%}

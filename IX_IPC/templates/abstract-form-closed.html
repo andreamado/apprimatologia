@@ -21,13 +21,29 @@
       </div>
     </div>
     {% if abstract.submitted -%}
-    <div class="card-footer rounded-bottom-4 abstract-footer-text bg-success text-white text-center p-0">
-      {{ 'IXIPC-abstract-submitted-long'|l10n(lang) }}
-    </div>
+      {% if abstract.acceptance_status == 1 -%}
+      <div class="card-footer rounded-bottom-4 abstract-footer-text bg-success text-white text-center p-0">
+        {{ 'IXIPC-abstract-accepted'|l10n(lang) }}
+      </div>
+      {% elif abstract.acceptance_status == 2 -%}
+      <div class="card-footer rounded-bottom-4 abstract-footer-text bg-danger text-white text-center p-0">
+        {{ 'IXIPC-abstract-rejected'|l10n(lang) }}
+      </div>
+      {% else -%}
+      <div class="card-footer rounded-bottom-4 abstract-footer-text bg-success text-white text-center p-0">
+        {{ 'IXIPC-abstract-submitted-long'|l10n(lang) }}
+      </div>
+      {% endif -%}
     {% else -%}
-    <div class="card-footer rounded-bottom-4 abstract-footer-text bg-warning text-center p-0">
-      {{ 'IXIPC-abstract-not-submitted-long'|l10n(lang) }}
-    </div>
+      {% if abstract.acceptance_status == 3 -%}
+      <div class="card-footer rounded-bottom-4 abstract-footer-text bg-warning text-center p-0">
+        {{ 'Resumo aceite condicionalmente - por favor corrige e resubmete'|l10n(lang) }}
+      </div>
+      {% else -%}
+      <div class="card-footer rounded-bottom-4 abstract-footer-text bg-warning text-center p-0">
+        {{ 'IXIPC-abstract-not-submitted-long'|l10n(lang) }}
+      </div>
+      {% endif -%}
     {% endif -%}
   </div>
 </form>

@@ -554,7 +554,8 @@ def load_abstract(language, id=None, csrf_token = None):
                       reload=True,
                       abstract=abstract,
                       csrf_token=csrf_token,
-                      submission_open=abstract_submission_open
+                      submission_open=abstract_submission_open,
+                      conditionally_accepted=(abstract.acceptance_status==3)
                   )
               }), 200
         else:

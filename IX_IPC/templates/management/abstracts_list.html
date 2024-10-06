@@ -18,16 +18,20 @@
           <label class="btn btn-outline-success" for="filters-submitted">Submitted abstracts</label>  
         </div>
       </div>
-      <div class="row g-2">
+      <div class="row-flex mb-2">
         <div class="col">
           <input type="radio" class="btn-check" name="filters" id="filters-undecided" autocomplete="off" value="undecided">
           <label class="btn btn-outline-success" for="filters-undecided">Undecided abstracts only</label>  
-        </div>
-        <div class="col">
+
           <input type="radio" class="btn-check" name="filters" id="filters-accepted" autocomplete="off" value="accepted">
           <label class="btn btn-outline-success" for="filters-accepted">Accepted abstracts only</label>  
         </div>
+      </div>
+      <div class="row-flex">
         <div class="col">
+          <input type="radio" class="btn-check" name="filters" id="filters-conditionally-accepted" autocomplete="off" value="conditionally_accepted">
+          <label class="btn btn-outline-success" for="filters-conditionally-accepted">Conditionally accepted abstracts only</label>  
+
           <input type="radio" class="btn-check" name="filters" id="filters-rejected" autocomplete="off" value="rejected">
           <label class="btn btn-outline-success" for="filters-rejected">Rejected abstracts only</label>  
         </div>
@@ -74,13 +78,19 @@
         } else if(abstract.acceptance_status == 3) {
           approvedBadge.classList.add('text-bg-warning');
           approvedBadge.innerText = 'Conditionally accepted';
+          submittedBadge.innerText = 'Resubmitted by authors';
         } else {
           approvedBadge.classList.add('text-bg-danger');
           approvedBadge.innerText = 'Rejected';
         }  
       } else {
-        submittedBadge.classList.add('text-bg-warning');
-        submittedBadge.innerText = 'Not submitted';
+        if (abstract.acceptance_status == 3) {
+          submittedBadge.classList.add('text-bg-secondary');
+          submittedBadge.innerText = 'Conditionally accepted - waiting for authors resubmission';  
+        } else {
+          submittedBadge.classList.add('text-bg-warning');
+          submittedBadge.innerText = 'Not submitted';  
+        }
       }
       info.appendChild(submittedBadge);
       info.appendChild(approvedBadge);
@@ -123,13 +133,13 @@
       if(filter == 'all') {
         selectedAbstracts = abstractsList;
       } else if(filter == 'submitted') {
-        selectedAbstracts = abstractsList.filter((abstract) => abstract.submitted);
+        selectedAbstracts = abstractsList.filter((abstract) => abstract.submitted || abstract.acceptance_status === 3);
       } else if(filter == 'undecided') {
         selectedAbstracts = abstractsList.filter((abstract) => abstract.submitted && abstract.acceptance_status === 0);
       } else if(filter == 'accepted') {
         selectedAbstracts = abstractsList.filter((abstract) => abstract.submitted && abstract.acceptance_status === 1);
       } else if(filter == 'conditionally_accepted') {
-        selectedAbstracts = abstractsList.filter((abstract) => abstract.submitted && abstract.acceptance_status === 3);
+        selectedAbstracts = abstractsList.filter((abstract) => abstract.acceptance_status === 3);
       } else {
         selectedAbstracts = abstractsList.filter((abstract) => abstract.submitted && abstract.acceptance_status === 2);
       }

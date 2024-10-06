@@ -48,18 +48,20 @@
         }
       );
 
-      abstractElement.querySelector('#abstract-delete').onclick = () => {
-        abstractAuthors.deregisterAbstract(id);
-
-        fetch("{{ url_for('IX_IPC.delete_abstract') }}", {
-          method: 'POST',
-          body: new FormData(abstractElement.querySelector('#abstract-' + String(id)))
-        })
-        .catch((e) => {
-          console.log(e)
-        });
-        abstractElement.remove();
-      };
+      try {
+        abstractElement.querySelector('#abstract-delete').onclick = () => {
+          abstractAuthors.deregisterAbstract(id);
+  
+          fetch("{{ url_for('IX_IPC.delete_abstract') }}", {
+            method: 'POST',
+            body: new FormData(abstractElement.querySelector('#abstract-' + String(id)))
+          })
+          .catch((e) => {
+            console.log(e)
+          });
+          abstractElement.remove();
+        };  
+      } catch (e) {}
 
       const validateSubmission = (abstractAuthors) => {
         let submissionValid = true;

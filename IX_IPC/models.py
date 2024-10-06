@@ -267,15 +267,19 @@ class Abstract(Base):
         self.submitted_on = utcnow()
 
     def accept(self):
+        self.submitted = True
         self.acceptance_status = 1
     
     def reject(self):
+        self.submitted = True
         self.acceptance_status = 2
     
     def conditionally_accept(self):
+        self.submitted = False
         self.acceptance_status = 3
 
     def undecide(self):
+        self.submitted = True
         self.acceptance_status = 0
 
     def unsubmit(self):

@@ -135,16 +135,18 @@
 
         <div class="d-flex flex-row mb-3">
           <div class="col">
-            {% if submission_open -%}
+            {% if submission_open or conditionally_accepted -%}
             <button type="button" id="abstract-submit" class="btn btn-primary">{{ 'IXIPC-abstract-submit'|l10n(lang) }}</button>
             {% else -%}
             {{ 'IXIPC-abstract-submission-closed'|l10n(lang) }}
             <button type="button" id="abstract-submit" class="btn btn-primary" disabled>{{ 'IXIPC-abstract-submit'|l10n(lang) }}</button>
             {% endif-%}
           </div>
+          {% if not conditionally_accepted -%}
           <div class="col d-flex justify-content-end">
             <button type="button" id="abstract-delete" class="btn btn-danger">{{ 'IXIPC-abstract-delete'|l10n(lang) }}</button>
           </div>
+          {% endif -%}
         </div>
       </div>
     </div>
