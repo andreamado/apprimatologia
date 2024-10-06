@@ -271,7 +271,10 @@ class Abstract(Base):
     
     def reject(self):
         self.acceptance_status = 2
-      
+    
+    def conditionally_accept(self):
+        self.acceptance_status = 3
+
     def undecide(self):
         self.acceptance_status = 0
 

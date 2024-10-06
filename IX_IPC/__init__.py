@@ -1738,6 +1738,8 @@ def update_abstract_acceptance_status(id, new_status):
                 abstract.undecide()
             elif new_status == 1:
                 abstract.accept()
+            elif new_status == 3:
+                abstract.conditionally_accept()
             else:
                 abstract.reject()
 

@@ -38,6 +38,8 @@
           <span class="badge rounded-pill text-bg-warning">Undecided</span>
           {% elif abstract.acceptance_status == 1 -%}
           <span class="badge rounded-pill text-bg-primary">Accepted</span>
+          {% elif abstract.acceptance_status == 3 -%}
+          <span class="badge rounded-pill text-bg-warning">Conditionally accepted</span>
           {% else -%}
           <span class="badge rounded-pill text-bg-danger">Rejected</span>
           {% endif -%}

@@ -71,6 +71,9 @@
         } else if(abstract.acceptance_status == 0) {
           approvedBadge.classList.add('text-bg-warning');
           approvedBadge.innerText = 'Undecided';
+        } else if(abstract.acceptance_status == 3) {
+          approvedBadge.classList.add('text-bg-warning');
+          approvedBadge.innerText = 'Conditionally accepted';
         } else {
           approvedBadge.classList.add('text-bg-danger');
           approvedBadge.innerText = 'Rejected';
@@ -125,6 +128,8 @@
         selectedAbstracts = abstractsList.filter((abstract) => abstract.submitted && abstract.acceptance_status === 0);
       } else if(filter == 'accepted') {
         selectedAbstracts = abstractsList.filter((abstract) => abstract.submitted && abstract.acceptance_status === 1);
+      } else if(filter == 'conditionally_accepted') {
+        selectedAbstracts = abstractsList.filter((abstract) => abstract.submitted && abstract.acceptance_status === 3);
       } else {
         selectedAbstracts = abstractsList.filter((abstract) => abstract.submitted && abstract.acceptance_status === 2);
       }
