@@ -1337,6 +1337,10 @@ def send_email(language='pt'):
     user_code = request.form['user']
     subject = request.form['subject']
     message = request.form['message']
+    
+    attachment = None
+    if 'attachment' in request.form:
+        attachment = request.form['attachment']
 
     users = []
     with get_session() as db_session:
@@ -1381,13 +1385,14 @@ def send_email(language='pt'):
             name = user.name
 
         abstract_title = ''
+        abstract_type = ''
         if user_code == 'ACCEPTED_ABSTRACTS':
             abstract_title = user.abstract_title
             abstract_type = user.abstract_type
 
         subject_user = subject.format(first_name=first_name, last_name=last_name, name=name, email=user.email, abstract_title=abstract_title, abstract_type=abstract_type)
         message_user = message.format(first_name=first_name, last_name=last_name, name=name, email=user.email, abstract_title=abstract_title, abstract_type=abstract_type)
-        app.send_email(subject_user, message_user, [user.email])
+        app.send_email(subject_user, message_user, [user.email], attachment)
 
     return json.dumps(''), 200
 

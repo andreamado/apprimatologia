@@ -103,7 +103,7 @@
               <label for="new-subject" class="form-label">Subject</label>
               <input type="text" class="form-control" id="new-subject">
             </div>
-            <div>
+            <div class="mb-3">
               <label for="new-message" class="form-label">Message</label>
               <textarea class="form-control" id="new-message" rows="10" aria-describedby="messageHelp"></textarea>
               <div id="messageHelp" class="form-text">
@@ -115,6 +115,10 @@
                   <li>{email}</li>
                 </ul>
               </div>
+            </div>
+            <div>
+              <label for="new-attachment" class="form-label">Attachment</label>
+              <input type="file" class="form-control" id="new-attachment">
             </div>
           </div>
           <div class="modal-footer border-0 mt-0">
@@ -128,6 +132,8 @@
 </div>
 {% include "scripts/utilities.html" -%}
 <script defer>
+  document.getElementById('new-attachment').value = '';
+
   makeBackLink('back-link', "{{ url_for('IX_IPC.management') }}");
 
   const emailLoader = () => {
@@ -232,14 +238,43 @@
     form.append('subject', document.getElementById('new-subject').value);
     form.append('message', document.getElementById('new-message').value);
 
-    fetch("{{ url_for('IX_IPC.send_email') }}", {
-      method: 'POST',
-      body: form
-    })
-    .catch((e) => {
-      console.log(e);
-      document.getElementById('emails-title').innerText = 'Failed to load user emails';
-    });
+    let attachmentElement = document.getElementById('new-attachment');
+    if (attachmentElement.files.length > 0) {
+      let attachmentForm = blankForm();
+      attachmentForm.append('file', attachmentElement.files[0]);
+  
+      console.log('uploading file ' + attachmentElement.files[0].name)
+
+      fetch("/email/attachmentupload", {
+        method: 'POST',
+        body: attachmentForm
+      })
+      .then((response) => response.json())
+      .then((data) => {
+        form.append('attachment', data.attachment);
+        fetch("{{ url_for('IX_IPC.send_email') }}", {
+          method: 'POST',
+          body: form
+        })
+        .then(() => attachmentElement.value = '')
+        .catch((e) => {
+          console.log(e);
+        });
+      })
+      .catch((e) => {
+        console.log('failed to upload file');
+        console.log(e);
+      });
+    } else {
+      fetch("{{ url_for('IX_IPC.send_email') }}", {
+        method: 'POST',
+        body: form
+      })
+      .then(() => attachmentElement.value = '')
+      .catch((e) => {
+        console.log(e);
+      });  
+    }
   });
 </script>
 {% endblock -%}
