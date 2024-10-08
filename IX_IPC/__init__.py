@@ -33,7 +33,7 @@ from docx.shared import Pt
 bp = Blueprint('IX_IPC', __name__, template_folder='templates')
 
 
-abstract_submission_open = False
+abstract_submission_open = True
 
 
 def login_IXIPC_required(view):
