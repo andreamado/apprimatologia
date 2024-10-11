@@ -935,7 +935,7 @@ def save_institutions():
 # 999 - Error on initializing the request. You can try again.
 
                                #  year, month, day
-earlyBirdDate = datetime.datetime(2024, 10,    10)
+earlyBirdDate = datetime.datetime(2024, 10,    18)
 
 all_prices = [
   #  non-member, member, student non-member, student member non-scholarship, student member scholarship
