@@ -101,9 +101,9 @@ class BankDetails():
         self.bic = app.config['IXIPC_BANK_BIC']
 
 @bp.route('/IX_IPC/<language:language>')
-@bp.route('/IX_IPC')
+@bp.route('/IX_IPC/')
 @bp.route('/IX_Iberian_Primatological_Conference/<language:language>')
-@bp.route('/IX_Iberian_Primatological_Conference')
+@bp.route('/IX_Iberian_Primatological_Conference/')
 def IXIPC(language='pt'):
     """IXIPC main page"""
 
