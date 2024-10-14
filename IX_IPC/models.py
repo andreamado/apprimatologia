@@ -232,6 +232,15 @@ class AbstractType:
             return 'Both'
         else:
             return 'Unknown'
+        
+    def to_string_with_article(tp):
+        if tp == AbstractType.POSTER:
+            return 'a poster'
+        elif tp == AbstractType.PRESENTATION:
+            return 'an oral communication'
+        else:
+            return 'unknown'
+
 
 
 

@@ -2,6 +2,7 @@ from flask import flash, render_template, redirect, url_for, Blueprint, g, reque
 from flask import current_app as app
 from flask_wtf import FlaskForm
 from flask_wtf.recaptcha import RecaptchaField
+import pptx.presentation
 from wtforms import EmailField, StringField, PasswordField, validators
 
 from sqlalchemy import select, delete
@@ -1397,7 +1398,7 @@ def send_email(language='pt'):
     return json.dumps(''), 200
 
 
-@bp.route('/IX_IPC/management')
+@bp.route('/IX_IPC/management/')
 @bp.route('/IX_IPC/management/<language:language>')
 @login_IXIPC_management_required
 def management(language='pt'):
@@ -1589,6 +1590,119 @@ def participants_pdf_report():
         as_attachment=True,
         download_name='participants_list.pdf',
         mimetype='application/pdf'
+    )
+
+
+@bp.route('/IX_IPC/management/certificates_tags')
+@bp.route('/IX_IPC/management/certificates_tags/<language:language>')
+@login_IXIPC_management_required
+def certificates_tags(language='pt'):
+    """Download of certificates and participant tags"""
+
+    with get_session() as db_session:
+        return render_template(
+            'management/certificates_tags.html',
+            lang=language,
+            text_column=True,
+        )
+
+
+import copy
+def new_slide(src_slide, newPrs, images, presenter_name, abstract_type, abstract_title):
+    # Define the layout you want to use from your generated pptx
+    SLD_LAYOUT = 6
+    slide_layout = newPrs.slide_layouts[SLD_LAYOUT]
+
+    # create now slide, to copy contents to
+    curr_slide = newPrs.slides.add_slide(slide_layout)
+
+    # now copy contents from external slide, but do not copy slide properties
+    # e.g. slide layouts, etc., because these would produce errors, as diplicate
+    # entries might be generated
+    for i, shp in enumerate(src_slide.shapes):
+        if 'PICTURE' in str(shp.shape_type):
+            pass
+        else:
+            # create copy of elem
+            el = shp.element
+            newel = copy.deepcopy(el)
+
+            # add elem to shape tree
+            curr_slide.shapes._spTree.insert_element_before(newel, 'p:extLst')
+
+    # add pictures
+    for v in images:
+        curr_slide.shapes.add_picture(v[4], v[0], v[1], v[2], v[3])
+
+    for shape in curr_slide.shapes:
+        print(f'{shape.name} ({shape.shape_type}): {shape.left} {shape.top} {shape.width} {shape.height}')
+        if shape.has_text_frame and str(shape.text_frame.text).startswith('This is to'):
+            for run in shape.text_frame.paragraphs[0].runs:
+                if run.text.startswith('NOME'):
+                    run.text = presenter_name
+
+                if run.text == 'abstract_type':
+                  run.text = abstract_type
+
+                if run.text == 'abstract_title':
+                    run.text = abstract_title
+
+
+import pptx
+@bp.route('/IX_IPC/management/presentation_certificates')
+@login_IXIPC_management_required
+def presentation_certificates():
+    buffer = BytesIO()
+    
+    template = pptx.Presentation(os.path.join(app.root_path, 'IX_IPC', 'tags_certificates', 'template.pptx'))
+    
+    images = []
+    for i, shp in enumerate(template.slides[0].shapes):
+        if 'PICTURE' in str(shp.shape_type):
+            # save image
+            filename = os.path.join(app.config['TEMP_FOLDER'], f'{i}.{shp.image.ext}')
+            with open(filename, 'wb') as f:
+                f.write(shp.image.blob)
+
+            # add image to dict
+            images.append([shp.left, shp.top, shp.width, shp.height, filename])
+
+    presentation = pptx.Presentation()
+    presentation.slide_height = template.slide_height
+    presentation.slide_width = template.slide_width
+    
+    with get_session() as db_session:
+        abstracts = db_session.execute(
+            select(Abstract)
+              .where(Abstract.acceptance_status == 1)
+              .order_by(Abstract.owner, Abstract.abstract_type)
+        ).scalars()
+
+        for abstract in abstracts:
+            presenting_author = db_session.execute(
+                select(AbstractAuthor)
+                  .where(AbstractAuthor.abstract_id == abstract.id)
+                  .where(AbstractAuthor.presenter == True)
+            ).scalar_one()
+            presenting_author = db_session.get(Author, presenting_author.author_id)
+            name = f'{presenting_author.first_name} {presenting_author.last_name} '
+
+            abstract_type = AbstractType.to_string_with_article(abstract.abstract_type)
+            abstract_title = abstract.title
+
+            new_slide(template.slides[0], presentation, images, name, abstract_type, abstract_title)
+
+    presentation.save(buffer)
+
+    for image in images:
+        os.remove(image[4])
+
+    buffer.seek(0)
+    return send_file(
+        buffer,
+        as_attachment=True,
+        download_name='certificates.pptx',
+        mimetype='application/pptx'
     )
 
 
