@@ -1671,7 +1671,7 @@ def presentation_certificates():
             abstract_type = AbstractType.to_string_with_article(abstract.abstract_type)
             abstract_title = abstract.title
 
-            abstract_list.append([name.capitalize(), abstract_type, abstract_title])
+            abstract_list.append([name, abstract_type, abstract_title])
     
     abstract_list = sorted(abstract_list, key=lambda x: x[0])
 
