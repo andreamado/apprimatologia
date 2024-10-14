@@ -1635,7 +1635,6 @@ def new_slide(src_slide, newPrs, images, presenter_name, abstract_type, abstract
         curr_slide.shapes.add_picture(v[4], v[0], v[1], v[2], v[3])
 
     for shape in curr_slide.shapes:
-        print(f'{shape.name} ({shape.shape_type}): {shape.left} {shape.top} {shape.width} {shape.height}')
         if shape.has_text_frame and str(shape.text_frame.text).startswith('This is to'):
             for run in shape.text_frame.paragraphs[0].runs:
                 if run.text.startswith('NOME'):
@@ -1652,25 +1651,7 @@ import pptx
 @bp.route('/IX_IPC/management/presentation_certificates')
 @login_IXIPC_management_required
 def presentation_certificates():
-    buffer = BytesIO()
-    
-    template = pptx.Presentation(os.path.join(app.root_path, 'IX_IPC', 'tags_certificates', 'template.pptx'))
-    
-    images = []
-    for i, shp in enumerate(template.slides[0].shapes):
-        if 'PICTURE' in str(shp.shape_type):
-            # save image
-            filename = os.path.join(app.config['TEMP_FOLDER'], f'{i}.{shp.image.ext}')
-            with open(filename, 'wb') as f:
-                f.write(shp.image.blob)
-
-            # add image to dict
-            images.append([shp.left, shp.top, shp.width, shp.height, filename])
-
-    presentation = pptx.Presentation()
-    presentation.slide_height = template.slide_height
-    presentation.slide_width = template.slide_width
-    
+    abstract_list = []
     with get_session() as db_session:
         abstracts = db_session.execute(
             select(Abstract)
@@ -1690,7 +1671,30 @@ def presentation_certificates():
             abstract_type = AbstractType.to_string_with_article(abstract.abstract_type)
             abstract_title = abstract.title
 
-            new_slide(template.slides[0], presentation, images, name, abstract_type, abstract_title)
+            abstract_list.append([name.capitalize(), abstract_type, abstract_title])
+    
+    abstract_list = sorted(abstract_list, key=lambda x: x[0])
+
+    buffer = BytesIO()
+    
+    template = pptx.Presentation(os.path.join(app.root_path, 'IX_IPC', 'tags_certificates', 'template.pptx'))    
+    images = []
+    for i, shp in enumerate(template.slides[0].shapes):
+        if 'PICTURE' in str(shp.shape_type):
+            # save image
+            filename = os.path.join(app.config['TEMP_FOLDER'], f'{i}.{shp.image.ext}')
+            with open(filename, 'wb') as f:
+                f.write(shp.image.blob)
+
+            # add image to dict
+            images.append([shp.left, shp.top, shp.width, shp.height, filename])
+
+    presentation = pptx.Presentation()
+    presentation.slide_height = template.slide_height
+    presentation.slide_width = template.slide_width
+    
+    for [name, abstract_type, abstract_title] in abstract_list:
+        new_slide(template.slides[0], presentation, images, name, abstract_type, abstract_title)
 
     presentation.save(buffer)
 
