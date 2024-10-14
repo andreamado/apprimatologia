@@ -7,12 +7,18 @@
   </a>
   <br>
   <button type="button" id="presentation-certificates-button" class="btn btn-primary mb-4">Presentation certificates download</button>
+  <br>
+  <button type="button" id="presence-certificates-button" class="btn btn-primary mb-4">Presence certificates download</button>
 </div>
 
 <script>
   document.getElementById('presentation-certificates-button').addEventListener('click', (evt) => {
     evt.preventDefault();
     window.open("{{ url_for('IX_IPC.presentation_certificates') }}");
+  });
+  document.getElementById('presence-certificates-button').addEventListener('click', (evt) => {
+    evt.preventDefault();
+    window.open("{{ url_for('IX_IPC.presence_certificates') }}");
   });
 </script>
 {% endblock -%}

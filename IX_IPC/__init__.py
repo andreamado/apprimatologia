@@ -7,7 +7,7 @@ from wtforms import EmailField, StringField, PasswordField, validators
 
 from sqlalchemy import select, delete
 
-import requests, datetime
+import requests, datetime, copy
 
 from email_validator import validate_email, EmailNotValidError
 import phonenumbers
@@ -30,6 +30,7 @@ from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 
 from docx import Document
 from docx.shared import Pt
+import pptx
 
 bp = Blueprint('IX_IPC', __name__, template_folder='templates')
 
@@ -1607,7 +1608,6 @@ def certificates_tags(language='pt'):
         )
 
 
-import copy
 def new_slide(src_slide, newPrs, images, presenter_name, abstract_type, abstract_title):
     # Define the layout you want to use from your generated pptx
     SLD_LAYOUT = 6
@@ -1647,7 +1647,6 @@ def new_slide(src_slide, newPrs, images, presenter_name, abstract_type, abstract
                     run.text = abstract_title
 
 
-import pptx
 @bp.route('/IX_IPC/management/presentation_certificates')
 @login_IXIPC_management_required
 def presentation_certificates():
@@ -1705,7 +1704,57 @@ def presentation_certificates():
     return send_file(
         buffer,
         as_attachment=True,
-        download_name='certificates.pptx',
+        download_name='certificates_presentation.pptx',
+        mimetype='application/pptx'
+    )
+
+
+@bp.route('/IX_IPC/management/presence_certificates')
+@login_IXIPC_management_required
+def presence_certificates():
+    user_list = []
+    with get_session() as db_session:
+        users = db_session.execute(
+            select(User)
+              .where(User.paid_registration == True)
+              .order_by(User.first_name, User.last_name)
+        ).scalars()
+        
+        for user in users:
+            name = f'{user.first_name} {user.last_name} '
+            user_list.append(name)
+    
+    buffer = BytesIO()
+    
+    template = pptx.Presentation(os.path.join(app.root_path, 'IX_IPC', 'tags_certificates', 'template_presence.pptx'))    
+    images = []
+    for i, shp in enumerate(template.slides[0].shapes):
+        if 'PICTURE' in str(shp.shape_type):
+            # save image
+            filename = os.path.join(app.config['TEMP_FOLDER'], f'{i}.{shp.image.ext}')
+            with open(filename, 'wb') as f:
+                f.write(shp.image.blob)
+
+            # add image to dict
+            images.append([shp.left, shp.top, shp.width, shp.height, filename])
+
+    presentation = pptx.Presentation()
+    presentation.slide_height = template.slide_height
+    presentation.slide_width = template.slide_width
+    
+    for name in user_list:
+        new_slide(template.slides[0], presentation, images, name, '', '')
+
+    presentation.save(buffer)
+
+    for image in images:
+        os.remove(image[4])
+
+    buffer.seek(0)
+    return send_file(
+        buffer,
+        as_attachment=True,
+        download_name='certificates_presence.pptx',
         mimetype='application/pptx'
     )
 
