@@ -949,7 +949,7 @@ def get_payment_value(user):
     """Returns the value of the payment for current user"""
 
     prices = all_prices[0] if earlyBirdDate > datetime.datetime.now() else all_prices[1]
-    if user.student or user.unemployed:
+    if user.student:
         if user.member:
             if user.scholarship:
                 return prices[4]
@@ -957,6 +957,11 @@ def get_payment_value(user):
                 return prices[3]
         else:
             return prices[2]
+    elif user.unemployed:
+        if user.member:
+            return prices[3]
+        else:
+            return prices[4]
     else:
         if user.member:
           return prices[1]
@@ -1757,6 +1762,51 @@ def presence_certificates():
         download_name='certificates_presence.pptx',
         mimetype='application/pptx'
     )
+
+# @bp.route('/IX_IPC/management/participant_tags')
+# @login_IXIPC_management_required
+# def participant_tags():
+#     users = []
+#     with get_session() as db_session:
+#         users = db_session.execute(
+#             select(User)
+#               .where(User.paid_registration == True)
+#               .order_by(User.first_name, User.last_name)
+#         ).scalars()
+        
+#     buffer = BytesIO()
+    
+#     template = pptx.Presentation(os.path.join(app.root_path, 'IX_IPC', 'tags_certificates', 'tags.pptx'))    
+#     images = []
+#     for i, shp in enumerate(template.slides[0].shapes):
+#         if 'PICTURE' in str(shp.shape_type):
+#             # save image
+#             filename = os.path.join(app.config['TEMP_FOLDER'], f'{i}.{shp.image.ext}')
+#             with open(filename, 'wb') as f:
+#                 f.write(shp.image.blob)
+
+#             # add image to dict
+#             images.append([shp.left, shp.top, shp.width, shp.height, filename])
+
+#     presentation = pptx.Presentation()
+#     presentation.slide_height = template.slide_height
+#     presentation.slide_width = template.slide_width
+    
+#     for user in users:
+#         new_slide(template.slides[0], presentation, images, name, '', '')
+
+#     presentation.save(buffer)
+
+#     for image in images:
+#         os.remove(image[4])
+
+#     buffer.seek(0)
+#     return send_file(
+#         buffer,
+#         as_attachment=True,
+#         download_name='certificates_presence.pptx',
+#         mimetype='application/pptx'
+#     )
 
 
 @bp.route('/IX_IPC/management/participants')

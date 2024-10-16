@@ -483,7 +483,7 @@ const personalDataManager = () => {
     
     const priceElement = document.getElementById('final-price');
     if(priceElement) { 
-      if(studentSwitchElement.checked || unemployedSwitchElement.checked) {
+      if(studentSwitchElement.checked) {
         if(memberSwitchElement.checked) {
           if(scholarshipSwitchElement.checked) {
             priceElement.innerHTML = String(prices[4]) + '€';
@@ -492,6 +492,12 @@ const personalDataManager = () => {
           }
         } else {
           priceElement.innerHTML = String(prices[2]) + '€';
+        }
+      } else if (unemployedSwitchElement.checked) {
+        if(memberSwitchElement.checked) {
+          priceElement.innerHTML = String(prices[3]) + '€';
+        } else {
+          priceElement.innerHTML = String(prices[4]) + '€';
         }
       } else {
         if(memberSwitchElement.checked) {
