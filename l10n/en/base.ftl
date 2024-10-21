@@ -89,7 +89,32 @@ IXIPC-travel-guide-where-stay = Where to stay
 IXIPC-travel-guide-where-stay-file = We prepared a file with suggestions for places to stay. Check it 
 IXIPC-travel-guide-where-stay-here = here
 IXIPC-travel-guide-what-visit = What to visit
+
 IXIPC-travel-guide-get-there = How to get to Vila do Conde
+IXIPC-travel-guide-get-there-details = 
+  <p>
+    Vila do Conde is about 35 km from the center of Porto.
+  </p>
+  <p class='mb-1'>
+    How to reach Vila do Conde from Porto, city-center
+  </p>
+  <ul>
+    <li>Metro (recommended) - about 48 min, take line B or Bx (express), departure from Trindade station (located in downtown Porto), direction Póvoa do Varzim. Leave the metro in Santa Clara station, price: 4 euros. More information here: <a class="dark-link text-nowrap" href='https://en.metrodoporto.pt/' target="_blank">https://en.metrodoporto.pt/</a></li>
+    <li>Bus - approximately 53 min, line 3503 (“Unir" buses), departure from Pólo Universitário São João, direction Vila do Conde Mercado - more information here: <a class="dark-link text-nowrap" href='https://www.unirmobilidade.pt/' target="_blank">https://www.unirmobilidade.pt/</a></li>
+    <li>By Taxi - 25 min, around 50 euros.</li>
+    <li>By car - 25 min, approximately 10 euros of gasoline consumption, via A28 (highway A28), with a toll cost of 1 euro.</li>
+  </ul>
+
+  <p class='mb-1'>
+    How to get to Vila do Conde from the airport
+  </p>
+  <ul>
+    <li>Metro (recommended): take line E, direction Trindade, exit at “Verdes” station in Maia. Here, change from line E to line B, direction Póvoa do Varzim, exit the metro at Santa Clara station. Time: 56 min. Cost about 2 euros, one way. More information here: <a class="dark-link text-nowrap" href='https://en.metrodoporto.pt/' target="_blank">https://en.metrodoporto.pt/</a></li>
+    <li>Bus ("Ovnitur”): 17 min, once a day, 3-5 euros, more details at <a class="dark-link text-nowrap" href='https://www.ovnitur.pt/index.php' target="_blank">https://www.ovnitur.pt/index.php</a></li>
+    <li>By Taxi: 17 min, around 50 euros.</li>
+    <li>By Car: 17 min (26 km) around 5-7 euros.</li>
+  </ul>
+
 IXIPC-travel-guide-where-eat = Where to eat
 
 IXIPC-photo-competition = Cláudia Sousa photography competition

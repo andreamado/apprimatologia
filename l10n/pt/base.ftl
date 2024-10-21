@@ -93,6 +93,31 @@ IXIPC-travel-guide-where-stay-file = Preparámos sugestões de onde ficar. Vê
 IXIPC-travel-guide-where-stay-here = aqui
 IXIPC-travel-guide-what-visit = O que visitar
 IXIPC-travel-guide-get-there = Como chegar a Vila do Conde
+IXIPC-travel-guide-get-there-details = 
+  <p>
+    Vila do Conde fica a cerca de 35 km do centro do Porto.
+  </p>
+  <p class='mb-1'>
+    Como chegar a partir do centro do Porto
+  </p>
+  <ul>
+    <li>Metro - cerca de 48 min, linha B ou Bx (expresso), partida da estação da trindade (localizada na baixa do Porto), direção Póvoa do Varzim, estação Santa Clara, preço: 4 euros - recomendado. Mais informações aqui: <a class="dark-link text-nowrap" href='https://www.metrodoporto.pt/' target="_blank">https://www.metrodoporto.pt/</a></li>
+    <li>Autocarro - cerca de 53 min, linha 3503 (autocarros Unir), partida do Pólo Universitário São João, direção Vila do Conde Mercado -  mais informações aqui: <a class="dark-link text-nowrap" href='https://www.unirmobilidade.pt/' target="_blank">https://www.unirmobilidade.pt/</a></li>
+    <li>Taxi - 25 min, cerca de 50 euros.</li>
+    <li>De carro - 25 min, cerca de 10 euros de consumo de gasolina, via A28, com portagem de 1 euro.</li>
+  </ul>
+
+  <p class='mb-1'>
+    Como chegar a partir do aeroporto
+  </p>
+  <ul>
+    <li>Metro (recomendado): linha E, direção trindade, saida na estação “Verdes” na Maia, troca de linha E para linha B, direção Póvoa do Varzim, saida estação Santa Clara. Tempo: 56 min. Cerca de 2 euros. Mais informações aqui: <a class="dark-link text-nowrap" href='https://www.metrodoporto.pt/' target="_blank">https://www.metrodoporto.pt/</a></li>
+    <li>Autocarro Ovnitur: 17 min, uma vez por dia, 3-5 euros, mais detalhes em <a class="dark-link text-nowrap" href='https://www.ovnitur.pt/index.php' target="_blank">https://www.ovnitur.pt/index.php</a></li>
+    <li>Táxi: 17 min, cerca de 50 euros.</li>
+    <li>Carro: 17 min (26 km) cerca de 5-7 euros.</li>
+  </ul>
+
+
 IXIPC-travel-guide-where-eat = Onde comer
 
 IXIPC-photo-competition = Concurso de fotografia Cláudia Sousa
