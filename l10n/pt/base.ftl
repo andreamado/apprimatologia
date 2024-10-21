@@ -103,7 +103,7 @@ IXIPC-travel-guide-get-there-details =
   <ul>
     <li>Metro - cerca de 48 min, linha B ou Bx (expresso), partida da estação da trindade (localizada na baixa do Porto), direção Póvoa do Varzim, estação Santa Clara, preço: 4 euros - recomendado. Mais informações aqui: <a class="dark-link text-nowrap" href='https://www.metrodoporto.pt/' target="_blank">https://www.metrodoporto.pt/</a></li>
     <li>Autocarro - cerca de 53 min, linha 3503 (autocarros Unir), partida do Pólo Universitário São João, direção Vila do Conde Mercado -  mais informações aqui: <a class="dark-link text-nowrap" href='https://www.unirmobilidade.pt/' target="_blank">https://www.unirmobilidade.pt/</a></li>
-    <li>Taxi - 25 min, cerca de 50 euros.</li>
+    <li>Táxi - 25 min, cerca de 50 euros.</li>
     <li>De carro - 25 min, cerca de 10 euros de consumo de gasolina, via A28, com portagem de 1 euro.</li>
   </ul>
 
