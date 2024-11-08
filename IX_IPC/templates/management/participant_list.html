@@ -9,6 +9,9 @@
   <button type="button" id="pdf-report-button" class="btn btn-primary mb-4">PDF list download</button>
   <button type="button" id="csv-summary-button" class="btn btn-primary mb-4">CSV summary download (Excel)</button>
 
+  <button type="button" id="csv-photo-button" class="btn btn-primary mb-4">CSV photography competition download (Excel)</button>
+  <button type="button" id="csv-presentation-button" class="btn btn-primary mb-4">CSV best presentation competition download (Excel)</button>
+
   <button type="button" class="btn btn-primary mb-4" data-bs-toggle="modal" data-bs-target="#send-email-modal">
     Send email to all participants
   </button>
@@ -175,6 +178,14 @@
   document.getElementById('csv-summary-button').addEventListener('click', (evt) => {
     evt.preventDefault();
     window.open("{{ url_for('IX_IPC.participants_csv_summary') }}");
+  });
+  document.getElementById('csv-photo-button').addEventListener('click', (evt) => {
+    evt.preventDefault();
+    window.open("{{ url_for('IX_IPC.photo_csv_summary') }}");
+  });
+  document.getElementById('csv-presentation-button').addEventListener('click', (evt) => {
+    evt.preventDefault();
+    window.open("{{ url_for('IX_IPC.presentation_csv_summary') }}");
   });
 
   document.getElementById('send-email-confirm').addEventListener('click', () => {

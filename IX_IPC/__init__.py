@@ -1470,6 +1470,74 @@ def participants_csv_summary():
             )
 
 
+@bp.route('/IX_IPC/management/photo_csv_summary')
+@login_IXIPC_management_required
+def photo_csv_summary():    
+    with StringIO() as buffer:
+        writer = csv.writer(buffer, delimiter=';')
+
+        fields = ['first_name', 'last_name', 'email', 'institution', 'student']
+        writer.writerow(fields)
+
+        with get_session() as db_session:
+            participants = db_session.execute(
+                select(User)
+                  .where(User.competition_photography == 1)
+                  .order_by(User.first_name, User.last_name)
+            ).scalars()
+
+            for participant in participants:
+                writer.writerow([
+                    participant.first_name, 
+                    participant.last_name,
+                    participant.email,
+                    participant.institution,
+                    1 if participant.student else 0,
+                ])
+
+            buffer.seek(0)
+            return send_file(
+                BytesIO(buffer.getvalue().encode('utf-8-sig')),
+                as_attachment=True,
+                download_name='photography_competition.csv',
+                mimetype='text/csv'
+            )
+
+
+@bp.route('/IX_IPC/management/presentation_csv_summary')
+@login_IXIPC_management_required
+def presentation_csv_summary():    
+    with StringIO() as buffer:
+        writer = csv.writer(buffer, delimiter=';')
+
+        fields = ['first_name', 'last_name', 'email', 'institution', 'student']
+        writer.writerow(fields)
+
+        with get_session() as db_session:
+            participants = db_session.execute(
+                select(User)
+                  .where(User.competition_talk == 1)
+                  .order_by(User.first_name, User.last_name)
+            ).scalars()
+
+            for participant in participants:
+                writer.writerow([
+                    participant.first_name, 
+                    participant.last_name,
+                    participant.email,
+                    participant.institution,
+                    1 if participant.student else 0,
+                ])
+
+            buffer.seek(0)
+            return send_file(
+                BytesIO(buffer.getvalue().encode('utf-8-sig')),
+                as_attachment=True,
+                download_name='talk_poster_competition.csv',
+                mimetype='text/csv'
+            )
+
+
 @bp.route('/IX_IPC/management/participants_pdf_report')
 @login_IXIPC_management_required
 def participants_pdf_report():
