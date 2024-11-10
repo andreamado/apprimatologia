@@ -9,6 +9,8 @@
   <button type="button" id="presentation-certificates-button" class="btn btn-primary mb-4">Presentation certificates download</button>
   <br>
   <button type="button" id="presence-certificates-button" class="btn btn-primary mb-4">Presence certificates download</button>
+  <br>
+  <button type="button" id="tags-button" class="btn btn-primary mb-4">Participant tags download</button>
 </div>
 
 <script>
@@ -19,6 +21,10 @@
   document.getElementById('presence-certificates-button').addEventListener('click', (evt) => {
     evt.preventDefault();
     window.open("{{ url_for('IX_IPC.presence_certificates') }}");
+  });
+  document.getElementById('tags-button').addEventListener('click', (evt) => {
+    evt.preventDefault();
+    window.open("{{ url_for('IX_IPC.participant_tags') }}");
   });
 </script>
 {% endblock -%}

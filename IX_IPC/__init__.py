@@ -1681,7 +1681,7 @@ def certificates_tags(language='pt'):
         )
 
 
-def new_slide(src_slide, newPrs, images, presenter_name, abstract_type, abstract_title):
+def new_presentation_slide(src_slide, newPrs, images, presenter_name, abstract_type, abstract_title):
     # Define the layout you want to use from your generated pptx
     SLD_LAYOUT = 6
     slide_layout = newPrs.slide_layouts[SLD_LAYOUT]
@@ -1714,7 +1714,7 @@ def new_slide(src_slide, newPrs, images, presenter_name, abstract_type, abstract
                     run.text = presenter_name
 
                 if run.text == 'abstract_type':
-                  run.text = abstract_type
+                    run.text = abstract_type
 
                 if run.text == 'abstract_title':
                     run.text = abstract_title
@@ -1766,7 +1766,7 @@ def presentation_certificates():
     presentation.slide_width = template.slide_width
     
     for [name, abstract_type, abstract_title] in abstract_list:
-        new_slide(template.slides[0], presentation, images, name, abstract_type, abstract_title)
+        new_presentation_slide(template.slides[0], presentation, images, name, abstract_type, abstract_title)
 
     presentation.save(buffer)
 
@@ -1816,7 +1816,7 @@ def presence_certificates():
     presentation.slide_width = template.slide_width
     
     for name in user_list:
-        new_slide(template.slides[0], presentation, images, name, '', '')
+        new_presentation_slide(template.slides[0], presentation, images, name, '', '')
 
     presentation.save(buffer)
 
@@ -1831,50 +1831,113 @@ def presence_certificates():
         mimetype='application/pptx'
     )
 
-# @bp.route('/IX_IPC/management/participant_tags')
-# @login_IXIPC_management_required
-# def participant_tags():
-#     users = []
-#     with get_session() as db_session:
-#         users = db_session.execute(
-#             select(User)
-#               .where(User.paid_registration == True)
-#               .order_by(User.first_name, User.last_name)
-#         ).scalars()
+
+def new_tags_slide(src_slide, newPrs, images, participants):
+    # Define the layout you want to use from your generated pptx
+    SLD_LAYOUT = 6
+    slide_layout = newPrs.slide_layouts[SLD_LAYOUT]
+
+    # create now slide, to copy contents to
+    curr_slide = newPrs.slides.add_slide(slide_layout)
+
+    # now copy contents from external slide, but do not copy slide properties
+    # e.g. slide layouts, etc., because these would produce errors, as diplicate
+    # entries might be generated
+    for i, shp in enumerate(src_slide.shapes):
+        if 'PICTURE' in str(shp.shape_type):
+            pass
+        else:
+            # create copy of elem
+            el = shp.element
+            newel = copy.deepcopy(el)
+
+            # add elem to shape tree
+            curr_slide.shapes._spTree.insert_element_before(newel, 'p:extLst')
+
+    # add pictures
+    for v in images:
+        curr_slide.shapes.add_picture(v[4], v[0], v[1], v[2], v[3])
+
+    for i, participant in enumerate(participants):
+      for shape in curr_slide.shapes:
+          if shape.has_text_frame and str(shape.text_frame.text).startswith('NOME'):
+              for paragraph in shape.text_frame.paragraphs:
+                  for run in paragraph.runs:
+                      if run.text.startswith(f'NOME {i+1}'):
+                          run.text = participant.first_name
+
+                      if run.text == f'APELIDO {i+1}':
+                          run.text = participant.last_name
+
+                      if run.text == f'INSTITUICAO {i+1}':
+                          run.text = participant.institution
+
+
+class Participant:
+    def __init__(self, first_name, last_name, institution):
+        self.first_name = first_name
+        self.last_name = last_name
+        self.institution = institution
+
+    def __str__(self):
+        return f'<{self.first_name}, {self.last_name}, {self.institution}>'
+
+import itertools
+def batched(iterable, n):
+    if n < 1:
+        raise ValueError('n must be at least one')
+    iterator = iter(iterable)
+    while batch := list(itertools.islice(iterator, n)):
+        yield batch
+
+@bp.route('/IX_IPC/management/participant_tags')
+@login_IXIPC_management_required
+def participant_tags():
+    participant_list = []
+    with get_session() as db_session:
+        users = db_session.execute(
+            select(User)
+              .where(User.paid_registration == True)
+              .order_by(User.first_name, User.last_name)
+        ).scalars()
         
-#     buffer = BytesIO()
+        for user in users:
+            participant_list.append(Participant(user.first_name, user.last_name, user.institution))
+
+    buffer = BytesIO()
     
-#     template = pptx.Presentation(os.path.join(app.root_path, 'IX_IPC', 'tags_certificates', 'tags.pptx'))    
-#     images = []
-#     for i, shp in enumerate(template.slides[0].shapes):
-#         if 'PICTURE' in str(shp.shape_type):
-#             # save image
-#             filename = os.path.join(app.config['TEMP_FOLDER'], f'{i}.{shp.image.ext}')
-#             with open(filename, 'wb') as f:
-#                 f.write(shp.image.blob)
+    template = pptx.Presentation(os.path.join(app.root_path, 'IX_IPC', 'tags_certificates', 'tags.pptx')) 
+    images = []
+    for i, shp in enumerate(template.slides[0].shapes):
+        if 'PICTURE' in str(shp.shape_type):
+            # save image
+            filename = os.path.join(app.config['TEMP_FOLDER'], f'{i}.{shp.image.ext}')
+            with open(filename, 'wb') as f:
+                f.write(shp.image.blob)
 
-#             # add image to dict
-#             images.append([shp.left, shp.top, shp.width, shp.height, filename])
+            # add image to dict
+            images.append([shp.left, shp.top, shp.width, shp.height, filename])
 
-#     presentation = pptx.Presentation()
-#     presentation.slide_height = template.slide_height
-#     presentation.slide_width = template.slide_width
+    presentation = pptx.Presentation()
+    presentation.slide_height = template.slide_height
+    presentation.slide_width = template.slide_width
     
-#     for user in users:
-#         new_slide(template.slides[0], presentation, images, name, '', '')
+    for participants_page in batched(participant_list, 8):
+        new_tags_slide(template.slides[0], presentation, images, participants_page)
 
-#     presentation.save(buffer)
+    presentation.save(buffer)
 
-#     for image in images:
-#         os.remove(image[4])
+    for image in images:
+        os.remove(image[4])
 
-#     buffer.seek(0)
-#     return send_file(
-#         buffer,
-#         as_attachment=True,
-#         download_name='certificates_presence.pptx',
-#         mimetype='application/pptx'
-#     )
+    buffer.seek(0)
+    return send_file(
+        buffer,
+        as_attachment=True,
+        download_name='tags.pptx',
+        mimetype='application/pptx'
+    )
+
 
 
 @bp.route('/IX_IPC/management/participants')
