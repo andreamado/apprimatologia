@@ -132,6 +132,27 @@ IXIPC-photo-competition-description =
   </ol>
 
 IXIPC-conference-dinner = Conference dinner
+IXIPC-conference-dinner-description = 
+  <p>
+    The conference dinner will be held on <b>Friday, November 22nd, 2024, at 8:00 PM</b> at <b>Garfo Torto restaurant</b>, located within walking distance from the conference venue. For more details, please visit <a class="dark-link text-nowrap" href='https://www.garfotorto.pt/' target="_blank">https://www.garfotorto.pt/</a> and <a class="dark-link text-nowrap" href='https://maps.app.goo.gl/t4F5YHg2io9az2Qs7' target="_blank">the location map</a>. 
+  </p>
+  <p>
+    The cost is <b>29€ per person</b>, which includes starters, two drinks, a main course, dessert, and coffee.
+  </p>
+  <p>
+    There are three main course options to choose from:
+    <ol>
+      <li><b>Fish:</b> Cod with cream ("Bacalhau com natas")</li>
+      <li><b>Meat:</b> Loin stuffed with alheiras and dried fruits ("Lombo recheado com alheiras e frutos secos")</li>
+      <li><b>Vegetarian:</b> Vegetable risotto</li>
+    </ol>
+  </p>
+  <p>
+    To complete your registration, please fill in the form <a class="dark-link text-nowrap" href='https://forms.gle/EcEjYKEJEgjmJokS6' target="_blank">here</a>. Afterwards, transfer the corresponding payment via bank transfer. Once the payment is made, kindly email the proof of payment to aportprimatologia@gmail.com. 
+  </p>
+  <p>
+    <b>The registration, payment, and proof of payment must be submitted by November 18th, 2024.</b>
+  </p>
 
 IXIPC-updates-soon = This section will soon be updated!
 
