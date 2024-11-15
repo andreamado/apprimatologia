@@ -137,7 +137,7 @@ IXIPC-photo-competition-description =
 IXIPC-conference-dinner = Jantar do congresso
 IXIPC-conference-dinner-description = 
   <p>
-    O jantar do congresso terá lugar na <b>Sexta-feira, 22 de Novembro de 2024, às 20h00</b> no <b>restaurante Garfo Torto</b>, localizado a uma curta distância a pé do Auditório Municipal. Para mais informações, visita <a class="dark-link text-nowrap" href='https://www.garfotorto.pt/' target="_blank">https://www.garfotorto.pt/</a> e <a class="dark-link text-nowrap" href='https://maps.app.goo.gl/t4F5YHg2io9az2Qs7' target="_blank">o mapa da localização</a>. 
+    O jantar do congresso terá lugar na <b>Sexta-feira, 22 de Novembro de 2024, às 20h00</b> no <b>restaurante Garfo Torto</b>, localizado a uma curta distância a pé do Auditório Municipal. Para mais informações, visita <a class="dark-link text-nowrap" href='https://www.garfotorto.pt/' target="_blank" rel="noopener noreferrer">https://www.garfotorto.pt/</a> e <a class="dark-link text-nowrap" href='https://maps.app.goo.gl/t4F5YHg2io9az2Qs7' target="_blank" rel="noopener noreferrer">o mapa da localização</a>. 
   </p>
   <p>
     O custo é de <b>29€ por pessoa</b> e inclui entradas, duas bebidas, um prato principal, sobremesa e café.
@@ -151,12 +151,14 @@ IXIPC-conference-dinner-description =
     </ol>
   </p>
   <p>
-    Para completar a inscrição, por favor, preenche o <a class="dark-link text-nowrap" href='https://forms.gle/EcEjYKEJEgjmJokS6' target="_blank">seguinte formulário</a>. De seguida, envia o valor correspondente por transferência bancária. Uma vez efectuado o pagamento, envia o comprovativo de pagamento para aportprimatologia@gmail.com. 
+    Para completar a inscrição, por favor, preenche o <a class="dark-link text-nowrap" href='https://forms.gle/EcEjYKEJEgjmJokS6' target="_blank" rel="noopener noreferrer">seguinte formulário</a>. De seguida, envia o valor correspondente por transferência bancária. Uma vez efectuado o pagamento, envia o comprovativo de pagamento para aportprimatologia@gmail.com. 
   </p>
   <p>
     <b>A inscrição, pagamento e envio do comprovativo devem ser completados até 18 de Novembro de 2024. </b>
   </p>
 
+IXIPC-detailed-programme = Podes fazer download do programa completo
+IXIPC-detailed-programme-here = aqui
 
 IXIPC-updates-soon = Esta secção será actualizada em breve!
 
