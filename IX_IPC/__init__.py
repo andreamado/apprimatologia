@@ -1378,28 +1378,40 @@ def send_email(language='pt'):
         else:
             users = [db_session.get(User, int(user_code))]
 
+    print(f'sending email with subject: {subject}\nto users: ', end='')
     for user in users:
-        first_name, last_name, name = '', '', ''
-        if user.first_name:
-            first_name = user.first_name if len(user.first_name) else user.name.strip().split()[0]
-        else:
-            first_name = user.name.strip().split()[0]
+        print(f'{user.id}', end=', ')
+    print()
 
-        if user.last_name:
-            last_name = user.last_name
-        
-        if user.name:
-            name = user.name
+    for user in users:
+        try:
+            first_name, last_name, name = '', '', ''
+            if user.first_name:
+                first_name = user.first_name if len(user.first_name) else user.name.strip().split()[0]
+            else:
+                first_name = user.name.strip().split()[0]
 
-        abstract_title = ''
-        abstract_type = ''
-        if user_code == 'ACCEPTED_ABSTRACTS':
-            abstract_title = user.abstract_title
-            abstract_type = user.abstract_type
+            if user.last_name:
+                last_name = user.last_name
+            
+            if user.name:
+                name = user.name
+            elif len(first_name) > 0 and len(last_name) > 0:
+                name = first_name + ' ' + last_name
+            else:
+                name = 'participant'
 
-        subject_user = subject.format(first_name=first_name, last_name=last_name, name=name, email=user.email, abstract_title=abstract_title, abstract_type=abstract_type)
-        message_user = message.format(first_name=first_name, last_name=last_name, name=name, email=user.email, abstract_title=abstract_title, abstract_type=abstract_type)
-        app.send_email(subject_user, message_user, [user.email], attachment)
+            abstract_title = ''
+            abstract_type = ''
+            if user_code == 'ACCEPTED_ABSTRACTS':
+                abstract_title = user.abstract_title
+                abstract_type = user.abstract_type
+
+            subject_user = subject.format(first_name=first_name, last_name=last_name, name=name, email=user.email, abstract_title=abstract_title, abstract_type=abstract_type)
+            message_user = message.format(first_name=first_name, last_name=last_name, name=name, email=user.email, abstract_title=abstract_title, abstract_type=abstract_type)
+            app.send_email(subject_user, message_user, [user.email], attachment)
+        except:
+            print(f'failed to send email to user {user.id}, with subject "{subject}"')
 
     return json.dumps(''), 200
 
