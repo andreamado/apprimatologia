@@ -161,7 +161,7 @@ IXIPC-updates-soon = This section will soon be updated!
 
 IXIPC-personal-area = Personal area
 IXIPC-personal-data-download-certificates = Certificates
-IXIPC-personal-data-download-certificates-participation = Attendance certificate
+IXIPC-personal-data-download-certificates-participation = Attendance
 
 IXIPC-program = Program
 IXIPC-invited-speakers = Invited speakers

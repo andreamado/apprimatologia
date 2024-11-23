@@ -116,9 +116,12 @@ def IXIPC(language='pt'):
         payment_status = 0
         organizer = False
         if g.IXIPC_user:
-            abstracts = db_session.execute(
+            abstracts = list(db_session.execute(
                 select(Abstract).filter_by(owner=g.IXIPC_user.id)
-            ).scalars()
+            ).scalars())
+
+            for abstract in abstracts:
+                abstract.abstract_type_str = AbstractType.to_string(abstract.abstract_type)
 
             user_id = g.IXIPC_user.id
 
@@ -1998,11 +2001,6 @@ def participants_certificate_pdf(id):
     pdfmetrics.registerFont(TTFont('Italic', os.path.join(app.root_path, 'IX_IPC', 'tags_certificates', 'arialnarrow_italic.ttf')))
     pdfmetrics.registerFont(TTFont('BoldItalic', os.path.join(app.root_path, 'IX_IPC', 'tags_certificates', 'arialnarrow_bolditalic.ttf')))
 
-    # addMapping('ArialNarrow', 0, 0, 'Text') #normal
-    # addMapping('ArialNarrow', 0, 1, 'Italic') #italic
-    # addMapping('ArialNarrow', 1, 0, 'Bold') #bold
-    # addMapping('ArialNarrow', 1, 1, 'BoldItalic') #italic and bold
-
     pdfmetrics.registerFontFamily(
         'ArialNarrow', 
         normal='ArialNarrow', 
@@ -2095,6 +2093,148 @@ def participants_certificate_pdf(id):
         buffer,
         as_attachment=True,
         download_name='IXIPC_participant_certificate.pdf',
+        mimetype='application/pdf'
+    )
+
+
+@bp.route('/IX_IPC/management/presentation_certificate_pdf/<int:id>')
+@login_IXIPC_required
+def presentation_certificate_pdf(id):
+    buffer = BytesIO()
+
+    border_distance = 0.7*cm
+
+    data = open(os.path.join(app.root_path, 'static', 'img', 'IPC_Text_Black_Logo.png'), 'rb').read()
+    logo = BytesIO(data)
+    logo.seek(0)
+
+    assinatura = BytesIO(open(os.path.join(app.root_path, 'IX_IPC', 'tags_certificates', 'assinatura.png'), 'rb').read())
+    assinatura.seek(0)
+
+    logo_app = BytesIO(open(os.path.join(app.root_path, 'IX_IPC', 'tags_certificates', 'APP.png'), 'rb').read())
+    logo_app.seek(0)
+
+    logo_ape = BytesIO(open(os.path.join(app.root_path, 'IX_IPC', 'tags_certificates', 'APE.png'), 'rb').read())
+    logo_ape.seek(0)
+
+    logo_biopolis = BytesIO(open(os.path.join(app.root_path, 'IX_IPC', 'tags_certificates', 'BIOPOLIS2.png'), 'rb').read())
+    logo_biopolis.seek(0)
+
+    logo_cibio = BytesIO(open(os.path.join(app.root_path, 'IX_IPC', 'tags_certificates', 'CIBIO.png'), 'rb').read())
+    logo_cibio.seek(0)
+
+    logo_cmvc = BytesIO(open(os.path.join(app.root_path, 'IX_IPC', 'tags_certificates', 'CMVC2.png'), 'rb').read())
+    logo_cmvc.seek(0)
+
+    logo_amvc = BytesIO(open(os.path.join(app.root_path, 'IX_IPC', 'tags_certificates', 'AMVC.png'), 'rb').read())
+    logo_amvc.seek(0)
+
+
+    pdfmetrics.registerFont(TTFont('ArialNarrow', os.path.join(app.root_path, 'IX_IPC', 'tags_certificates', 'arialnarrow.ttf')))
+    pdfmetrics.registerFont(TTFont('Bold', os.path.join(app.root_path, 'IX_IPC', 'tags_certificates', 'arialnarrow_bold.ttf')))
+    pdfmetrics.registerFont(TTFont('Italic', os.path.join(app.root_path, 'IX_IPC', 'tags_certificates', 'arialnarrow_italic.ttf')))
+    pdfmetrics.registerFont(TTFont('BoldItalic', os.path.join(app.root_path, 'IX_IPC', 'tags_certificates', 'arialnarrow_bolditalic.ttf')))
+
+    pdfmetrics.registerFontFamily(
+        'ArialNarrow', 
+        normal='ArialNarrow', 
+        bold='Bold',
+        italic='Italic',
+        boldItalic='BoldItalic',
+    )
+    font = 'ArialNarrow'
+
+    can = canvas.Canvas(buffer, pagesize=A4)
+
+    w, h = A4
+    styles = getSampleStyleSheet()
+
+    with get_session() as db_session:
+        abstract = db_session.get(Abstract, id)
+
+        abstract_author = db_session.execute(
+            select(AbstractAuthor)
+              .where(AbstractAuthor.abstract_id == id)
+              .where(AbstractAuthor.presenter == True)
+        ).one()[0]
+        author = db_session.get(Author, abstract_author.author_id)
+
+        can.setTitle('IXIPC certificate')
+
+        can.drawImage(ImageReader(logo), w/2, h-1.8*cm, 13.29*cm, preserveAspectRatio=True, anchor='n', anchorAtXY=True)
+        
+        title_style = ParagraphStyle(
+            'Title',
+            parent=styles['Normal'],
+            fontName=font, 
+            fontSize=14,
+            alignment=TA_CENTER, 
+            leading=22
+        )
+        text = Paragraph(
+            f'<b>9<super size="8" rise="5">th</super> IBERIAN PRIMATOLOGICAL CONFERENCE</b>', 
+            title_style
+        )
+
+        pw, ph = text.wrap(16*cm, 10*cm)
+        text.drawOn(can, (w-pw)/2, h - 10*cm)
+
+        can.setFont('ArialNarrow', 12)
+        can.drawCentredString(w/2, h - 11*cm, "Vila do Conde, Portugal, 21-23 November 2024")
+
+        can.setFont('Italic', 18)
+        can.drawCentredString(w/2, h - 13.5*cm, "CERTIFICATE")
+
+        paragraph_style = ParagraphStyle(
+            'MainText',
+            parent=styles['Normal'],
+            fontName=font, 
+            fontSize=13,
+            alignment=TA_JUSTIFY, 
+            justifyLastLine=False,
+            leading=22
+        )
+
+        tp = AbstractType.to_string_with_article(abstract.abstract_type)
+        text = Paragraph(
+            f'This is to certify that <b>{author.first_name} {author.last_name}</b> attended the 9<super size="8" rise="5">th</super> Iberian Primatological Conference which took place in Vila do Conde, Portugal from the 21<super size="8" rise="5">st</super size="8" rise="5"> to the 23<super size="8" rise="5">rd</super> of November 2024 and presented <b>{tp}</b> entitled <b>“{abstract.title}”</b>.',
+            paragraph_style
+        )
+
+        pw, ph = text.wrap(16*cm, 10*cm)
+        text.drawOn(can, (w-pw)/2, h - 16.5*cm)
+
+        paragraph_style_centered = ParagraphStyle(
+            'MainTextCentered',
+            parent=paragraph_style,
+            alignment=TA_CENTER, 
+        )
+        text = Paragraph(
+            f'Vila do Conde, 23<super size="8" rise="5">rd</super> of November 2024<br /><i>The Organizing Committee</i>', 
+            paragraph_style_centered
+        )
+        pw, ph = text.wrap(16*cm, 10*cm)
+        text.drawOn(can, (w-pw)/2, h - 20*cm)
+
+        can.drawImage(ImageReader(assinatura), w/2, h-19.85*cm, 3.3*cm, preserveAspectRatio=True, anchor='n', anchorAtXY=True)
+        can.line(9*cm, h-20.5*cm, w-9*cm, h-20.5*cm)
+
+        can.drawImage(ImageReader(logo_app), 4.75*cm, h-22.65*cm, 3.56*cm, preserveAspectRatio=True, anchor='nw', anchorAtXY=True)
+        can.drawImage(ImageReader(logo_ape), 10.74*cm, h-23.67*cm, 4.32*cm, preserveAspectRatio=True, anchor='nw', anchorAtXY=True)
+        can.drawImage(ImageReader(logo_cibio), 2.59*cm, h-26.74*cm, 2.67*cm, preserveAspectRatio=True, anchor='nw', anchorAtXY=True)
+        can.drawImage(ImageReader(logo_biopolis), 6.82*cm, h-26.28*cm, 1.99*cm, preserveAspectRatio=True, anchor='nw', anchorAtXY=True)
+        can.drawImage(ImageReader(logo_cmvc), 10.12*cm, h-26.69*cm, 2.8*cm, preserveAspectRatio=True, anchor='nw', anchorAtXY=True)
+        can.drawImage(ImageReader(logo_amvc), 14.48*cm, h-26.69*cm, 1.98*cm, preserveAspectRatio=True, anchor='nw', anchorAtXY=True)
+
+        can.rect(border_distance, border_distance, w-2*border_distance, h-2*border_distance)
+
+    can.save()
+
+    buffer.seek(0)
+    return send_file(
+        buffer,
+        as_attachment=True,
+        download_name='IXIPC_presentation_certificate.pdf',
         mimetype='application/pdf'
     )
 

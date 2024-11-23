@@ -242,8 +242,6 @@ class AbstractType:
             return 'unknown'
 
 
-
-
 class Abstract(Base):
     __tablename__ = 'abstracts'
     id = Column(Integer, primary_key=True)

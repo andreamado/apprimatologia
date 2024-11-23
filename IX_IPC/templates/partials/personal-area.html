@@ -13,6 +13,13 @@
       </div>
     </div>
     <button type="button" id="attendance-certificates-button" class="btn btn-primary mb-4">{{ 'IXIPC-personal-data-download-certificates-participation'|l10n(lang) }}</button>
+
+    {% for abstract in abstracts -%}
+      {% if abstract.acceptance_status == 1 -%}
+        <br>
+        <button type="button" id="presentation-certificates-button-{{abstract.id}}" class="btn btn-primary mb-4">{{ abstract.abstract_type_str }}: {{abstract.title}}</button>
+      {% endif -%}
+    {% endfor -%}
   </div>
   {% endif -%}
   
@@ -395,6 +402,16 @@ document.getElementById('attendance-certificates-button').addEventListener('clic
   evt.preventDefault();
   window.open("{{ url_for('IX_IPC.participants_certificate_pdf', id=user_id) }}");
 });
+
+{% for abstract in abstracts -%}
+  {% if abstract.acceptance_status == 1 -%}
+    document.getElementById('presentation-certificates-button-{{abstract.id}}').addEventListener('click', (evt) => {
+      evt.preventDefault();
+      window.open("{{ url_for('IX_IPC.presentation_certificate_pdf', id=abstract.id) }}");
+    });
+  {% endif -%}
+{% endfor -%}
+
 
 const personalDataManager = () => {
   let element = document.getElementById('personal-data');

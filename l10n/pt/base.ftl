@@ -164,7 +164,7 @@ IXIPC-updates-soon = Esta secção será actualizada em breve!
 
 IXIPC-personal-area = Área pessoal
 IXIPC-personal-data-download-certificates = Certificados
-IXIPC-personal-data-download-certificates-participation = Certificado de participação
+IXIPC-personal-data-download-certificates-participation = Participação
 
 IXIPC-program = Programa
 IXIPC-invited-speakers = Oradores convidados
