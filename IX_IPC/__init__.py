@@ -2202,7 +2202,7 @@ def presentation_certificate_pdf(id):
         )
 
         pw, ph = text.wrap(16*cm, 10*cm)
-        text.drawOn(can, (w-pw)/2, h - 16.5*cm)
+        text.drawOn(can, (w-pw)/2, h - 17.5*cm)
 
         paragraph_style_centered = ParagraphStyle(
             'MainTextCentered',
