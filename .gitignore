@@ -1,5 +1,7 @@
 .venv/
-.env
+.env*
+*.db
+nginx*
 
 *.pyc
 __pycache__/
@@ -15,3 +17,16 @@ build/
 *.egg-info/
 
 *.pem
+
+uploaded_files/
+.vscode
+random_content
+tests
+old_know_hosts
+sqlite3.exe
+static/js
+backups/
+temp/*.jpg
+temp/abstracts/*
+temp/email/*
+assinatura.png
