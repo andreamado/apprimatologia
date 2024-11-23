@@ -2,6 +2,20 @@
   <h2 class="mb-1">{{ 'IXIPC-hi'|l10n(lang) }}, {{ g.IXIPC_user.name }}!</h2>
   <p class="lead mb-5">{{ 'IXIPC-register-to-submit-logged-in'|l10n(lang) }}</p>
 
+  {% if payment_status > 0 -%}
+  <!-- Personal data form -->
+  <div class="container mb-5">
+    <div class="rounded-4 card mb-3 abstract-new">
+      <div class="card-body">
+        <h5 class="card-title mb-0">
+          {{ 'IXIPC-personal-data-download-certificates'|l10n(lang) }}
+        </h5>
+      </div>
+    </div>
+    <button type="button" id="attendance-certificates-button" class="btn btn-primary mb-4">{{ 'IXIPC-personal-data-download-certificates-participation'|l10n(lang) }}</button>
+  </div>
+  {% endif -%}
+  
   <!-- Personal data form -->
   <div class="container mb-5">
     <form id="personal-data" action="">
@@ -376,6 +390,11 @@ let paymentProofUploader = null;
     .catch((e) => console.log(e));
   };
 {% endif-%}
+
+document.getElementById('attendance-certificates-button').addEventListener('click', (evt) => {
+  evt.preventDefault();
+  window.open("{{ url_for('IX_IPC.participants_certificate_pdf', id=user_id) }}");
+});
 
 const personalDataManager = () => {
   let element = document.getElementById('personal-data');
