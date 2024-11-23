@@ -1,4 +1,4 @@
-<div class="mb-5" id="personal-area">
+<div class="mb-1" id="personal-area">
   <h2 class="mb-1">{{ 'IXIPC-personal-area'|l10n(lang) }}</h2>
   <p class="lead">{{ 'IXIPC-register-to-submit'|l10n(lang) }}</p>
 </div>
@@ -7,15 +7,15 @@
     document.getElementById('login-submit').removeAttribute("disabled");
   }
 
-  function allowSubmissionRegistration() {
+  {# function allowSubmissionRegistration() {
     document.getElementById('register-submit').removeAttribute("disabled");
-  }
+  } #}
 </script>
 <script src="https://www.google.com/recaptcha/api.js?hl={{lang}}" async defer></script>
 
 <div class="container mb-5">
   <!-- register form -->
-  <div class="row mb-3">
+  {# <div class="row mb-3">
     <div class="col-12 g-3">
       <div class="card rounded-4 mb-3 h-100">
         <div class="card-body">
@@ -38,7 +38,6 @@
                   {{ error }}
                 {% endfor %}
                 <div class="g-recaptcha" data-sitekey="6LcdvrYpAAAAAABBbwEG7ojVIlg44cj1Jqpg18Bg" data-callback="allowSubmissionRegistration"></div>
-                {# {{ registration_form.recaptcha }} #}
               </div>
               <div class="col">
                 <button type="submit" id="register-submit" class="btn btn-primary" disabled>{{ 'IXIPC-register-submit'|l10n(lang) }}</button>
@@ -48,7 +47,7 @@
         </div>
       </div>
     </div>
-  </div>
+  </div> #}
   <div class="row">
     <!-- login form -->
     <div class="col-12 g-3">

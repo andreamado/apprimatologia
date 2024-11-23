@@ -229,7 +229,7 @@ IXIPC-personal-data-dinner-vegetarian = Vegetariano
 IXIPC-personal-data-dinner-vegan = Vegan
 IXIPC-personal-data-dinner-other-restrictions = Outras restrições
 
-IXIPC-register-to-submit = Regista-te para te inscreveres e submeter resumos
+IXIPC-register-to-submit = Entra para verificares a tua informação pessoal ou obter os certificados
 IXIPC-register-to-submit-logged-in = Submete resumos para os teus posters e apresentações!
 
 IXIPC-register-name = Nome

@@ -226,7 +226,7 @@ IXIPC-personal-data-dinner-vegetarian = Vegetarian
 IXIPC-personal-data-dinner-vegan = Vegan
 IXIPC-personal-data-dinner-other-restrictions = Other dietary restrictions
 
-IXIPC-register-to-submit = Register or login submit abstracts
+IXIPC-register-to-submit = Login to check your personal information or get the certificates
 IXIPC-register-to-submit-logged-in = Submit abstracts for your posters and presentations!
 
 IXIPC-register-first-name = First name
